@@ -17,7 +17,6 @@ body {
     justify-content: center;
     height: 90vh;
     width: 23vw;
-    margin: 0 auto;
     padding: 20px;
     box-sizing: border-box;
     border: 1px solid #333;
@@ -88,6 +87,9 @@ body {
     text-decoration: none;
 }
 
+.modal-content {
+    width: 20vw;
+}
 .modal-content h2 {
     margin-top: 0;
     margin-bottom: 80px;
