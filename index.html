@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>DailyDose</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/png" href="images/favicon.png">
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-content">
+                <div class="header">
+                <h1>Hello, User!</h1>
+                <div class="date" id="currentDate"></div>
+            </div>
+            
+            <div class="calendar">
+                <div class="calendar-day">Mon</div>
+                <div class="calendar-day">Tue</div>
+                <div class="calendar-day">Wed</div>
+                <div class="calendar-day">Thu</div>
+                <div class="calendar-day">Fri</div>
+                <div class="calendar-day">Sat</div>
+                <div class="calendar-day">Sun</div>
+                
+                <!-- Empty slots that will be filled by JavaScript -->
+                <div class="calendar-day"></div>
+                <div class="calendar-day"></div>
+                <div class="calendar-day"></div>
+                <div class="calendar-day"></div>
+                <div class="calendar-day"></div>
+                <div class="calendar-day"></div>
+                <div class="calendar-day"></div>
+            </div>
+            
+            <div class="medication-list">
+                <div class="medication-item">
+                    <div class="medication-name">Medication 1</div>
+                    <div class="medication-time">9:00 AM</div>
+                </div>
+                
+                <div class="medication-item">
+                    <div class="medication-name">Medication 2</div>
+                    <div class="medication-time">1:00 PM</div>
+                </div>
+                
+                <div class="medication-item">
+                    <div class="medication-name">Medication 3</div>
+                    <div class="medication-time">9:00 PM</div>
+                </div>
+            </div>
+            
+            <div class="navigation">
+                <div class="nav-item">Messages</div>
+                <div class="nav-item active">Medication</div>
+                <div class="nav-item">Emergency</div>
+                <div class="nav-item">Settings</div>
+            </div>
+
+        </div>
+            
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
