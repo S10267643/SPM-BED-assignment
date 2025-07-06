@@ -56,6 +56,59 @@ function updateCalendar(date) {
 const today = new Date();
 updateCalendar(today);
 
+// Enables visual state change on checkbox toggle
+document.querySelectorAll('.medication-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        const content = this.previousElementSibling;
+        content.querySelector('.medication-name').style.opacity = this.checked ? 0.5 : 1;
+        content.querySelector('.medication-time').style.opacity = this.checked ? 0.5 : 1;
+        content.querySelector('.medication-name').style.textDecoration = this.checked ? 'line-through' : 'none';
+        content.querySelector('.medication-time').style.textDecoration = this.checked ? 'line-through' : 'none';
+    });
+});
+
+// Save checkbox state
+function saveCheckboxState(checkbox) {
+    const medicationName = checkbox.closest('.medication-item').querySelector('.medication-name').textContent;
+    localStorage.setItem(`medication_${medicationName}`, checkbox.checked);
+}
+
+// Load checkbox state on page load
+function loadCheckboxStates() {
+    document.querySelectorAll('.medication-checkbox').forEach(checkbox => {
+        const medicationName = checkbox.closest('.medication-item').querySelector('.medication-name').textContent;
+        const isChecked = localStorage.getItem(`medication_${medicationName}`) === 'true';
+        checkbox.checked = isChecked;
+        
+        // Update visual state if needed
+        if (isChecked) {
+            const content = checkbox.previousElementSibling;
+            content.querySelector('.medication-name').style.opacity = 0.5;
+            content.querySelector('.medication-time').style.opacity = 0.5;
+            content.querySelector('.medication-name').style.textDecoration = 'line-through';
+            content.querySelector('.medication-time').style.textDecoration = 'line-through';
+        }
+    });
+}
+
+// Add event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    loadCheckboxStates();
+    
+    document.querySelectorAll('.medication-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            saveCheckboxState(this);
+            
+            // Update visual state immediately
+            const content = this.previousElementSibling;
+            content.querySelector('.medication-name').style.opacity = this.checked ? 0.5 : 1;
+            content.querySelector('.medication-time').style.opacity = this.checked ? 0.5 : 1;
+            content.querySelector('.medication-name').style.textDecoration = this.checked ? 'line-through' : 'none';
+            content.querySelector('.medication-time').style.textDecoration = this.checked ? 'line-through' : 'none';
+        });
+    });
+});
+
 // Navigation functionality
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', function() {

@@ -225,6 +225,9 @@ p a {
     border-radius: 10px;
     border: 1px solid #eee;
     transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .medication-item:hover {
@@ -237,11 +240,55 @@ p a {
     font-size: 1rem;
     margin-bottom: 6px;
     color: #000;
+    flex: 1;
 }
 
 .medication-time {
     color: #00ADB5;
     font-size: 0.9rem;
+    margin-right: 15px; /* Space between time and checkbox */
+}
+
+.medication-content {
+    order: 1; /* Content comes first */
+    flex: 1;  /* Takes remaining space */
+}
+
+.medication-checkbox {
+    order: 2; /* Checkbox comes second */
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    min-width: 20px; /* Prevents shrinking */
+    min-height: 20px;
+    border: 2px solid #00ADB5;
+    border-radius: 0;
+    position: relative;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Add this AFTER your general input styles */
+.modal-content input[type="checkbox"] {
+    width: auto !important; /* Override the 100% width */
+    padding: 0 !important; /* Remove padding if needed */
+    border-radius: 20% !important; /* Ensure square shape */
+}
+
+.medication-checkbox:checked {
+    background-color: #00ADB5;
+}
+
+.medication-checkbox:checked::after {
+    content: "✓";
+    color: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .navigation {
