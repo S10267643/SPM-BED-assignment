@@ -28,15 +28,30 @@ async function createUser(req, res) {
     const newUser = await userModel.createUser(req.body);
     res.status(201).json(newUser);
   } catch (error) {
-    console.error("User creation error:", error.message);
+    // Handle known (custom) errors from model
+    if (error.statusCode) {
+      return res.status(error.statusCode).json({ error: error.message });
+    }
 
-    const statusCode = error.statusCode || 500;
-    const message =
-      error.message === "Email already exists"
-        ? error.message
-        : "Error creating user";
+    // Fallback to generic error
+    console.error("Controller error:", error);
+    res.status(500).json({ error: "Unexpected error creating user" });
+  }
+}
 
-    res.status(statusCode).json({ error: message });
+async function loginUser(req, res) {
+  try {
+    const { email, password } = req.body;
+    const user = await userModel.findUserByEmail(email);
+
+    if (!user || user.password !== password) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
+    res.json({ message: "Login successful", user });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Server error during login" });
   }
 }
 
@@ -44,4 +59,5 @@ module.exports = {
   getAllUsers,
   getUserById,
   createUser,
+  loginUser
 };

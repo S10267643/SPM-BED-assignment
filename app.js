@@ -26,6 +26,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.get("/users", userController.getAllUsers);
 app.get("/users/:id", validateUserId, userController.getUserById); // Use validateUserId middleware
 app.post("/users", validateUser, userController.createUser); // Use validateUser middleware
+app.post("/users/login", userController.loginUser);
+
 
 // Add routes for PUT/DELETE with validation middleware
 
