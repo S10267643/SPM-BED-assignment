@@ -52,11 +52,13 @@ async function createUser(userData) {
     const result = await request.query(query);
     const newUserId = result.recordset[0].id;
     return await getUserById(newUserId);
-  } catch (error) {
-    console.error("Database error:", error);
+    } catch (error) {
+    if (error.message.includes("Violation of UNIQUE KEY constraint")) {
+      const err = new Error("Email already exists");
+      err.statusCode = 400;
+      throw err;
+    }
     throw error;
-  } finally {
-    if (connection) await connection.close();
   }
 }
 

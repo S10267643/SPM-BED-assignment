@@ -28,7 +28,15 @@ async function createUser(req, res) {
     const newUser = await userModel.createUser(req.body);
     res.status(201).json(newUser);
   } catch (error) {
-    res.status(500).json({ error: "Error creating user" });
+    console.error("User creation error:", error.message);
+
+    const statusCode = error.statusCode || 500;
+    const message =
+      error.message === "Email already exists"
+        ? error.message
+        : "Error creating user";
+
+    res.status(statusCode).json({ error: message });
   }
 }
 
