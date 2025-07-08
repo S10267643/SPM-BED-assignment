@@ -8,7 +8,6 @@
   "name": "spm-bed-assignment",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,5 +22,6 @@
     "url": "https://github.com/S10267643/SPM-BED-assignment/issues"
   },
   "homepage": "https://github.com/S10267643/SPM-BED-assignment#readme",
+  "devDependencies": {},
   "description": ""
 }
