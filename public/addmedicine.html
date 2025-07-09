@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Medication</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="addmedication-container">
+  <h2>Add Medication</h2>
+
+  <label for="medName">Name Of Medication</label>
+  <input type="text" id="medName" name="medName">
+
+  <label>Date</label>
+  <div class="date-picker">
+    <div class="day">Mon</div>
+    <div class="day">Tue</div>
+    <div class="day">Wed</div>
+    <div class="day">Thu</div>
+    <div class="day">Fri</div>
+    <div class="day">Sat</div>
+    <div class="day">Sun</div>
+  </div>
+
+  <label for="time">Time</label>
+  <select id="time" class="time-select">
+    <option>06:00 AM</option>
+    <option>09:00 AM</option>
+    <option>12:00 PM</option>
+    <option>03:00 PM</option>
+    <option>06:30 PM</option>
+    <option>09:00 PM</option>
+  </select>
+
+  <div class="actions">
+    <a href="index.html" class="btn cancel">Cancel</a>
+    <button class="btn confirm">Confirm</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
