@@ -12,24 +12,31 @@ const {
   validateUserId,
 } = require("./middlewares/userValidation"); // import User Validation Middleware
 
-// Create Express app
+const notificationController = require("./controllers/NotificationController");
+
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware (Parsing request bodies)
-app.use(express.json()); // Parse JSON request bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
-// --- Add other general middleware here (e.g., logging, security headers) ---
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Routes for users
+// User routes
 app.get("/users", userController.getAllUsers);
-app.get("/users/:id", validateUserId, userController.getUserById); // Use validateUserId middleware
-app.post("/users", validateUser, userController.createUser); // Use validateUser middleware
+app.get("/users/:id", validateUserId, userController.getUserById);
+app.post("/users", validateUser, userController.createUser);
 app.post("/users/login", userController.loginUser);
 
 
-// Add routes for PUT/DELETE with validation middleware
+// Custom notifications routes 
+
+app.post("/api/notifications", notificationController.createNotification);
+app.put("/api/notifications/:userId", notificationController.editNotification);
+app.delete("/api/notifications/:userId", notificationController.deleteNotification);
+app.get("/api/notifications/:userId", notificationController.getNotification);
+
+
 
 
 // Start server
