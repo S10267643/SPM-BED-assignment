@@ -1,0 +1,76 @@
+/* Base page styling */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    font-family: 'Open Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Back arrow top-left */
+.back-arrow {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    text-decoration: none;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Main settings container with exact provided styling */
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* to allow title and tabs to layout correctly */
+    height: 90vh;
+    width: 23vw;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: white;
+    position: relative;
+}
+
+/* Settings title */
+.settings-container h2 {
+    margin-top: 40px; /* space below arrow */
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+}
+
+/* Tabs container */
+.tabs {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-top: 1px solid #ccc;
+}
+
+/* Individual tab */
+.tab-button {
+    display: block; /* important: makes it behave like a full-width block */
+    width: 100%;
+    font-size: 18px;
+    padding: 18px 20px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+    text-decoration: none;
+    color: #333;
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.tab-button:hover {
+    font-weight: bold;
+    color: #00ADB5;
+}
