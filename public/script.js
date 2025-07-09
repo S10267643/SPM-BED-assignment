@@ -29,7 +29,7 @@ function updateCalendar(date) {
     document.getElementById('currentDate').textContent = formatDate(date);
     
     // Update calendar days
-    const calendarDays = document.querySelectorAll('.calendar-day:not(:nth-child(-n+7)');
+    const calendarDays = document.querySelectorAll('.calendar-day:not(:nth-child(-n+7))');
     
     weekDates.forEach((day, index) => {
         calendarDays[index].textContent = day.getDate();
@@ -54,16 +54,33 @@ function updateCalendar(date) {
 
 // Initialize with current date
 const today = new Date();
+// Call the calendar setup
 updateCalendar(today);
+
+// Utility function to apply visual changes for checkbox state
+function updateMedicationStyle(checkbox) {
+    const item = checkbox.closest('.medication-item');
+    const content = checkbox.previousElementSibling;
+    if (!content || !item) return;
+
+    const name = content.querySelector('.medication-name');
+    const time = content.querySelector('.medication-time');
+    if (!name || !time) return;
+
+    const isChecked = checkbox.checked;
+
+    // Background and text colors on the box and text elements
+    item.style.backgroundColor = isChecked ? '#00ADB5' : '#f9f9f9';
+    name.style.color = isChecked ? '#ffffff' : '#000000';
+    time.style.color = isChecked ? '#ffffff' : '#00ADB5'; // keep time blue or white based on your design
+}
+
+
 
 // Enables visual state change on checkbox toggle
 document.querySelectorAll('.medication-checkbox').forEach(checkbox => {
     checkbox.addEventListener('change', function() {
-        const content = this.previousElementSibling;
-        content.querySelector('.medication-name').style.opacity = this.checked ? 0.5 : 1;
-        content.querySelector('.medication-time').style.opacity = this.checked ? 0.5 : 1;
-        content.querySelector('.medication-name').style.textDecoration = this.checked ? 'line-through' : 'none';
-        content.querySelector('.medication-time').style.textDecoration = this.checked ? 'line-through' : 'none';
+        updateMedicationStyle(this);
     });
 });
 
@@ -79,14 +96,10 @@ function loadCheckboxStates() {
         const medicationName = checkbox.closest('.medication-item').querySelector('.medication-name').textContent;
         const isChecked = localStorage.getItem(`medication_${medicationName}`) === 'true';
         checkbox.checked = isChecked;
-        
+
         // Update visual state if needed
         if (isChecked) {
-            const content = checkbox.previousElementSibling;
-            content.querySelector('.medication-name').style.opacity = 0.5;
-            content.querySelector('.medication-time').style.opacity = 0.5;
-            content.querySelector('.medication-name').style.textDecoration = 'line-through';
-            content.querySelector('.medication-time').style.textDecoration = 'line-through';
+            updateMedicationStyle(checkbox);
         }
     });
 }
@@ -94,20 +107,15 @@ function loadCheckboxStates() {
 // Add event listeners
 document.addEventListener('DOMContentLoaded', () => {
     loadCheckboxStates();
-    
+
     document.querySelectorAll('.medication-checkbox').forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             saveCheckboxState(this);
-            
-            // Update visual state immediately
-            const content = this.previousElementSibling;
-            content.querySelector('.medication-name').style.opacity = this.checked ? 0.5 : 1;
-            content.querySelector('.medication-time').style.opacity = this.checked ? 0.5 : 1;
-            content.querySelector('.medication-name').style.textDecoration = this.checked ? 'line-through' : 'none';
-            content.querySelector('.medication-time').style.textDecoration = this.checked ? 'line-through' : 'none';
+            updateMedicationStyle(this);
         });
     });
 });
+
 
 // Navigation functionality
 document.querySelectorAll('.nav-item').forEach(item => {
