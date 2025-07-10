@@ -23,8 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 // User routes
-app.get("/users", userController.getAllUsers);
-app.get("/users/:id", validateUserId, userController.getUserById);
+app.get("/users/:id", validateUserId, userController.getUserById); //for future use when view/edit profile
 app.post("/users", validateUser, userController.createUser);
 app.post("/users/login", userController.loginUser);
 
@@ -35,9 +34,6 @@ app.post("/api/notifications", notificationController.createNotification);
 app.put("/api/notifications/:userId", notificationController.editNotification);
 app.delete("/api/notifications/:userId", notificationController.deleteNotification);
 app.get("/api/notifications/:userId", notificationController.getNotification);
-
-
-
 
 // Start server
 app.listen(port, () => {
