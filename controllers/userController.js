@@ -1,15 +1,5 @@
 const userModel = require("../models/userModel");
 
-// Get all users
-async function getAllUsers(req, res) {
-  try {
-    const users = await userModel.getAllUsers();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: "Error retrieving users" });
-  }
-}
-
 // Get user by ID
 async function getUserById(req, res) {
   const id = parseInt(req.params.id);
@@ -56,7 +46,6 @@ async function loginUser(req, res) {
 }
 
 module.exports = {
-  getAllUsers,
   getUserById,
   createUser,
   loginUser

@@ -1,0 +1,194 @@
+/* Reset and base */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  font-family: 'Open Sans', sans-serif;
+  /* Center container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Container with your exact border style */
+#wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
+  width: 23vw;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid #333;
+  border-radius: 5px;
+  background-color: white;
+  position: relative;
+}
+
+/* Back arrow top-left inside the container */
+#backArrow {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  user-select: none;
+  z-index: 1000;
+}
+
+/* Title styling */
+.container h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 600;
+  color: #222;
+}
+
+/* Container for form content inside wrapper */
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Form labels */
+form label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 600;
+  color: #444;
+}
+
+/* Inputs and selects */
+form input[type="text"],
+form input[type="url"],
+form input[type="number"],
+form select {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 6px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline-offset: 2px;
+  transition: border-color 0.2s ease-in-out;
+}
+
+form input[type="text"]:focus,
+form input[type="url"]:focus,
+form input[type="number"]:focus,
+form select:focus {
+  border-color: #00adb5;
+  outline: none;
+}
+
+/* Buttons container */
+#formButtons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+/* Buttons styling */
+button {
+  padding: 10px 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease-in-out;
+  color: white;
+  font-size: 14px;
+}
+
+/* Specific buttons */
+button#createBtn {
+  background-color: #00adb5;
+}
+button#createBtn:hover {
+  background-color: #008f99;
+}
+
+button#updateBtn {
+  background-color: #009688;
+}
+button#updateBtn:hover {
+  background-color: #007f6e;
+}
+
+button#deleteBtn {
+  background-color: #f44336;
+}
+button#deleteBtn:hover {
+  background-color: #c0392b;
+}
+
+/* Message overlay */
+#messageOverlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  user-select: none;
+}
+
+#messageOverlay.hidden {
+  display: none;
+}
+
+#messageText {
+  background: white;
+  padding: 25px 40px;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+  max-width: 320px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+.action-button {
+  padding: 10px 20px;
+  margin: 10px 5px 0;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #00ADB5;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: #009aa1;
+}
+
+.action-button.delete {
+  background-color: #ff4d4d;
+}
+
+.action-button.delete:hover {
+  background-color: #cc0000;
+}
+
+.action-button.create {
+  background-color: #4CAF50;
+}
+
+.action-button.create:hover {
+  background-color: #3e8e41;
+}
