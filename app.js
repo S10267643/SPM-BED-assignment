@@ -4,15 +4,27 @@ const sql = require("mssql");
 const dotenv = require("dotenv");
 
 // Load environment variables
+
+
+
 dotenv.config();
 
+
+
+
+//user Controllers
 const userController = require("./controllers/userController");
 const {
   validateUser,
   validateUserId,
 } = require("./middlewares/userValidation"); // import User Validation Middleware
-
 const notificationController = require("./controllers/NotificationController");
+
+//medication controllers
+const medicationController = require("./controllers/medicationController");
+
+
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -28,12 +40,25 @@ app.post("/users", validateUser, userController.createUser);
 app.post("/users/login", userController.loginUser);
 
 
+
 // Custom notifications routes 
 
 app.post("/api/notifications", notificationController.createNotification);
 app.put("/api/notifications/:userId", notificationController.editNotification);
 app.delete("/api/notifications/:userId", notificationController.deleteNotification);
 app.get("/api/notifications/:userId", notificationController.getNotification);
+
+//Medication routes
+app.post('api/medications',medicationController.addmedication)
+
+
+
+
+
+
+
+
+
 
 // Start server
 app.listen(port, () => {
