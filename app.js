@@ -36,7 +36,8 @@ app.put("/api/notifications/:userId", notificationController.editNotification);
 app.delete("/api/notifications/:userId", notificationController.deleteNotification);
 app.get("/api/notifications/:userId", notificationController.getNotification);
 
-
+// Translation routes
+app.post("/api/update-language", translationController.updateLanguagePreference);
 
 
 // Start server
