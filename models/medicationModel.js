@@ -1,36 +1,36 @@
 const sql = require("mssql");
-const dbConfig = require("../dbConfig");
+const dbConfig = require("../config/dbConfig");
 
-// Add Medication
+async function addMedicine(MedicineData) {
+  const { user_id, medication_name, medication_time, medication_prescription, medication_day } = MedicineData;
 
-async function createMedicine(MedicineData) {
-    let connection;
-    try{
-        connection =await sql.connect(dbConfig);
-        const query = `
-        INSERT INTO medication_schedule (user_id, medication_name, medication_time, medication_prescription)
-        VALUES (@user_id, @medication_name, @time, @medication_description);
-        `;
-        const request = connection.request()
-        .input("user_id", MedicineData.user_id)
-        .input("medication_name", MedicineData.medication_name)
-        .input("medication_time", MedicineData.medication_time)
-        .input("medication_prescription", MedicineData.medication_prescription);
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
 
-    }catch (error) {
-  if (error.number === 515) {
-    const err = new Error("A required field is missing. Please fill in all fields.");
-    err.statusCode = 400;
-    throw err;
+    const query = `
+      INSERT INTO medication_schedule (user_id, medication_name, day_of_week, time, dosage)
+      VALUES (@user_id, @medication_name, @day_of_week, @time, @dosage);
+    `;
+
+    await connection.request()
+      .input("user_id", sql.Int, user_id)
+      .input("medication_name", sql.VarChar(50), medication_name)
+      .input("day_of_week", sql.TinyInt, medication_day)
+      .input("time", sql.Time, medication_time)
+      .input("dosage", sql.VarChar(100), medication_prescription)
+      .query(query);
+
+    return { message: `Inserted for day ${medication_day}` };
+  } catch (error) {
+    throw error;
+  } finally {
+    if (connection) await connection.close();
   }
+}
 
-  console.error("Unhandled SQL error:", error.message);
-  throw error;
-}
-    finally {
-        if (connection) await connection.close();
-    }
-}
+module.exports = { addMedicine };
+
 
 async function updateMedicine(MedicineData) {
   let connection;
