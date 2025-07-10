@@ -1,5 +1,6 @@
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
+const bcrypt = require("bcryptjs");
 
 // Get all users
 async function getAllUsers() {
@@ -91,9 +92,42 @@ async function findUserByEmail(email) {
   }
 }
 
+// Find user by username
+async function getUserByUsername(username) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const request = connection.request().input("name", username);
+    const result = await request.query("SELECT * FROM users WHERE name = @name");
+    return result.recordset[0] || null;
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function authenticateUser(email, plainPassword) {
+  const user = await findUserByEmail(email);
+
+  if (!user) {
+    return null; // No user found
+  }
+
+  const isMatch = await bcrypt.compare(plainPassword, user.password);
+  if (!isMatch) {
+    return null; // Password doesn't match
+  }
+
+  return user;
+}
+
 module.exports = {
   getAllUsers,
   getUserById,
   createUser,
-  findUserByEmail
+  findUserByEmail,
+  getUserByUsername,
+  authenticateUser
 };
