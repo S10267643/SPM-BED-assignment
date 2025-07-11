@@ -1,6 +1,7 @@
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // Get all users
 async function getAllUsers() {
@@ -39,16 +40,19 @@ async function createUser(userData) {
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-      INSERT INTO users (name, email, phone, password, preferred_language)
-      VALUES (@name, @email, @phone, @password, @preferred_language);
+      INSERT INTO users (name, email, phone, password, preferred_language, role)
+      VALUES (@name, @email, @phone, @password, @preferred_language, @role);
       SELECT SCOPE_IDENTITY() AS id;
     `;
+
     const request = connection.request()
       .input("name", userData.name)
       .input("email", userData.email)
       .input("phone", userData.phone)
       .input("password", userData.password)
-      .input("preferred_language", userData.preferred_language || "English");
+      .input("preferred_language", userData.preferred_language || "English")
+      .input("role", userData.role || "Elderly");
+
 
     const result = await request.query(query);
     const newUserId = result.recordset[0].id;

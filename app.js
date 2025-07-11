@@ -3,6 +3,8 @@ const express = require("express");
 const sql = require("mssql");
 const dotenv = require("dotenv");
 
+const verifyJWT = require("./middlewares/verifyJWT");
+
 // Load environment variables
 
 
@@ -18,6 +20,8 @@ const {
   validateUser,
   validateUserId,
 } = require("./middlewares/userValidation"); // import User Validation Middleware
+
+
 const notificationController = require("./controllers/NotificationController");
 
 //medication controllers
@@ -51,7 +55,7 @@ app.delete("/api/notifications/:userId", notificationController.deleteNotificati
 app.get("/api/notifications/:userId", notificationController.getNotification);
 
 //Medication routes
-app.post('/api/medications',medicationValidation,medicationController.addMedicine)
+app.post('/api/medications', verifyJWT, medicationValidation, medicationController.addMedicine);
 app.get("/api/medications", medicationController.getAllMedications);
 
 
@@ -61,7 +65,7 @@ app.get("/api/medications", medicationController.getAllMedications);
 
 
 // Translation routes
-app.post("/api/update-language", translationController.updateLanguagePreference);
+// app.post("/api/update-language", translationController.updateLanguagePreference);
 
 
 // Start server

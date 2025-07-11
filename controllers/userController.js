@@ -1,5 +1,6 @@
 const userModel = require("../models/userModel");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // Get user by ID
 async function getUserById(req, res) {
@@ -16,7 +17,7 @@ async function getUserById(req, res) {
 // Register new user
 async function createUser(req, res) {
   try {
-    const { name, email, phone, password, preferred_language } = req.body;
+    const { name, email, phone, password, preferred_language, role } = req.body;
 
     // Check required fields
     if (!name || !email || !password) {
@@ -34,8 +35,9 @@ async function createUser(req, res) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // ✅ Hash password before creating user
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Hash password before creating user
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = await userModel.createUser({
       name,
@@ -43,10 +45,8 @@ async function createUser(req, res) {
       phone,
       password: hashedPassword,
       preferred_language,
+      role: "Elderly",
     });
-
-    // Remove password before returning user object
-    delete newUser.password;
 
     res.status(201).json(newUser);
   } catch (error) {
@@ -60,16 +60,28 @@ async function createUser(req, res) {
 
 async function loginUser(req, res) {
   const { email, password } = req.body;
+
   try {
-    const user = await userModel.authenticateUser(email, password);
+    const user = await userModel.findUserByEmail(email);
     if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Email not found." });
     }
 
-    res.json({ message: "Login successful", user });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ error: "Login failed" });
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Incorrect password." });
+    }
+    
+    const token = jwt.sign(
+      { userId: user.user_id, role: user.role }, // role can be "elderly" or "caregiver"
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
+
+    res.status(200).json({ message: "Login successful", token });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ error: "Internal server error" });
   }
 }
 
