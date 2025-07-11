@@ -1,86 +1,93 @@
 body {
-margin: 0;
-padding: 0;
-background-color: #f9f9f9;
-font-family: 'Open Sans', sans-serif;
-display: flex;
-justify-content: center;
-align-items: center;
-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    font-family: 'Open Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    transition: all 0.3s ease;
 }
 
 .back-arrow {
-position: absolute;
-top: 15px;
-left: 15px;
-text-decoration: none;
-font-size: 24px;
-color: #333;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    text-decoration: none;
+    font-size: 24px;
+    color: #333;
+    transition: color 0.3s ease;
 }
 
-/* Main settings container with exact provided styling */
 .settings-container {
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: flex-start;
-height: 90vh;
-width: 23vw;
-padding: 20px;
-box-sizing: border-box;
-border: 1px solid #333;
-border-radius: 5px;
-background-color: white;
-position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 90vh;
+    width: 23vw;
+    min-width: 300px;
+    max-width: 400px;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: white;
+    position: relative;
+    transition: all 0.3s ease;
 }
 
-/* Settings title */
 .settings-container h2 {
-margin-top: 40px; /* space below arrow */
-margin-bottom: 20px;
-text-align: center;
-width: 100%;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
 }
 
-/* Language buttons container */
 .language-buttons {
-display: flex;
-flex-direction: column;
-gap: 15px;
-width: 100%;
-padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    padding: 0 20px;
 }
 
-/* Language button styling */
 .language-button {
-padding: 12px 20px;
-border: 1px solid #ddd;
-border-radius: 5px;
-background-color: #f5f5f5;
-color: #333;
-font-size: 16px;
-cursor: pointer;
-transition: all 0.3s ease;
-text-align: center;
-width: 100%;
+    padding: 12px 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .language-button:hover {
-background-color: #00adb5;
-border-color: #00adb5;
+    background-color: #00adb5;
+    color: white;
+    border-color: #00adb5;
 }
 
-/* English text styling */
-.language-button span:last-child:lang(en) {
-font-family: 'Open Sans', sans-serif;
-font-weight: 500;
+.language-button.active {
+    background-color: #00adb5;
+    color: white;
+    border-color: #00adb5;
 }
 
-/* Chinese text styling */
-.language-button span:last-child:lang(zh) {
-font-family: 'Noto Sans SC', sans-serif;
-font-weight: 400;
-font-size: 17px;
+/* Language-specific font styling */
+[lang="en"] {
+    font-family: 'Open Sans', sans-serif;
+}
+
+[lang="zh"] {
+    font-family: 'Noto Sans SC', sans-serif;
 }
 
 .flag-icon img {
@@ -89,8 +96,12 @@ font-size: 17px;
     vertical-align: middle;
 }
 
-.language-button.active {
-    background-color: #00adb5;
-    color: white;
-    border-color: #00adb5;
+/* RTL support for future compatibility */
+[dir="rtl"] .back-arrow {
+    left: auto;
+    right: 15px;
+}
+
+[dir="rtl"] .language-button {
+    text-align: right;
 }

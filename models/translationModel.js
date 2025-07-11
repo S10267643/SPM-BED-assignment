@@ -1,25 +1,17 @@
+const { TranslationServiceClient } = require('@google-cloud/translate').v3beta1;
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
 class TranslationModel {
   constructor() {
-    // In-memory translations (replace with DB fetch if needed)
-    this.translations = {
-      en: {
-        welcome: "Welcome",
-        changeLanguage: "Change Language",
-        back: "←",
-        english: "English",
-        chinese: "Chinese"
-      },
-      zh: {
-        welcome: "欢迎",
-        changeLanguage: "更改语言",
-        back: "←",
-        english: "英语",
-        chinese: "简体中文"
-      }
-    };
+    // Initialize Google Cloud Translation client
+    // It will automatically use GOOGLE_APPLICATION_CREDENTIALS
+    this.translationClient = new TranslationServiceClient();
+    this.projectId = 'crucial-garden-465606-b9'; // Your project ID
+    this.location = 'global'; // Or your preferred location
+    
+    // Translation cache
+    this.translationCache = new Map();
   }
 
   /**
@@ -31,7 +23,6 @@ class TranslationModel {
   async updateLanguagePreference(userId, language) {
     let pool;
     try {
-      // Additional validation (redundant if middleware validates)
       if (!['en', 'zh'].includes(language)) {
         throw new Error('Invalid language code');
       }
@@ -49,7 +40,7 @@ class TranslationModel {
       return result.rowsAffected[0] > 0;
     } catch (error) {
       console.error('Database operation failed:', error);
-      throw error; // Let controller handle
+      throw error;
     } finally {
       if (pool) await pool.close();
     }
@@ -57,11 +48,67 @@ class TranslationModel {
 
   /**
    * Gets translations for a specific language
-   * @param {string} lang 
-   * @returns {Object} Translation key-value pairs
+   * @param {string} targetLang - Target language code (e.g., 'en', 'zh')
+   * @returns {Promise<Object>} Translation key-value pairs
    */
-  getTranslations(lang = 'en') {
-    return this.translations[lang] || this.translations.en;
+  async getTranslations(targetLang = 'en') {
+    // Check cache first
+    const cacheKey = `translations_${targetLang}`;
+    if (this.translationCache.has(cacheKey)) {
+      return this.translationCache.get(cacheKey);
+    }
+
+    // If target is same as source, return source strings directly
+    if (targetLang === 'en') {
+      return {
+        welcome: "Welcome",
+        changeLanguage: "Change Language",
+        back: "←",
+        english: "English",
+        chinese: "Chinese"
+      };
+    }
+
+    // Define your source strings
+    const sourceStrings = {
+      welcome: "Welcome",
+      changeLanguage: "Change Language",
+      back: "←",
+      english: "English",
+      chinese: "Chinese"
+    };
+
+    try {
+      const request = {
+        parent: `projects/${this.projectId}/locations/${this.location}`,
+        contents: Object.values(sourceStrings),
+        mimeType: 'text/plain',
+        sourceLanguageCode: 'en', // Assuming source is English
+        targetLanguageCode: targetLang,
+      };
+
+      const [response] = await this.translationClient.translateText(request);
+
+      // Map the translations back to the original keys
+      const translations = {};
+      let i = 0;
+      for (const key in sourceStrings) {
+        translations[key] = response.translations[i].translatedText;
+        i++;
+      }
+
+      // Cache the translations
+      this.translationCache.set(cacheKey, translations);
+      
+      return translations;
+    } catch (error) {
+      console.error('Translation API error:', error);
+      // Provide more helpful error messages
+      if (error.message.includes('Could not load the default credentials')) {
+        throw new Error('Google Cloud credentials not configured. Set GOOGLE_APPLICATION_CREDENTIALS environment variable.');
+      }
+      throw error;
+    }
   }
 }
 

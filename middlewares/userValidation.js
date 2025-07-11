@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const jwt = require("jsonwebtoken");
 
 // Schema for user registration
 const userSchema = Joi.object({
