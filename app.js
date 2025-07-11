@@ -60,7 +60,8 @@ app.get("/api/medications", medicationController.getAllMedications);
 
 
 
-
+// Translation routes
+app.post("/api/update-language", translationController.updateLanguagePreference);
 
 
 // Start server

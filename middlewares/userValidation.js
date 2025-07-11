@@ -57,6 +57,15 @@ const loginSchema = Joi.object({
   }),
 });
 
+// Language validation schema
+const languageSchema = Joi.object({
+  language: Joi.string().valid('en', 'zh').required().messages({
+    "string.base": "Language must be a string",
+    "any.only": "Language must be either 'en' or 'zh'",
+    "any.required": "Language is required"
+  })
+});
+
 function validateLogin(req, res, next) {
   const { error } = loginSchema.validate(req.body);
   if (error) {
@@ -68,5 +77,13 @@ function validateLogin(req, res, next) {
 module.exports = {
   validateUser,
   validateUserId,
-  validateLogin
+  validateLogin,
+  validateLanguage: (req, res, next) => {
+    const { error } = languageSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const messages = error.details.map((d) => d.message).join(", ");
+      return res.status(400).json({ error: messages });
+    }
+    next();
+  }
 };

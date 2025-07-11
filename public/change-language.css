@@ -89,3 +89,8 @@ font-size: 17px;
     vertical-align: middle;
 }
 
+.language-button.active {
+    background-color: #00adb5;
+    color: white;
+    border-color: #00adb5;
+}
