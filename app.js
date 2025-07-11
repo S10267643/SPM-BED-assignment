@@ -29,6 +29,7 @@ const translationController = require("./controllers/translationController");
 
 
 
+
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -62,6 +63,7 @@ app.get("/api/medications", medicationController.getAllMedications);
 
 
 // Translation routes
+app.get("/api/translations", translationController.getTranslations);
 app.post("/api/update-language", translationController.updateLanguagePreference);
 
 
