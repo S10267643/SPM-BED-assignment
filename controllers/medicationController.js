@@ -14,7 +14,7 @@ async function addMedicine(req, res) {
 
     for (const dayNum of medication_days) {
       await medicationModel.addMedicine({
-        user_id,
+        user_id : 1,
         medication_name,
         medication_time,
         medication_prescription,

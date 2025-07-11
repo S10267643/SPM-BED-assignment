@@ -2,9 +2,9 @@ const Joi = require("joi");
 
 const medicationSchema = Joi.object({
   user_id: Joi.number().integer().required(),
-  medication_name: Joi.string().min(2).max(100).required(),
+  medication_name: Joi.string().max(50).required(),
   medication_time: Joi.string().required(),
-  medication_prescription: Joi.string().allow("").max(255),
+  medication_prescription: Joi.string().allow("").max(200),
     medication_days: Joi.array().items(Joi.number().integer().min(1).max(7)).min(1).required()
 
 });
