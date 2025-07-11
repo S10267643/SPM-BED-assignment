@@ -10,9 +10,6 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 
-const translationController = require("./controllers/translationController");
-
-
 //user Controllers
 const userController = require("./controllers/userController");
 const {
