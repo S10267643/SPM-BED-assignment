@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const medicationModel = require("../models/medicationModel");
 
 async function addMedicine(req, res) {

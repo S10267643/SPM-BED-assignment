@@ -1,29 +1,31 @@
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
+const { request } = require("express");
 
-async function addMedicine(data) {
-  const pool = await sql.connect(dbConfig);
-  const { user_id, medication_name, medication_time, dosage, day_of_week } = data;
+async function createMedication(medicationData) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const query = `
+        INSERT INTO medication_schedule (user_id, medication_name, dosage, medication_time, day_of_week)
+        VALUES (@user_id, @medication_name, @dosage, @medication_time, @day_of_week)
+      `;
+    
 
-  const query = `
-    INSERT INTO medication_schedule 
-    (user_id, medication_name, medication_time, dosage, medication_day)
-    VALUES (@user_id, @medication_name, @time, @dosage, @day_of_week)
-  `;
+    const request = await connection.request()
+      .input("user_id", medicationData.user_id)
+      .input("medication_name", medicationData.medication_name)
+      .input("dosage", medicationData.dosage)
+      .input("medication_time", medicationData.medication_time)
+      .input("day_of_week", medicationData.day_of_week)
 
-  await pool.request()
-    .input("user_id", sql.Int, user_id)
-    .input("medication_name", sql.VarChar, medication_name)
-    .input("time", sql.VarChar, medication_time)
-    .input("dosage", sql.VarChar, dosage)
-    .input("day_of_week", sql.Int, day_of_week)
-    .query(query);
+      await request.query(query);
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
 }
 
-async function getAllMedications() {
-  const pool = await sql.connect(dbConfig);
-  const result = await pool.request().query("SELECT * FROM medication_schedule");
-  return result.recordset;
-}
-
-module.exports = { addMedicine, getAllMedications };
+module.exports = { createMedication };
