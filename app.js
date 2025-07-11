@@ -26,6 +26,9 @@ const medicationController = require("./controllers/medicationController");
 const medicationValidation = require("./middlewares/medicationValidation");
 
 
+//translation controllers
+const translationController = require("./controllers/translationController");
+
 
 
 
