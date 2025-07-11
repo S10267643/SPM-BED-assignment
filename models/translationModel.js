@@ -1,25 +1,13 @@
+const { TranslationServiceClient } = require('@google-cloud/translate').v3beta1;
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
 class TranslationModel {
   constructor() {
-    // In-memory translations (replace with DB fetch if needed)
-    this.translations = {
-      en: {
-        welcome: "Welcome",
-        changeLanguage: "Change Language",
-        back: "←",
-        english: "English",
-        chinese: "Chinese"
-      },
-      zh: {
-        welcome: "欢迎",
-        changeLanguage: "更改语言",
-        back: "←",
-        english: "英语",
-        chinese: "简体中文"
-      }
-    };
+    // Initialize Google Cloud Translation client
+    this.translationClient = new TranslationServiceClient();
+    this.projectId = 'your-google-cloud-project-id'; // Replace with your actual project ID
+    this.location = 'global'; // Or your preferred location
   }
 
   /**
@@ -31,7 +19,6 @@ class TranslationModel {
   async updateLanguagePreference(userId, language) {
     let pool;
     try {
-      // Additional validation (redundant if middleware validates)
       if (!['en', 'zh'].includes(language)) {
         throw new Error('Invalid language code');
       }
@@ -49,7 +36,7 @@ class TranslationModel {
       return result.rowsAffected[0] > 0;
     } catch (error) {
       console.error('Database operation failed:', error);
-      throw error; // Let controller handle
+      throw error;
     } finally {
       if (pool) await pool.close();
     }
@@ -57,11 +44,45 @@ class TranslationModel {
 
   /**
    * Gets translations for a specific language
-   * @param {string} lang 
-   * @returns {Object} Translation key-value pairs
+   * @param {string} targetLang - Target language code (e.g., 'en', 'zh')
+   * @returns {Promise<Object>} Translation key-value pairs
    */
-  getTranslations(lang = 'en') {
-    return this.translations[lang] || this.translations.en;
+  async getTranslations(targetLang = 'en') {
+    // Define your source strings (could also be stored in a database)
+    const sourceStrings = {
+      welcome: "Welcome",
+      changeLanguage: "Change Language",
+      back: "←",
+      english: "English",
+      chinese: "Chinese"
+    };
+
+    try {
+      // Prepare the translation request
+      const request = {
+        parent: `projects/${this.projectId}/locations/${this.location}`,
+        contents: Object.values(sourceStrings),
+        mimeType: 'text/plain',
+        sourceLanguageCode: 'en', // Assuming source is English
+        targetLanguageCode: targetLang,
+      };
+
+      // Call the Translation API
+      const [response] = await this.translationClient.translateText(request);
+
+      // Map the translations back to the original keys
+      const translations = {};
+      let i = 0;
+      for (const key in sourceStrings) {
+        translations[key] = response.translations[i].translatedText;
+        i++;
+      }
+
+      return translations;
+    } catch (error) {
+      console.error('Translation API error:', error);
+      throw error;
+    }
   }
 }
 

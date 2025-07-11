@@ -12,8 +12,6 @@ const verifyJWT = require("./middlewares/verifyJWT");
 dotenv.config();
 
 
-
-
 //user Controllers
 const userController = require("./controllers/userController");
 const {
@@ -28,6 +26,9 @@ const notificationController = require("./controllers/NotificationController");
 const medicationController = require("./controllers/medicationController");
 const medicationValidation = require("./middlewares/medicationValidation");
 
+
+//translation controllers
+const translationController = require("./controllers/translationController");
 
 
 
