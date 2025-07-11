@@ -1,5 +1,5 @@
 const sql = require("mssql");
-const dbConfig = require("../config/dbConfig");
+const dbConfig = require("../dbConfig");
 
 async function addMedicine(MedicineData) {
   const { user_id, medication_name, medication_time, medication_prescription, medication_day } = MedicineData;
