@@ -1,0 +1,139 @@
+/*AddMedicine page*/
+
+body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #ffffff;
+    color: #333;
+    min-height: 79vh;
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+    overflow-y: auto;
+}
+
+.addmedication-container {
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+  width: 20vw;
+  border: 1px solid #333;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1px;
+}
+h3 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.medication-list {
+    width: 100%;
+    margin-bottom: 40px;
+}
+
+.medication-item {
+    background-color: #f9f9f9;
+    padding: 16px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.medication-item:hover {
+    background-color: #f0fafa;
+    border-color: #00ADB5;
+}
+
+.medication-name {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 6px;
+    color: #000;
+    flex: 1;
+}
+
+.medication-time {
+    color: #00ADB5;
+    font-size: 0.9rem;
+    margin-right: 15px; /* Space between time and checkbox */
+}
+
+.medication-content {
+    order: 1; /* Content comes first */
+    flex: 1;  /* Takes remaining space */
+}
+
+
+
+.medication-item.selected {
+  background-color: #00ADB5;
+  color: white;
+  border-radius: 10px;
+}
+
+/* Force inner text elements to turn white too */
+.medication-item.selected .medication-name,
+.medication-item.selected .medication-time {
+  color: white;
+}
+
+
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-bottom: 10px;
+  gap: 15px;
+}
+
+.actions .btn {
+  width: 100%;
+  max-width: 280px;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  display: inline-block;
+  border-color: #000;
+}
+
+.actions .btn.delete {
+  border: 2px solid #00ADB5;
+  background-color: white;
+  color: #00ADB5;
+}
+
+.actions .btn.delete:hover {
+  background-color: #f0fafa;
+}
+
+.actions .btn.edit {
+  background-color: #00ADB5;
+  color: white;
+  border: none;
+}
+
+.actions .btn.edit:hover {
+  background-color: #00939a;
+}
+
+
+
+
+
+
+
+

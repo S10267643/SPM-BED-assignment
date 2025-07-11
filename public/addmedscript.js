@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         medication_name: medName,
         medication_prescription: dosage,
         medication_time: time,
-        medication_days: day
+        day_of_week: day
       };
 
       try {

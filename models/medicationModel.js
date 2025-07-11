@@ -3,20 +3,20 @@ const dbConfig = require("../dbConfig");
 
 async function addMedicine(data) {
   const pool = await sql.connect(dbConfig);
-  const { user_id, medication_name, medication_time, medication_prescription, medication_day } = data;
+  const { user_id, medication_name, medication_time, dosage, day_of_week } = data;
 
   const query = `
     INSERT INTO medication_schedule 
-    (user_id, medication_name, medication_time, medication_prescription, medication_day)
-    VALUES (@user_id, @medication_name, @time, @doseage, @day_of_week)
+    (user_id, medication_name, medication_time, dosage, medication_day)
+    VALUES (@user_id, @medication_name, @time, @dosage, @day_of_week)
   `;
 
   await pool.request()
     .input("user_id", sql.Int, user_id)
     .input("medication_name", sql.VarChar, medication_name)
     .input("time", sql.VarChar, medication_time)
-    .input("doseage", sql.VarChar, medication_prescription)
-    .input("day_of_the_week", sql.Int, medication_day)
+    .input("dosage", sql.VarChar, dosage)
+    .input("day_of_week", sql.Int, day_of_week)
     .query(query);
 }
 
