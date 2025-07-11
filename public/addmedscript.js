@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  
   const dayElements = document.querySelectorAll(".day");
   const confirmBtn = document.querySelector(".btn.confirm");
 
@@ -14,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const medName = document.getElementById("medName").value.trim();
     const dosage = document.getElementById("dosage").value.trim();
     const time = document.getElementById("time").value;
+    console.log("here2");
 
     const selectedDays = Array.from(document.querySelectorAll(".day.selected"))
       .map(day => parseInt(day.id.trim()));
@@ -25,27 +27,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     for (const day of selectedDays) {
       const medicationData = {
-        user_id: 1,
+        user_id : 1,
         medication_name: medName,
         medication_prescription: dosage,
         medication_time: time,
-        medication_days: day
+        day: day
       };
 
       try {
-        const response = await fetch("http://localhost:3000/api/medications", {
+        const response = await fetch("/api/medications", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json"},
           body: JSON.stringify(medicationData)
         });
 
-        if (!response.ok) {
-          const error = await response.json();
-          console.error("Request failed:", error);
-          alert("Error: " + (error.error || "Could not add medication."));
-          return;
+        const data = await response.json();
+
+        if (response.ok) {
+          
+          alert("Added medication.");
+          window.location.href = "index.html";
+        }
+        else {
+          alert("Error: " + data.error);
         }
 
       } catch (err) {
@@ -55,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    alert("Medication added successfully!");
-    window.location.href = "index.html";
+    
+    
   });
 });

@@ -1,42 +1,19 @@
+const bcrypt = require("bcryptjs");
 const medicationModel = require("../models/medicationModel");
 
-async function addMedicine(req, res) {
+async function addMedication(req, res) {
+ // const { error, value } = medicationSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
+  }
+
   try {
-    const {
-      user_id = 1,
-      medication_name,
-      medication_time,
-      medication_prescription,
-      medication_days
-    } = req.body;
-
-
-
-    for (const dayNum of medication_days) {
-      await medicationModel.addMedicine({
-        user_id : 1,
-        medication_name,
-        medication_time,
-        medication_prescription,
-        medication_day: dayNum
-      });
-    }
-
-    res.status(201).json({ message: "Medication added successfully for all selected days." });
-  } catch (error) {
-    console.error("Error in addMedicine:", error);
-    res.status(500).json({ error: error.message });
+    await createMedication(value);
+    return res.status(201).json({ message: "Medication added successfully" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Database error" });
   }
 }
 
-async function getAllMedications(req, res) {
-  try {
-    const meds = await medicationModel.getAllMedications();
-    res.status(200).json(meds);
-  } catch (error) {
-    console.error("Error in getAllMedications:", error);
-    res.status(500).json({ error: error.message });
-  }
-}
-
-module.exports = { addMedicine, getAllMedications };
+module.exports = { addMedication };

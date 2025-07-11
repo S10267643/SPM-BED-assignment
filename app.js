@@ -10,7 +10,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 
-const translationController = require("./controllers/translationController");
+
 
 
 //user Controllers
@@ -55,8 +55,7 @@ app.delete("/api/notifications/:userId", notificationController.deleteNotificati
 app.get("/api/notifications/:userId", notificationController.getNotification);
 
 //Medication routes
-app.post('/api/medications',medicationValidation,medicationController.addMedicine)
-app.get("/api/medications", medicationController.getAllMedications);
+app.post('/api/medications', medicationController.addMedication)
 
 
 
