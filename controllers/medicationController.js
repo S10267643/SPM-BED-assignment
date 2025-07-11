@@ -1,25 +1,42 @@
 const medicationModel = require("../models/medicationModel");
 
-async function createMedicine(req, res) {
+async function addMedicine(req, res) {
   try {
-    const { medication_days, ...rest } = req.body;
-    if (!medication_days) {
-      return res.status(400).json({ error: "Medication days are required." });
+    const {
+      user_id = 1,
+      medication_name,
+      medication_time,
+      medication_prescription,
+      medication_days
+    } = req.body;
+
+
+
+    for (const dayNum of medication_days) {
+      await medicationModel.addMedicine({
+        user_id,
+        medication_name,
+        medication_time,
+        medication_prescription,
+        medication_day: dayNum
+      });
     }
 
-    // medication_days expected as comma-separated string like "1,3,5"
-    const days = medication_days.split(",").map(d => parseInt(d.trim()));
-
-    for (const day of days) {
-      await medicationModel.addMedicine({ ...rest, medication_day: day });
-    }
-
-    res.status(201).json({ message: "Medication added for all selected days" });
+    res.status(201).json({ message: "Medication added successfully for all selected days." });
   } catch (error) {
-    console.error("Controller error:", error);
-    res.status(500).json({ error: "Unexpected error creating medicine" });
+    console.error("Error in addMedicine:", error);
+    res.status(500).json({ error: error.message });
   }
 }
 
-module.exports = { createMedicine };
-    
+async function getAllMedications(req, res) {
+  try {
+    const meds = await medicationModel.getAllMedications();
+    res.status(200).json(meds);
+  } catch (error) {
+    console.error("Error in getAllMedications:", error);
+    res.status(500).json({ error: error.message });
+  }
+}
+
+module.exports = { addMedicine, getAllMedications };

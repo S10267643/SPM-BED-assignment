@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const time = document.getElementById("time").value;
     
     const selectedDays = Array.from(document.querySelectorAll(".day.selected"))
-      .map(day => day.textContent.trim());
+      .map(day => parseInt(day.id.trim()));
 
     if (!medName || !dosage || selectedDays.length === 0 || !time) {
       alert("Please fill in all fields.");
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const response = await fetch("/api/medications", {
+      const response = await fetch("http://localhost:3000/api/medications", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -49,9 +49,11 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("Medication added successfully!");
         window.location.href = "index.html";
       } else {
-        const error = await response.json();
-        alert("Error: " + (error.message || "Could not add medication."));
+      const error = await response.json();
+      console.error("Request failed:", error);
+      alert("Error: " + (error.error || "Could not add medication."));
       }
+
     } catch (err) {
       console.error("Request failed:", err);
       alert("Something went wrong. Please try again.");
