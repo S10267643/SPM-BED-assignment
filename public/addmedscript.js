@@ -15,11 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const medName = document.getElementById("medName").value.trim();
     const dosage = document.getElementById("dosage").value.trim();
     const time = document.getElementById("time").value;
-    console.log("here2");
+
 
     const selectedDays = Array.from(document.querySelectorAll(".day.selected"))
       .map(day => parseInt(day.id.trim()));
-
+    console.log(selectedDays);
     if (!medName || !dosage || selectedDays.length === 0 || !time) {
       alert("Please fill in all fields.");
       return;
@@ -29,10 +29,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const medicationData = {
         user_id : 1,
         medication_name: medName,
-        medication_prescription: dosage,
+        dosage: dosage,
         medication_time: time,
-        day: day
+        day_of_week: day
       };
+
 
       try {
         const response = await fetch("/api/medications", {

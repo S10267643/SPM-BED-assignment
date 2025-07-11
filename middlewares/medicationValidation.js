@@ -1,4 +1,4 @@
-const Joi = require("joi");
+/*const Joi = require("joi");
 
 const medicationValidation = Joi.object({
   user_id: Joi.number().integer().required(),
@@ -11,3 +11,4 @@ const medicationValidation = Joi.object({
 });
 
 module.exports = { medicationValidation };
+*/

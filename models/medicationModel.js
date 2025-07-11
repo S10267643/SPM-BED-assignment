@@ -7,7 +7,7 @@ async function createMedication(medicationData) {
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-        INSERT INTO medication_schedule (user_id, medication_name, medication_prescription, medication_time, day_of_week)
+        INSERT INTO medication_schedule (user_id, medication_name, dosage, medication_time, day_of_week)
         VALUES (@user_id, @medication_name, @dosage, @medication_time, @day_of_week)
       `;
     
@@ -15,9 +15,9 @@ async function createMedication(medicationData) {
     const request = await connection.request()
       .input("user_id", medicationData.user_id)
       .input("medication_name", medicationData.medication_name)
-      .input("medication_prescription", medicationData.medication_prescription)
+      .input("dosage", medicationData.dosage)
       .input("medication_time", medicationData.medication_time)
-      .input("day_of_week", medicationData.day)
+      .input("day_of_week", medicationData.day_of_week)
 
       await request.query(query);
   } catch (error) {
