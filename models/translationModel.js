@@ -5,9 +5,13 @@ const dbConfig = require("../dbConfig");
 class TranslationModel {
   constructor() {
     // Initialize Google Cloud Translation client
+    // It will automatically use GOOGLE_APPLICATION_CREDENTIALS
     this.translationClient = new TranslationServiceClient();
-    this.projectId = 'your-google-cloud-project-id'; // Replace with your actual project ID
+    this.projectId = 'crucial-garden-465606-b9'; // Your project ID
     this.location = 'global'; // Or your preferred location
+    
+    // Translation cache
+    this.translationCache = new Map();
   }
 
   /**
@@ -48,7 +52,24 @@ class TranslationModel {
    * @returns {Promise<Object>} Translation key-value pairs
    */
   async getTranslations(targetLang = 'en') {
-    // Define your source strings (could also be stored in a database)
+    // Check cache first
+    const cacheKey = `translations_${targetLang}`;
+    if (this.translationCache.has(cacheKey)) {
+      return this.translationCache.get(cacheKey);
+    }
+
+    // If target is same as source, return source strings directly
+    if (targetLang === 'en') {
+      return {
+        welcome: "Welcome",
+        changeLanguage: "Change Language",
+        back: "←",
+        english: "English",
+        chinese: "Chinese"
+      };
+    }
+
+    // Define your source strings
     const sourceStrings = {
       welcome: "Welcome",
       changeLanguage: "Change Language",
@@ -58,7 +79,6 @@ class TranslationModel {
     };
 
     try {
-      // Prepare the translation request
       const request = {
         parent: `projects/${this.projectId}/locations/${this.location}`,
         contents: Object.values(sourceStrings),
@@ -67,7 +87,6 @@ class TranslationModel {
         targetLanguageCode: targetLang,
       };
 
-      // Call the Translation API
       const [response] = await this.translationClient.translateText(request);
 
       // Map the translations back to the original keys
@@ -78,9 +97,16 @@ class TranslationModel {
         i++;
       }
 
+      // Cache the translations
+      this.translationCache.set(cacheKey, translations);
+      
       return translations;
     } catch (error) {
       console.error('Translation API error:', error);
+      // Provide more helpful error messages
+      if (error.message.includes('Could not load the default credentials')) {
+        throw new Error('Google Cloud credentials not configured. Set GOOGLE_APPLICATION_CREDENTIALS environment variable.');
+      }
       throw error;
     }
   }
