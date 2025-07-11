@@ -1,49 +1,20 @@
-const medicationModel = require("../models/medicationModel");
+const Joi = require("joi");
 
-const dayMap = {
-  Mon: 1,
-  Tue: 2,
-  Wed: 3,
-  Thu: 4,
-  Fri: 5,
-  Sat: 6,
-  Sun: 7
-};
+const medicationSchema = Joi.object({
+  user_id: Joi.number().integer().required(),
+  medication_name: Joi.string().min(2).max(100).required(),
+  medication_time: Joi.string().required(),
+  medication_prescription: Joi.string().allow("").max(255),
+    medication_days: Joi.array().items(Joi.number().integer().min(1).max(7)).min(1).required()
 
-async function createMedicine(req, res) {
-  try {
-    const {
-      user_id,
-      medication_name,
-      medication_time,
-      medication_prescription,
-      medication_days // e.g. "Mon,Wed,Fri"
-    } = req.body;
+});
 
-    if (!medication_days || !medication_name || !medication_time) {
-      return res.status(400).json({ error: "Missing required fields." });
-    }
-
-    const daysArray = medication_days
-      .split(",")
-      .map(day => dayMap[day.trim()])
-      .filter(Boolean); // remove any invalid days
-
-    for (const dayNum of daysArray) {
-      await medicationModel.addMedicine({
-        user_id,
-        medication_name,
-        medication_time,
-        medication_prescription,
-        medication_day: dayNum
-      });
-    }
-
-    res.status(201).json({ message: "Medication added for selected days." });
-  } catch (error) {
-    console.error("Create medicine error:", error);
-    res.status(500).json({ error: "Failed to add medication." });
+function validateMedication(req, res, next) {
+  const { error } = medicationSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ error: error.details[0].message });
   }
+  next();
 }
 
-module.exports = { createMedicine };
+module.exports = validateMedication;

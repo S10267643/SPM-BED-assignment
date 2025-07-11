@@ -22,6 +22,8 @@ const notificationController = require("./controllers/NotificationController");
 
 //medication controllers
 const medicationController = require("./controllers/medicationController");
+const medicationValidation = require("./middlewares/medicationValidation");
+
 
 
 
@@ -49,7 +51,8 @@ app.delete("/api/notifications/:userId", notificationController.deleteNotificati
 app.get("/api/notifications/:userId", notificationController.getNotification);
 
 //Medication routes
-app.post('api/medications',medicationController.addmedication)
+app.post('/api/medications',medicationValidation,medicationController.addMedicine)
+app.get("/api/medications", medicationController.getAllMedications);
 
 
 
