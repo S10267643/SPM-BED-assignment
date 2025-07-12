@@ -1,4 +1,3 @@
-const bcrypt = require("bcryptjs");
 const medicationModel = require("../models/medicationModel");
 
 async function addMedicine(req, res) {
@@ -6,17 +5,17 @@ async function addMedicine(req, res) {
     const {
       user_id,
       medication_name,
+      dosage,
       medication_time,
-      medication_prescription,
       day_of_week
     } = req.body;
 
-    // Directly add the medication (since this is for a single day)
+    // Call the model function
     await medicationModel.addMedicine({
       user_id,
       medication_name,
+      dosage,
       medication_time,
-      medication_prescription,
       day_of_week
     });
 
@@ -26,4 +25,5 @@ async function addMedicine(req, res) {
     res.status(500).json({ error: error.message });
   }
 }
-module.exports = { addMedicine,};
+
+module.exports = { addMedicine };
