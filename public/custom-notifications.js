@@ -1,31 +1,44 @@
 function extractYouTubeID(url) {
-const regExp = /^.*(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/))([^#&?]{11}).*/;
+  const regExp = /^.*(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/))([^#&?]{11}).*/;
   const match = url.match(regExp);
   return match ? match[1] : null;
 }
 
+// 🔒 Decode JWT to get user ID
+function getUserIdFromToken() {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.userId || payload.id || null;
+  } catch (e) {
+    console.error("Invalid JWT:", e);
+    return null;
+  }
+}
+
+const userId = getUserIdFromToken();
+if (!userId) {
+  alert("You must be logged in to access this page.");
+  window.location.href = "login.html";
+}
+
+// DOM elements
 const form = document.getElementById("notificationForm");
 const msgEl = document.getElementById("message");
 const preview = document.getElementById("preview");
 const vibrationToggle = document.getElementById("vibration");
-
 const vibrationLabel = document.getElementById("vibrationLabel");
 const formButtons = document.getElementById("formButtons");
 const messageOverlay = document.getElementById("messageOverlay");
 const messageText = document.getElementById("messageText");
 
-
-
-// Simulate logged-in userId for demo; replace with your auth user ID logic
-const userId = 1; // Example fixed user ID
-
-// Update vibration label text on toggle change
+// Update vibration label
 vibrationToggle.addEventListener("change", () => {
   vibrationLabel.textContent = vibrationToggle.value === "on" ? "On" : "Off";
 });
 
-
-// Preview YouTube video embed
+// YouTube preview
 document.getElementById("youtube").addEventListener("input", function () {
   const id = extractYouTubeID(this.value);
   preview.innerHTML = id
@@ -33,32 +46,26 @@ document.getElementById("youtube").addEventListener("input", function () {
     : "";
 });
 
-// Show a message overlay and redirect to index after click
 function showMessageAndRedirect(msg) {
   messageText.textContent = msg;
   messageOverlay.classList.remove("hidden");
-
   function clickHandler() {
     messageOverlay.classList.add("hidden");
     messageOverlay.removeEventListener("click", clickHandler);
-    window.location.href = "index.html"; // redirect after user clicks anywhere
+    window.location.href = "index.html";
   }
-
   messageOverlay.addEventListener("click", clickHandler);
 }
 
-// Show an error message inside form
 function showError(msg) {
   msgEl.textContent = msg;
   msgEl.style.color = "red";
 }
 
-// Clear error message
 function clearError() {
   msgEl.textContent = "";
 }
 
-// Extract form data as an object
 function getFormData() {
   return {
     userId,
@@ -69,13 +76,10 @@ function getFormData() {
   };
 }
 
-
-// Dynamically create buttons based on notification existence
 function renderButtons(notificationExists) {
   formButtons.innerHTML = "";
 
   if (notificationExists) {
-    // Done Editing button
     const doneBtn = document.createElement("button");
     doneBtn.id = "updateBtn";
     doneBtn.type = "button";
@@ -83,7 +87,6 @@ function renderButtons(notificationExists) {
     doneBtn.addEventListener("click", handleUpdate);
     formButtons.appendChild(doneBtn);
 
-    // Delete button
     const deleteBtn = document.createElement("button");
     deleteBtn.id = "deleteBtn";
     deleteBtn.type = "button";
@@ -91,7 +94,6 @@ function renderButtons(notificationExists) {
     deleteBtn.addEventListener("click", handleDelete);
     formButtons.appendChild(deleteBtn);
   } else {
-    // Create button
     const createBtn = document.createElement("button");
     createBtn.id = "createBtn";
     createBtn.type = "button";
@@ -101,7 +103,6 @@ function renderButtons(notificationExists) {
   }
 }
 
-// Load notification and populate form, then show appropriate buttons
 async function loadNotification() {
   try {
     const res = await fetch(`/api/notifications/${userId}`);
@@ -114,14 +115,11 @@ async function loadNotification() {
 
     const notif = await res.json();
 
-    // Populate form
     form.ringtone.value = notif.ringtone_name;
     form.repeat.value = notif.repeat_count;
     form.youtube.value = notif.youtube_link || "";
-    const vibrateOn = notif.vibration_type === "On";
-    vibrationToggle.value = vibrateOn ? "on" : "off"; // FIXED
+    vibrationToggle.value = notif.vibration_type === "On" ? "on" : "off";
 
-    // Preview
     if (notif.youtube_link) {
       const id = extractYouTubeID(notif.youtube_link);
       preview.innerHTML = id
@@ -134,13 +132,12 @@ async function loadNotification() {
     clearError();
     renderButtons(true);
   } catch (err) {
+    console.error("Load error:", err);
     showError("Error loading notification");
     renderButtons(false);
   }
 }
 
-
-// Create new notification
 async function handleCreate(event) {
   event.preventDefault();
   clearError();
@@ -161,7 +158,6 @@ async function handleCreate(event) {
   }
 }
 
-// Update existing notification
 async function handleUpdate(event) {
   event.preventDefault();
   clearError();
@@ -182,7 +178,6 @@ async function handleUpdate(event) {
   }
 }
 
-// Delete notification
 async function handleDelete(event) {
   event.preventDefault();
   clearError();
@@ -202,5 +197,4 @@ async function handleDelete(event) {
   }
 }
 
-// Initialize page
 loadNotification();

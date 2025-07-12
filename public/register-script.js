@@ -12,7 +12,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   };
 
   try {
-    console.log(Json.stringify(user));
+    console.log(JSON.stringify(user));
     const res = await fetch("/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
