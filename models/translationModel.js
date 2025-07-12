@@ -4,10 +4,18 @@ const dbConfig = require("../dbConfig");
 
 class TranslationModel {
   constructor() {
-    this.translationClient = new TranslationServiceClient();
-    this.projectId = 'crucial-garden-465606-b9';
+    if (!process.env.GOOGLE_PROJECT_ID || !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      throw new Error('Missing required Google Cloud configuration. Please set GOOGLE_PROJECT_ID and GOOGLE_APPLICATION_CREDENTIALS');
+    }
+
+    this.translationClient = new TranslationServiceClient({
+      projectId: process.env.GOOGLE_PROJECT_ID, // No fallback!
+      keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
+    });
+    
     this.location = 'global';
     this.translationCache = new Map();
+    this.projectId = process.env.GOOGLE_PROJECT_ID; // No fallback!
   }
 
   async updateLanguagePreference(userId, language) {
@@ -94,6 +102,15 @@ class TranslationModel {
       vibration_off: "Off",
       repeat_label: "Repeat Count:",
       youtube_label: "YouTube Link (optional):",
+
+      //startingPage.html
+      caregiver_login: "Caregiver Login",
+
+      // register.html
+      register: "Register",
+      name: "Name:",
+      sign_up: "Sign Up",
+      already_have_account: "Already have an account?",
 
 
 
