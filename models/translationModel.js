@@ -103,6 +103,15 @@ class TranslationModel {
       repeat_label: "Repeat Count:",
       youtube_label: "YouTube Link (optional):",
 
+      //startingPage.html
+      caregiver_login: "Caregiver Login",
+
+      // register.html
+      register: "Register",
+      name: "Name:",
+      sign_up: "Sign Up",
+      already_have_account: "Already have an account?",
+
 
 
     };
