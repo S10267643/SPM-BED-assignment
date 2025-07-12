@@ -25,16 +25,14 @@ const {
 
 const notificationController = require("./controllers/NotificationController");
 
-//medication controllers
-const medicationController = require("./controllers/medicationController");
-const medicationValidation = require("./middlewares/medicationValidation");
+
 
 
 //translation controllers
 const translationController = require("./controllers/translationController");
 
-
-
+//medicationHistory controller
+const medicationHistoryController = require("./controllers/medicationHistoryController")
 
 
 const app = express();
@@ -59,12 +57,12 @@ app.put("/api/notifications/:userId", notificationController.editNotification);
 app.delete("/api/notifications/:userId", notificationController.deleteNotification);
 app.get("/api/notifications/:userId", notificationController.getNotification);
 
-//Medication routes
-app.post('/api/medications', verifyJWT, medicationValidation, medicationController.addMedicine);
-app.get("/api/medications", medicationController.getAllMedications);
 
 
 
+//Medication History routes
+app.get('/api/medicationHistory/:id', medicationHistoryController.getMedicalHistoryById); // More specific route first
+app.get('/api/medicationHistory/user/:userId', medicationHistoryController.getMedicalHistoryByUserId); // Changed path to avoid conflict
 
 
 
