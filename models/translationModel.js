@@ -4,33 +4,23 @@ const dbConfig = require("../dbConfig");
 
 class TranslationModel {
   constructor() {
-    // Initialize Google Cloud Translation client
-    // It will automatically use GOOGLE_APPLICATION_CREDENTIALS
     this.translationClient = new TranslationServiceClient();
-    this.projectId = 'crucial-garden-465606-b9'; // Your project ID
-    this.location = 'global'; // Or your preferred location
-    
-    // Translation cache
+    this.projectId = 'crucial-garden-465606-b9';
+    this.location = 'global';
     this.translationCache = new Map();
   }
 
-  /**
-   * Updates user's preferred language in database
-   * @param {number} userId 
-   * @param {string} language (en|zh)
-   * @returns {Promise<boolean>}
-   */
   async updateLanguagePreference(userId, language) {
     let pool;
     try {
-      if (!['en', 'zh'].includes(language)) {
+      if (!['English', 'Chinese'].includes(language)) {
         throw new Error('Invalid language code');
       }
 
       pool = await sql.connect(dbConfig);
       const result = await pool.request()
         .input('userId', sql.Int, userId)
-        .input('language', sql.NVarChar(2), language)
+        .input('language', sql.NVarChar(10), language)
         .query(`
           UPDATE users 
           SET preferred_language = @language 
@@ -46,50 +36,86 @@ class TranslationModel {
     }
   }
 
-  /**
-   * Gets translations for a specific language
-   * @param {string} targetLang - Target language code (e.g., 'en', 'zh')
-   * @returns {Promise<Object>} Translation key-value pairs
-   */
-  async getTranslations(targetLang = 'en') {
-    // Check cache first
+  async getTranslations(targetLang = 'English') {
     const cacheKey = `translations_${targetLang}`;
     if (this.translationCache.has(cacheKey)) {
       return this.translationCache.get(cacheKey);
     }
 
-    // If target is same as source, return source strings directly
-    if (targetLang === 'en') {
-      return {
-        welcome: "Welcome",
-        changeLanguage: "Change Language",
-        back: "←",
-        english: "English",
-        chinese: "Chinese"
-      };
-    }
-
-    // Define your source strings
+    // Define source strings in English
     const sourceStrings = {
-      welcome: "Welcome",
+      // change-language.html
       changeLanguage: "Change Language",
-      back: "←",
       english: "English",
-      chinese: "Chinese"
+      chinese: "Chinese",
+      title: "DailyDose",
+
+      // index.html
+      welcome_message: "Hello, User!",
+      messages: "Messages",
+      medication: "Medication",
+      add_pills: "Add pills",
+      emergency: "Emergency",
+
+      // settings.html
+      settings: "Settings",
+      daily_summary: "Daily Summary",
+      custom_notification: "Custom Notifications",
+      medical_history: "Medical History",
+
+      // addmedicine.html
+      add_medication_title: "Add Medication",
+      add_medication_header: "Add Medication",
+      medication_name_label: "Name Of Medication",
+      date_label: "Date",
+      time_label: "Time",
+      dosage_label: "Dosage",
+      cancel_button: "Cancel",
+      confirm_button: "Confirm",
+
+      // caregiverLogin.html
+      login_header: "Login",
+      email_label: "Email Address:",
+      password_label: "Password:",
+      forgot_password: "Forgot Password?",
+      sign_in_button: "Sign In",
+
+      //login.html
+      create_account_prompt: "Don't have an account yet? ",
+      create_account: "Create Account",
+
+      //custom-notifications.html
+      notifications_title: "Custom Notifications",
+      notifications_header: "Custom Notifications",
+      back_to_settings: "← Settings",
+      ringtone_label: "Ringtone:",
+      vibration_label: "Vibration:",
+      vibration_on: "On",
+      vibration_off: "Off",
+      repeat_label: "Repeat Count:",
+      youtube_label: "YouTube Link (optional):",
+
+
+
     };
+
+    // Return source strings directly for English
+    if (targetLang === 'English') {
+      this.translationCache.set(cacheKey, sourceStrings);
+      return sourceStrings;
+    }
 
     try {
       const request = {
         parent: `projects/${this.projectId}/locations/${this.location}`,
         contents: Object.values(sourceStrings),
         mimeType: 'text/plain',
-        sourceLanguageCode: 'en', // Assuming source is English
-        targetLanguageCode: targetLang,
+        sourceLanguageCode: 'en',
+        targetLanguageCode: 'zh', 
       };
 
       const [response] = await this.translationClient.translateText(request);
 
-      // Map the translations back to the original keys
       const translations = {};
       let i = 0;
       for (const key in sourceStrings) {
@@ -97,13 +123,10 @@ class TranslationModel {
         i++;
       }
 
-      // Cache the translations
       this.translationCache.set(cacheKey, translations);
-      
       return translations;
     } catch (error) {
       console.error('Translation API error:', error);
-      // Provide more helpful error messages
       if (error.message.includes('Could not load the default credentials')) {
         throw new Error('Google Cloud credentials not configured. Set GOOGLE_APPLICATION_CREDENTIALS environment variable.');
       }

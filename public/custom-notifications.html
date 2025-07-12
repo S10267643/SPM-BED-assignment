@@ -1,67 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Custom Notifications</title>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="custom-notifications.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-translate="notifications_title">Custom Notifications</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="custom-notifications.css">
+  <script src="changeLanguage.js"></script>
 </head>
 <body>
   <div id="wrapper">
-    <!-- Back arrow top-left inside border -->
-    <a href="Settings.html" id="backArrow" aria-label="Back to Settings">← Settings</a>
+    <a href="Settings.html" id="backArrow" data-translate="back_to_settings">← Settings</a>
 
     <div class="container">
-      <h2>Custom Notifications</h2>
-
+      <h2 data-translate="notifications_header">Custom Notifications</h2>
       <form id="notificationForm" novalidate>
-        <label for="ringtone">Ringtone:</label>
-        <input
-          type="text"
-          id="ringtone"
-          name="ringtone"
-          placeholder="Enter ringtone name or URL"
-          required
-          autocomplete="off"
-        />
+        <label for="ringtone" data-translate="ringtone_label">Ringtone:</label>
+        <input type="text" id="ringtone" name="ringtone" placeholder="Enter ringtone name or URL" required autocomplete="off">
 
-        <label for="vibration">Vibration:</label>
+        <label for="vibration" data-translate="vibration_label">Vibration:</label>
         <select id="vibration" name="vibration" required>
-          <option value="on">On</option>
-          <option value="off">Off</option>
+          <option value="on" data-translate="vibration_on">On</option>
+          <option value="off" data-translate="vibration_off">Off</option>
         </select>
 
-        <label for="repeat">Repeat Count:</label>
-        <input
-          type="number"
-          id="repeat"
-          name="repeat"
-          min="1"
-          placeholder="Enter repeat count"
-          required
-        />
+        <label for="repeat" data-translate="repeat_label">Repeat Count:</label>
+        <input type="number" id="repeat" name="repeat" min="1" placeholder="Enter repeat count" required>
 
-        <label for="youtube">YouTube Link (optional):</label>
-        <input
-          type="url"
-          id="youtube"
-          name="youtube"
-          placeholder="Enter YouTube video URL"
-          autocomplete="off"
-        />
-        <div id="preview"></div>
-
-        <div id="formButtons"></div>
+        <label for="youtube" data-translate="youtube_label">YouTube Link (optional):</label>
+        <input type="url" id="youtube" name="youtube" placeholder="Enter YouTube video URL" autocomplete="off">
       </form>
     </div>
-
-    <!-- Message overlay -->
-    <div id="messageOverlay" class="hidden" role="alert" aria-live="assertive" tabindex="0">
-      <div id="messageText"></div>
-    </div>
   </div>
-   <div id="message"></div>
   <script src="custom-notifications.js"></script>
 </body>
 </html>

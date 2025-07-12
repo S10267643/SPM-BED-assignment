@@ -2,45 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Add Medication</title>
+  <title data-translate="add_medication_title">Add Medication</title>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="addmedicine.css">
+  <script src="changeLanguage.js"></script>
 </head>
 <body>
-
 <div class="addmedication-container">
-  <h2>Add Medication</h2>
+  <h2 data-translate="add_medication_header">Add Medication</h2>
 
-  <label for="medName">Name Of Medication</label>
+  <label for="medName" data-translate="medication_name_label">Name Of Medication</label>
   <input type="text" id="medName" name="medName">
 
-  <label>Date</label>
+  <label data-translate="date_label">Date</label>
   <div class="date-picker">
-    <div class="day" id="1">Mon</div>
-    <div class="day" id="2">Tue</div>
-    <div class="day" id="3">Wed</div>
-    <div class="day" id="4">Thu</div>
-    <div class="day" id="5">Fri</div>
-    <div class="day" id="6">Sat</div>
-    <div class="day" id="7">Sun</div>
+    <div class="day" id="1" data-translate="day_mon">Mon</div>
+    <div class="day" id="2" data-translate="day_tue">Tue</div>
+    <div class="day" id="3" data-translate="day_wed">Wed</div>
+    <div class="day" id="4" data-translate="day_thu">Thu</div>
+    <div class="day" id="5" data-translate="day_fri">Fri</div>
+    <div class="day" id="6" data-translate="day_sat">Sat</div>
+    <div class="day" id="7" data-translate="day_sun">Sun</div>
   </div>
 
-  <label for="time">Time</label>
+  <label for="time" data-translate="time_label">Time</label>
   <select id="time" class="time-select">
     <option value="06:00:00">06:00</option>
-  <option value="09:00:00">09:00</option>
-  <option value="12:00:00">12:00</option>
-  <option value="15:00:00">15:00</option>
-  <option value="18:30:00">18:30</option>
-  <option value="21:00:00">21:00</option>
+    <option value="09:00:00">09:00</option>
+    <option value="12:00:00">12:00</option>
+    <option value="15:00:00">15:00</option>
+    <option value="18:30:00">18:30</option>
+    <option value="21:00:00">21:00</option>
   </select>
-  <label for="dosage">Dosage</label>
-<input type="text" id="dosage" name="dosage" class="dosage-select" placeholder="Enter dosage (e.g., 2 tablets)">
 
+  <label for="dosage" data-translate="dosage_label">Dosage</label>
+  <input type="text" id="dosage" name="dosage" class="dosage-select" placeholder="Enter dosage (e.g., 2 tablets)">
 
   <div class="actions">
-    <a href="index.html" class="btn cancel">Cancel</a>
-    <button class="btn confirm">Confirm</button>
+    <a href="index.html" class="btn cancel" data-translate="cancel_button">Cancel</a>
+    <button class="btn confirm" data-translate="confirm_button">Confirm</button>
   </div>
 </div>
 

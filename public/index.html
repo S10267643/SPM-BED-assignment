@@ -2,11 +2,11 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>DailyDose</title>
+    <title data-translate="title">DailyDose</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <script src="translationLoader.js"></script>
+    <script src="changeLanguage.js"></script>
 </head>
 <body>
 
@@ -18,19 +18,19 @@
     <div class="addmedication-button" onclick="location.href='Settings.html'">☰</div>
     
     <div class="header">
-      <h1>Hello, User!</h1>
+      <h1 data-translate="welcome_message">Hello, User!</h1>
       <div class="date" id="currentDate"></div>
     </div>
 
             
             <div class="calendar">
-                <div class="calendar-day">Mon</div>
-                <div class="calendar-day">Tue</div>
-                <div class="calendar-day">Wed</div>
-                <div class="calendar-day">Thu</div>
-                <div class="calendar-day">Fri</div>
-                <div class="calendar-day">Sat</div>
-                <div class="calendar-day">Sun</div>
+                <div class="calendar-day" data-translate="day_mon">Mon</div>
+                <div class="calendar-day" data-translate="day_tue">Tue</div>
+                <div class="calendar-day" data-translate="day_wed">Wed</div>
+                <div class="calendar-day" data-translate="day_thu">Thu</div>
+                <div class="calendar-day" data-translate="day_fri">Fri</div>
+                <div class="calendar-day" data-translate="day_sat">Sat</div>
+                <div class="calendar-day" data-translate="day_sun">Sun</div>
                 
                 <!-- Empty slots that will be filled by JavaScript -->
                 <div class="calendar-day"></div>
@@ -69,10 +69,10 @@
             </div>
             
             <div class="navigation">
-                <div class="nav-item">Messages</div>
-                <div class="nav-item active">Medication</div>
-                <div class="nav-item" onclick="location.href='addmedicine.html'">Add pills</div>
-                <div class="nav-item">Emergency</div>
+                <div class="nav-item" data-translate="messages">Messages</div>
+                <div class="nav-item active" data-translate="medication">Medication</div>
+                <div class="nav-item" onclick="location.href='addmedicine.html'" data-translate="add_pills">Add pills</div>
+                <div class="nav-item" data-translate="emergency">Emergency</div>
                 
                 
 
@@ -83,6 +83,5 @@
     </div>
 
     <script src="script.js"></script>
-    <script src="language-switcher.js"></script>
 </body>
 </html>

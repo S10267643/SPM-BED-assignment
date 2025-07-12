@@ -5,7 +5,7 @@ async function updateLanguagePreference(req, res) {
   try {
     const { userId, language } = req.body;
     
-    if (!['en', 'zh'].includes(language)) {
+    if (!['English', 'Chinese'].includes(language)) {
       return res.status(400).json({ error: "Invalid language code" });
     }
 
@@ -27,26 +27,11 @@ async function getTranslations(req, res) {
   try {
     const { lang } = req.query;
     
-    // Only support English and Chinese
-    if (!['en', 'zh'].includes(lang)) {
+    if (!['English', 'Chinese'].includes(lang)) {
       return res.status(400).json({ error: "Unsupported language" });
     }
 
-    // Return predefined translations
-    const translations = lang === 'en' ? {
-      back: "←",
-      changeLanguage: "Change Language",
-      english: "English",
-      chinese: "Chinese",
-      title: "DailyDose"
-    } : {
-      back: "←",
-      changeLanguage: "更改语言",
-      english: "英语",
-      chinese: "简体中文",
-      title: "每日剂量"
-    };
-
+    const translations = await model.getTranslations(lang);
     res.json(translations);
   } catch (error) {
     console.error("Error:", error);
