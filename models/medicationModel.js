@@ -31,13 +31,36 @@ async function getAllMedications() {
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-        SELECT id, medication_name, dosage, time, day_of_week 
+        SELECT id, user_id, medication_name, dosage, time, day_of_week 
         FROM medication_schedule
         ORDER BY day_of_week, time
-        WHERE user_id = @user_id
       `;
     
     const result = await connection.request().query(query);
+    return result.recordset;
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function getAllMedicationsByUserId(userId) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const query = `
+        SELECT id, user_id, medication_name, dosage, time, day_of_week 
+        FROM medication_schedule
+        WHERE user_id = @user_id
+        ORDER BY day_of_week, time
+      `;
+    
+    const request = connection.request()
+      .input("user_id", userId);
+
+    const result = await request.query(query);
     return result.recordset;
   } catch (error) {
     console.error("Database error:", error);
@@ -52,7 +75,7 @@ async function getMedicationById(medicationId) {
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-        SELECT id, medication_name, dosage, time, day_of_week 
+        SELECT id, user_id, medication_name, dosage, time, day_of_week 
         FROM medication_schedule
         WHERE id = @id
       `;
@@ -120,4 +143,11 @@ async function deleteMedicine(medicationId) {
   }
 }
 
-module.exports = { addMedicine, getAllMedications, getMedicationById, updateMedicine, deleteMedicine };
+module.exports = { 
+  addMedicine, 
+  getAllMedications, 
+  getAllMedicationsByUserId, 
+  getMedicationById, 
+  updateMedicine, 
+  deleteMedicine 
+};

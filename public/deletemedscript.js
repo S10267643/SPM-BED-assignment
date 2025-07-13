@@ -2,8 +2,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   let medications = [];
   let selectedMedicationId = null;
 
+  // 🔒 Decode JWT to get user ID
+  function getUserIdFromToken() {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.userId || payload.id || null;
+    } catch (e) {
+      console.error("Invalid JWT:", e);
+      return null;
+    }
+  }
 
-  
+  const userId = getUserIdFromToken();
+  if (!userId) {
+    alert("You must be logged in to access this page.");
+    window.location.href = "login.html";
+    return;
+  }
+
   // Load medications from the database
   await loadMedications();
 
@@ -16,16 +34,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function loadMedications() {
     try {
-      const response = await fetch("/api/medications");
-      medications = await response.json();
-      
+      const response = await fetch(`/api/medications/user/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
       if (response.ok) {
+        medications = await response.json();
         displayMedications();
       } else {
-        console.error("Failed to load medications");
+        const errorData = await response.json();
+        console.error("Failed to load medications:", errorData);
+        alert("Failed to load medications: " + (errorData.error || "Unknown error"));
       }
     } catch (error) {
       console.error("Error loading medications:", error);
+      alert("Error loading medications. Please try again.");
     }
   }
 
@@ -83,6 +109,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const response = await fetch(`/api/medications/${selectedMedicationId}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json"
+        }
       });
 
       const data = await response.json();
