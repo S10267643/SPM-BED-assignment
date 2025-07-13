@@ -65,6 +65,7 @@ app.get("/api/notifications/:userId", notificationController.getNotification);
 //medicationSchedule routes
 app.post('/api/medications', verifyJWT, medicationValidation.validateMedication, medicationController.addMedicine);
 app.get('/api/medications/:id', medicationValidation.validateMedicationId, medicationController.getMedicationById);
+app.get('/api/medications/user/:userId',medicationController.getAllMedicationsByUserId);
 app.put('/api/medications/:id', medicationValidation.validateMedicationId, medicationValidation.validateUpdateMedication, medicationController.updateMedicine);
 app.delete('/api/medications/:id', medicationValidation.validateMedicationId, medicationController.deleteMedicine);
 

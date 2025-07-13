@@ -46,7 +46,7 @@ async function createUser(req, res) {
       phone,
       password: hashedPassword,
       preferred_language,
-      role: "Elderly",
+      role
     });
 
     res.status(201).json(newUser);
@@ -80,10 +80,11 @@ async function loginUser(req, res) {
     );
 
     // Return BOTH token AND user ID
-res.status(200).json({ 
-  message: "Login successful", 
-  token,
-  userId: user.user_id  // ✅ now matches field name from DB
+    res.status(200).json({ 
+    message: "Login successful", 
+    token,
+    userId: user.user_id,
+    role: user.role 
 });
 
 

@@ -107,18 +107,34 @@ function loadCheckboxStates() {
     });
 }
 
-// Add event listeners
-document.addEventListener('DOMContentLoaded', () => {
-    loadCheckboxStates();
+document.addEventListener("DOMContentLoaded", function () {
+  // Hide Add Pills nav for Elderly
+    const role = localStorage.getItem("role"); // stored at login
+    console.log("Role:", role);
+    const addPillsNav = document.getElementById("addPillsNav");
+    if (role === "Elderly" && addPillsNav) {
+    addPillsNav.style.display = "none";
+  }
 
-    document.querySelectorAll('.medication-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            saveCheckboxState(this);
-            updateMedicationStyle(this);
-        });
+  // Load checkbox states
+  loadCheckboxStates();
+
+  // Add event listeners to checkboxes
+  document.querySelectorAll('.medication-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      saveCheckboxState(this);
+      updateMedicationStyle(this);
     });
-});
+  });
 
+  // Navigation tab highlight
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', function() {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+});
 
 // Navigation functionality
 document.querySelectorAll('.nav-item').forEach(item => {

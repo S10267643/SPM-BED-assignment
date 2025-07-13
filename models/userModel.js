@@ -1,7 +1,6 @@
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
 // Get all users
 async function getAllUsers() {

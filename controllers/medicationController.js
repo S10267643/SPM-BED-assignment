@@ -36,6 +36,17 @@ async function getAllMedications(req, res) {
   }
 }
 
+async function getAllMedicationsByUserId(req, res) {
+  try {
+    const { userId } = req.params;
+    const medications = await medicationModel.getAllMedicationsByUserId(userId);
+    res.status(200).json(medications);
+  } catch (error) {
+    console.error("Error in getAllMedicationsByUserId:", error);
+    res.status(500).json({ error: error.message });
+  }
+}
+
 async function getMedicationById(req, res) {
   try {
     const { id } = req.params;
@@ -90,4 +101,11 @@ async function deleteMedicine(req, res) {
   }
 }
 
-module.exports = { addMedicine, getAllMedications, getMedicationById, updateMedicine, deleteMedicine };
+module.exports = { 
+  addMedicine, 
+  getAllMedications, 
+  getAllMedicationsByUserId, 
+  getMedicationById, 
+  updateMedicine, 
+  deleteMedicine 
+};

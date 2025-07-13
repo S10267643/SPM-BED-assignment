@@ -1,5 +1,26 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  
+
+
+// 🔒 Decode JWT to get user ID
+function getUserIdFromToken() {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.userId || payload.id || null;
+  } catch (e) {
+    console.error("Invalid JWT:", e);
+    return null;
+  }
+}
+
+const userId = getUserIdFromToken();
+if (!userId) {
+  alert("You must be logged in to access this page.");
+  window.location.href = "login.html";
+}
+
+
   const dayElements = document.querySelectorAll(".day");
   const confirmBtn = document.querySelector(".btn.confirm");
   const medNameInput = document.getElementById("medName");
@@ -112,7 +133,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function addMedication(medName, dosage, time, selectedDays) {
     for (const day of selectedDays) {
       const medicationData = {
-        user_id: 1,
+        user_id: userId,
         medication_name: medName,
         dosage: dosage,
         medication_time: time,

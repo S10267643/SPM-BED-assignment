@@ -35,15 +35,24 @@ async function loadTranslations(lang) {
 function applyTranslations(translations) {
   document.querySelectorAll('[data-translate]').forEach(element => {
     const key = element.getAttribute('data-translate');
-    if (translations[key]) {
-      if (element.tagName === 'INPUT' && element.placeholder) {
-        element.placeholder = translations[key];
-      } else {
-        element.textContent = translations[key];
-      }
+    const translatedText = translations[key];
+
+    if (!translatedText) return;
+
+    if (element.tagName === 'INPUT' && element.placeholder) {
+      element.placeholder = translatedText;
+
+    } else if (element.children.length === 0) {
+      // Safe to replace if no child elements
+      element.textContent = translatedText;
+
+    } else {
+      // Don't overwrite HTML content that includes child tags (e.g., <a>)
+      console.warn(`Skipped translation for ${key} to preserve HTML inside:`, element);
     }
   });
 }
+
 
 // Main language change function
 async function changeLanguage(newLang) {
