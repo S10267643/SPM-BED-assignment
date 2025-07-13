@@ -33,7 +33,9 @@ const translationController = require("./controllers/translationController");
 
 //medicationHistory controller
 const medicationHistoryController = require("./controllers/medicationHistoryController")
-
+//medicationSchedule controllers
+const medicationValidation = require("./middlewares/medicationValidation");
+const medicationController = require("./controllers/medicationController");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -57,6 +59,13 @@ app.put("/api/notifications/:userId", notificationController.editNotification);
 app.delete("/api/notifications/:userId", notificationController.deleteNotification);
 app.get("/api/notifications/:userId", notificationController.getNotification);
 
+
+
+//medicationSchedule routes
+app.post('/api/medications', medicationValidation.validateMedication, medicationController.addMedicine);
+app.get('/api/medications/:id', medicationValidation.validateMedicationId, medicationController.getMedicationById);
+app.put('/api/medications/:id', medicationValidation.validateMedicationId, medicationValidation.validateUpdateMedication, medicationController.updateMedicine);
+app.delete('/api/medications/:id', medicationValidation.validateMedicationId, medicationController.deleteMedicine);
 
 
 
