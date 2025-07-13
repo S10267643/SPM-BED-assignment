@@ -50,7 +50,7 @@ async function createUser(userData) {
       .input("phone", userData.phone)
       .input("password", userData.password)
       .input("preferred_language", userData.preferred_language || "English")
-      .input("role", userData.role || "Elderly");
+      .input("role", userData.role);
 
 
     const result = await request.query(query);
