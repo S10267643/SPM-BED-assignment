@@ -34,6 +34,7 @@ async function getAllMedications() {
         SELECT id, medication_name, dosage, time, day_of_week 
         FROM medication_schedule
         ORDER BY day_of_week, time
+        WHERE user_id = @user_id
       `;
     
     const result = await connection.request().query(query);

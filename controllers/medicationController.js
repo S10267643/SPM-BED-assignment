@@ -90,4 +90,4 @@ async function deleteMedicine(req, res) {
   }
 }
 
-module.exports = { addMedicine, getAllMedications, getMedicationById, updateMedicine, deleteMedicine };
+module.exports = { addMedicine, getAllMedicationsByUserId, getMedicationById, updateMedicine, deleteMedicine };

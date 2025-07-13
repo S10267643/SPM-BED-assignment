@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   let medications = [];
   let selectedMedicationId = null;
 
+
+  
   // Load medications from the database
   await loadMedications();
 
