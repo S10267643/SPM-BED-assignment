@@ -36,9 +36,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
       try {
+        const token = localStorage.getItem("token"); // Get token from localStorage
+
         const response = await fetch("/api/medications", {
           method: "POST",
-          headers: { "Content-Type": "application/json"},
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` // Include the token here
+          },
           body: JSON.stringify(medicationData)
         });
 
