@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 function verifyJWT(req, res, next) {
   const token =
     req.headers.authorization && req.headers.authorization.split(" ")[1];
@@ -13,13 +15,13 @@ function verifyJWT(req, res, next) {
 
     // Authorization rules for DailyDose
     const authorizedRoles = {
-      // Only caregivers can manage medications
-      "POST /api/medications": ["elderly", "caregiver"],
-      "PUT /api/medications/[0-9]+": ["elderly", "caregiver"],
-      "DELETE /api/medications/[0-9]+": ["elderly", "caregiver"],
+      // Only Caregiver can Manage medications
+      "POST /api/medications": ["Caregiver"],
+      "PUT /api/medications/[0-9]+": ["Caregiver"],
+      "DELETE /api/medications/[0-9]+": ["Caregiver"],
 
       // Elderly users can mark medications as taken
-      "POST /api/medications/[0-9]+/taken": ["elderly"]
+      "POST /api/medications/[0-9]+/taken": ["Elderly"]
     };
 
     // Build a key like "POST /medications/123"
