@@ -2,44 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Add Medication</title>
+  <title data-translate="add_medication_title">Edit Medication</title>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="editmedicine.css">
+  <link rel="stylesheet" href="addmedicine.css">
+  <script src="changeLanguage.js"></script>
 </head>
 <body>
-
 <div class="addmedication-container">
-  <h2>Edit Medication</h2>
-  <h3>Pick Medicine</h3>
-<div class="medication-list">
-                <div class="medication-item">
-                    <div class="medication-content">
-                        <div class="medication-name">Medication 1</div>
-                        <div class="medication-time">9:00 AM</div>
-                    </div>
-                </div>
-                
-                <div class="medication-item">
-                    <div class="medication-content">
-                        <div class="medication-name">Medication 2</div>
-                        <div class="medication-time">1:00 PM</div>
-                    </div>
-                </div>
-                
-                <div class="medication-item">
-                    <div class="medication-content">
-                        <div class="medication-name">Medication 3</div>
-                        <div class="medication-time">9:00 PM</div>
-                    </div>
-                </div>
-            </div>
+  <h2 data-translate="add_medication_header">Edit Medication</h2>
 
-<div class="actions">
-  <a class="btn delete">Delete</a>
-  <button class="btn edit">Edit</button>
+  <label for="medName" data-translate="medication_name_label">Name Of Medication</label>
+  <input type="text" id="medName" name="medName">
+
+  <label data-translate="date_label">Date</label>
+  <div class="date-picker">
+    <div class="day" id="1" data-translate="day_mon">Mon</div>
+    <div class="day" id="2" data-translate="day_tue">Tue</div>
+    <div class="day" id="3" data-translate="day_wed">Wed</div>
+    <div class="day" id="4" data-translate="day_thu">Thu</div>
+    <div class="day" id="5" data-translate="day_fri">Fri</div>
+    <div class="day" id="6" data-translate="day_sat">Sat</div>
+    <div class="day" id="7" data-translate="day_sun">Sun</div>
+  </div>
+
+  <label for="dosage" data-translate="dosage_label">Dosage</label>
+  <input type="text" id="dosage" name="dosage" class="dosage-select" placeholder="Enter dosage (e.g., 2 tablets)">
+
+  <label for="time" data-translate="time_label">Alert Time</label>
+  <select id="time" class="time-select">
+    <option value="06:00:00">06:00</option>
+    <option value="09:00:00">09:00</option>
+    <option value="12:00:00">12:00</option>
+    <option value="15:00:00">15:00</option>
+    <option value="18:30:00">18:30</option>
+    <option value="21:00:00">21:00</option>
+  </select>
+
+
+
+  <div class="actions">
+    <a href="deletemedicine.html" class="btn cancel" data-translate="cancel_button">Cancel</a>
+    <button class="btn confirm" data-translate="confirm_button">Update</button>
+  </div>
 </div>
-
-
 
 <script src="editmedscript.js"></script>
 </body>

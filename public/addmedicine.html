@@ -25,7 +25,11 @@
     <div class="day" id="7" data-translate="day_sun">Sun</div>
   </div>
 
-  <label for="time" data-translate="time_label">Time</label>
+    <label for="dosage" data-translate="dosage_label">Dosage</label>
+    <input type="text" id="dosage" name="dosage" class="dosage-select" placeholder="Enter dosage (e.g., 2 tablets)">
+
+
+  <label for="time" data-translate="time_label">Alert Time</label>
   <select id="time" class="time-select">
     <option value="06:00:00">06:00</option>
     <option value="09:00:00">09:00</option>
@@ -35,8 +39,7 @@
     <option value="21:00:00">21:00</option>
   </select>
 
-  <label for="dosage" data-translate="dosage_label">Dosage</label>
-  <input type="text" id="dosage" name="dosage" class="dosage-select" placeholder="Enter dosage (e.g., 2 tablets)">
+  
 
   <div class="actions">
     <a href="index.html" class="btn cancel" data-translate="cancel_button">Cancel</a>
