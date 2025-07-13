@@ -19,30 +19,52 @@ class TranslationModel {
   }
 
   async updateLanguagePreference(userId, language) {
-    let pool;
+  let pool;
+  try {
+    console.log(`DB Update Start - User: ${userId}, Language: ${language}`);
+    pool = await sql.connect(dbConfig);
+
+    // Begin transaction
+    const transaction = new sql.Transaction(pool);
+    await transaction.begin();
+    
     try {
-      if (!['English', 'Chinese'].includes(language)) {
-        throw new Error('Invalid language code');
+      // 1. Verify user exists
+      const userCheck = await transaction.request()
+        .input('userId', sql.Int, userId)
+        .query('SELECT user_id FROM users WHERE user_id = @userId');
+      
+      if (userCheck.recordset.length === 0) {
+        throw new Error('User not found');
       }
 
-      pool = await sql.connect(dbConfig);
-      const result = await pool.request()
+      // 2. Update language
+      const updateResult = await transaction.request()
         .input('userId', sql.Int, userId)
-        .input('language', sql.NVarChar(10), language)
-        .query(`
-          UPDATE users 
-          SET preferred_language = @language 
-          WHERE user_id = @userId
-        `);
+        .input('language', sql.NVarChar(10), language === 'zh' ? 'Chinese' : 'English')
+        .query(`UPDATE users SET preferred_language = @language 
+                WHERE user_id = @userId`);
       
-      return result.rowsAffected[0] > 0;
-    } catch (error) {
-      console.error('Database operation failed:', error);
-      throw error;
-    } finally {
-      if (pool) await pool.close();
+      console.log(`Update affected ${updateResult.rowsAffected} rows`);
+      
+      // Commit transaction
+      await transaction.commit();
+      
+      return updateResult.rowsAffected[0] > 0;
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
     }
+  } catch (error) {
+    console.error("DB Operation Failed:", {
+      error: error.message,
+      stack: error.stack
+    });
+    throw error;
+  } finally {
+    if (pool) await pool.close();
   }
+}
 
   async getTranslations(targetLang = 'English') {
     const cacheKey = `translations_${targetLang}`;
@@ -151,5 +173,6 @@ class TranslationModel {
     }
   }
 }
+
 
 module.exports = TranslationModel;

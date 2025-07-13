@@ -16,8 +16,13 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     const data = await response.json();
 
     if (response.ok) {
+      // Verify we got a user ID
+      if (!data.userId) {
+        throw new Error("Server didn't return user ID");
+      }
       // Save token to localStorage
       localStorage.setItem("token", data.token);
+      localStorage.setItem('userId', String(data.userId)); 
 
       alert("Login successful!");
       window.location.href = "index.html";

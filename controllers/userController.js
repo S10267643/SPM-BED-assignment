@@ -78,7 +78,13 @@ async function loginUser(req, res) {
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
-    res.status(200).json({ message: "Login successful", token });
+    // Return BOTH token AND user ID
+    res.status(200).json({ 
+      message: "Login successful", 
+      token,
+      userId: user.user_id // Add this line
+    });
+    
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Internal server error" });
