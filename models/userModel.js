@@ -80,13 +80,18 @@ async function createUser(userData) {
   }
 }
 
-// Find user by email
+
 async function findUserByEmail(email) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
     const request = connection.request().input("email", email);
-    const result = await request.query("SELECT * FROM users WHERE email = @email");
+    const result = await request.query(`
+  SELECT user_id, name, email, password, role 
+  FROM users 
+  WHERE email = @email
+`);
+
     return result.recordset[0] || null;
   } catch (error) {
     console.error("Database error:", error);

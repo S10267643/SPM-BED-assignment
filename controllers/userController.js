@@ -2,6 +2,7 @@ const userModel = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+
 // Get user by ID
 async function getUserById(req, res) {
   const id = parseInt(req.params.id);
@@ -79,17 +80,19 @@ async function loginUser(req, res) {
     );
 
     // Return BOTH token AND user ID
-    res.status(200).json({ 
-      message: "Login successful", 
-      token,
-      userId: user.user_id // Add this line
-    });
-    
+res.status(200).json({ 
+  message: "Login successful", 
+  token,
+  userId: user.user_id  // ✅ now matches field name from DB
+});
+
+
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
 
 module.exports = {
   getUserById,
