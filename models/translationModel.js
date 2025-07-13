@@ -98,6 +98,7 @@ class TranslationModel {
       date_label: "Date",
       time_label: "Time",
       dosage_label: "Dosage",
+      dosage_placeholder: "Enter dosage (e.g., 2 tablets)",
       cancel_button: "Cancel",
       confirm_button: "Confirm",
 
@@ -122,6 +123,9 @@ class TranslationModel {
       vibration_off: "Off",
       repeat_label: "Repeat Count:",
       youtube_label: "YouTube Link (optional):",
+      ringtone_placeholder: "Enter ringtone name or URL",
+      repeat_placeholder: "Enter repeat count",
+      youtube_placeholder: "Enter YouTube video URL",
 
       //startingPage.html
       caregiver_login: "Caregiver Login",
@@ -131,6 +135,9 @@ class TranslationModel {
       name: "Name:",
       sign_up: "Sign Up",
       already_have_account: "Already have an account?",
+      name_placeholder: "Enter your full name",
+      email_placeholder: "Enter your email",
+      password_placeholder: "Create a password",
 
 
 
