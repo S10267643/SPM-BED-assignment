@@ -21,7 +21,6 @@ class TranslationModel {
   async updateLanguagePreference(userId, language) {
   let pool;
   try {
-    console.log(`DB Update Start - User: ${userId}, Language: ${language}`);
     pool = await sql.connect(dbConfig);
 
     // Begin transaction
@@ -45,7 +44,6 @@ class TranslationModel {
         .query(`UPDATE users SET preferred_language = @language 
                 WHERE user_id = @userId`);
       
-      console.log(`Update affected ${updateResult.rowsAffected} rows`);
       
       // Commit transaction
       await transaction.commit();

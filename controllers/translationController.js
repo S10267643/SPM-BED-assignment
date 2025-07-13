@@ -2,8 +2,6 @@ const TranslationModel = require("../models/translationModel");
 const model = new TranslationModel();
 
 async function updateLanguagePreference(req, res) {
-  console.log('Headers:', req.headers);
-  console.log('Body:', req.body);
 
   try {
     const { userId, language } = req.body;
@@ -12,16 +10,13 @@ async function updateLanguagePreference(req, res) {
       return res.status(400).json({ error: "Missing required fields" });
     }
     
-    console.log(`Attempting to update user ${userId} to language ${language}`);
     
     const success = await model.updateLanguagePreference(parseInt(userId), language);
     
     if (!success) {
-      console.error('Update failed - user not found or no rows affected');
       return res.status(404).json({ error: "User not found or update failed" });
     }
     
-    console.log('Language preference updated successfully');
     res.json({ success: true });
   } catch (error) {
     console.error("Update error:", error);
