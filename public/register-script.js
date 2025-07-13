@@ -27,6 +27,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
       alert("Registration successful!");
       window.location.href = "login.html";
     } else {
+      console.log("Server response:", data);
       alert("Error: " + data.error);
     }
   } catch (err) {

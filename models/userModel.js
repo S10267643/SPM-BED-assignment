@@ -60,7 +60,7 @@ async function createUser(userData) {
     // Check for SQL Server unique constraint violation (error number 2627)
     if (error.number === 2627) {
       // Determine which constraint was violated
-      if (error.message.includes("UQ__users__AB6E6164")) {
+      if (error.message.includes("UQ__users__email")) {
         const err = new Error("This email is already registered. Try logging in.");
         err.statusCode = 400;
         throw err;

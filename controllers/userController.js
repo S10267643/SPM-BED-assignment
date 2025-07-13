@@ -22,18 +22,18 @@ async function createUser(req, res) {
 
     // Check required fields
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Name, email, and password are required" });
+      return res.status(400).json({ error: "Name, email, and password are required" });
     }
 
     // Check if name or email already exists
     const existingName = await userModel.getUserByUsername(name);
     if (existingName) {
-      return res.status(400).json({ message: "Username already exists" });
+      return res.status(400).json({ error: "Username already exists" });
     }
 
     const existingEmail = await userModel.findUserByEmail(email);
     if (existingEmail) {
-      return res.status(400).json({ message: "Email already exists" });
+      return res.status(400).json({ error: "Email already exists" });
     }
 
     // Hash password before creating user
