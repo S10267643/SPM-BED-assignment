@@ -1,30 +1,33 @@
 const Joi = require("joi");
-const jwt = require("jsonwebtoken");
 
 // Schema for user registration
 const userSchema = Joi.object({
-    name: Joi.string().min(2).max(100).required().messages({
+  name: Joi.string().min(2).max(100).required().messages({
     "string.base": "Name must be a string",
     "string.empty": "Name cannot be empty",
     "string.min": "Name must be at least 2 characters long",
     "string.max": "Name cannot exceed 100 characters",
     "any.required": "Name is required",
   }),
-    email: Joi.string().email().required().messages({
+  email: Joi.string().email().required().messages({
     "string.base": "Email must be a string",
     "string.email": "Email must be a valid email address",
     "string.empty": "Email cannot be empty",
     "any.required": "Email is required",
   }),
-  phone: Joi.string().optional().allow(""),
-    password: Joi.string().min(8).required().messages({
+  password: Joi.string().min(8).required().messages({
     "string.base": "Password must be a string",
     "string.empty": "Password cannot be empty",
     "string.min": "Password must be at least 8 characters",
     "any.required": "Password is required",
   }),
-  preferred_language: Joi.string().optional()
+  role: Joi.string().valid("Elderly", "Caregiver").required().messages({
+    "string.base": "Role must be a string",
+    "any.only": "Role must be either 'Elderly' or 'Caregiver'",
+    "any.required": "Role is required"
+  }),
 });
+
 
 // Validate request body for user creation
 function validateUser(req, res, next) {

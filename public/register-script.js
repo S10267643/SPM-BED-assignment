@@ -4,11 +4,13 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   const name = document.getElementById("name").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  const role = document.getElementById("role").value;
 
   const user = {
     name,
     email,
-    password
+    password,
+    role
   };
 
   try {

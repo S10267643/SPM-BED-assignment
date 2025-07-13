@@ -23,6 +23,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       // Save token to localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem('userId', String(data.userId)); 
+      localStorage.setItem("role", data.role); 
 
       alert("Login successful!");
       window.location.href = "index.html";
