@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 // 🔒 Decode JWT to get user ID
-function getUserIdFromToken() {
+function getUserIdFromToken() {   
   const token = localStorage.getItem("token");
   if (!token) return null;
   try {

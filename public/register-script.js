@@ -1,3 +1,6 @@
+
+
+
 document.getElementById("registerForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
