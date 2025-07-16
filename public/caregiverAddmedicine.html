@@ -16,13 +16,13 @@
 
   <label data-translate="date_label">Date</label>
   <div class="date-picker">
-    <div class="day" id="1" data-translate="day_mon">Mon</div>
-    <div class="day" id="2" data-translate="day_tue">Tue</div>
-    <div class="day" id="3" data-translate="day_wed">Wed</div>
-    <div class="day" id="4" data-translate="day_thu">Thu</div>
-    <div class="day" id="5" data-translate="day_fri">Fri</div>
-    <div class="day" id="6" data-translate="day_sat">Sat</div>
-    <div class="day" id="7" data-translate="day_sun">Sun</div>
+    <div class="day" id="Mon" data-translate="day_mon">Mon</div>
+    <div class="day" id="Tue" data-translate="day_tue">Tue</div>
+    <div class="day" id="Wed" data-translate="day_wed">Wed</div>
+    <div class="day" id="Thu" data-translate="day_thu">Thu</div>
+    <div class="day" id="Fri" data-translate="day_fri">Fri</div>
+    <div class="day" id="Sat" data-translate="day_sat">Sat</div>
+    <div class="day" id="Sun" data-translate="day_sun">Sun</div>
   </div>
 
     <label for="dosage" data-translate="dosage_label">Dosage</label>
@@ -38,6 +38,11 @@
     <option value="18:30:00">18:30</option>
     <option value="21:00:00">21:00</option>
   </select>
+<label for="refillThreshold" data-translate="refill_threshold_label">Refill Threshold</label>
+<input type="number" id="refillThreshold" name="refillThreshold" placeholder="Enter threshold (e.g., 5)" min = "0">
+
+<label for="supplyQuantity" data-translate="supply_quantity_label">Current Supply Quantity</label>
+<input type="number" id="supplyQuantity" name="supplyQuantity" placeholder="Enter supply quantity (e.g., 30)" min = "0">
 
   
 
