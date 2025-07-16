@@ -27,16 +27,13 @@ if (!userId) {
 const form = document.getElementById("notificationForm");
 const msgEl = document.getElementById("message");
 const preview = document.getElementById("preview");
-const vibrationToggle = document.getElementById("vibration");
-const vibrationLabel = document.getElementById("vibrationLabel");
+
+const enable = document.getElementById("enable");
 const formButtons = document.getElementById("formButtons");
 const messageOverlay = document.getElementById("messageOverlay");
 const messageText = document.getElementById("messageText");
 
 // Update vibration label
-vibrationToggle.addEventListener("change", () => {
-  vibrationLabel.textContent = vibrationToggle.value === "on" ? "On" : "Off";
-});
 
 // YouTube preview
 document.getElementById("youtube").addEventListener("input", function () {
@@ -69,9 +66,8 @@ function clearError() {
 function getFormData() {
   return {
     userId,
-    ringtone: form.ringtone.value.trim(),
-    vibration: vibrationToggle.value === "on" ? "On" : "Off",
-    repeat: parseInt(form.repeat.value),
+    title: form.title.value.trim(),
+    enable: form.enable,
     youtube: form.youtube.value.trim() || null
   };
 }
@@ -115,10 +111,9 @@ async function loadNotification() {
 
     const notif = await res.json();
 
-    form.ringtone.value = notif.ringtone_name;
-    form.repeat.value = notif.repeat_count;
+    form.title.value = notif.title;
     form.youtube.value = notif.youtube_link || "";
-    vibrationToggle.value = notif.vibration_type === "On" ? "on" : "off";
+    form.enable.value = notif.enable ;
 
     if (notif.youtube_link) {
       const id = extractYouTubeID(notif.youtube_link);

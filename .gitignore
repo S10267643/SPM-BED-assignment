@@ -141,5 +141,3 @@ vite.config.ts.timestamp-*
 # .gitignore
 config/crucial-garden-465606-b9-78362cedde2d.json
 
-package.json
-package-lock.json

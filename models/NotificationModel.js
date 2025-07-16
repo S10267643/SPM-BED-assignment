@@ -1,29 +1,30 @@
 const sql = require("mssql");
-const config = require("../dbConfig");
+const dbConfig = require("../dbConfig");
 
 async function getNotificationByUserId(userId) {
-  await sql.connect(config);
+  let connection;
+  connection = await sql.connect(dbConfig);
   const result = await sql.query`
-    SELECT TOP 1 * FROM custom_notifications WHERE user_id = ${userId}
+    SELECT TOP 1 * FROM custom_notifications WHERE userId = ${userId}
   `;
   return result.recordset.length > 0 ? result.recordset[0] : null;
 }
 
-async function insertNotification({ userId, ringtone, vibration, repeat, youtube }) {
-  await sql.connect(config);
+async function insertNotification({ userId, title, enableNotification, youtube }) {
+  let connection;
+  connection = await sql.connect(dbConfig);
   await sql.query`
-    INSERT INTO custom_notifications (user_id, ringtone_name, vibration_type, repeat_count, youtube_link)
-    VALUES (${userId}, ${ringtone}, ${vibration}, ${repeat}, ${youtube})
+    INSERT INTO custom_notifications (userId, title, enableNotification, youtube_link)
+    VALUES (${userId}, ${title}, ${enableNotification}, ${youtube})
   `;
 }
 
-async function updateNotification({ userId, ringtone, vibration, repeat, youtube }) {
-  await sql.connect(config);
+async function updateNotification({ userId, title, enableNotification, youtube}) {
+  await sql.connect(dbConfig);
   await sql.query`
     UPDATE custom_notifications SET
-      ringtone_name = ${ringtone},
-      vibration_type = ${vibration},
-      repeat_count = ${repeat},
+      title = ${title},
+      enableNotification = ${enableNotification},
       youtube_link = ${youtube}
     WHERE user_id = ${userId}
   `;
@@ -32,7 +33,7 @@ async function updateNotification({ userId, ringtone, vibration, repeat, youtube
 async function deleteNotification(userId) {
   await sql.connect(config);
   await sql.query`
-    DELETE FROM custom_notifications WHERE user_id = ${userId}
+    DELETE FROM custom_notifications WHERE userId = ${userId}
   `;
 }
 
