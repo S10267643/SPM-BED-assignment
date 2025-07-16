@@ -184,6 +184,7 @@ p a {
 /* index page */
 .header {
     width: 100%;
+    positionL: fixed;
     text-align: left;
     margin-bottom: 30px;
 }
@@ -308,6 +309,7 @@ p a {
 .navigation {
     display: flex;
     justify-content: space-around;
+    position: fixed;
     width: 100%;
     padding: 15px 0;
     border-top: 1px solid #eee;
