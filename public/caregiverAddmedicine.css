@@ -124,3 +124,12 @@ input[type="text"], select {
   background-color: #f0fafa;
 }
 
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
