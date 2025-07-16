@@ -26,7 +26,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       localStorage.setItem("role", data.role); 
 
       alert("Login successful!");
-      window.location.href = "index.html";
+      window.location.href = "elderlyHomeScreen.html";
     } else {
       alert(data.error || "Login failed");
     }
