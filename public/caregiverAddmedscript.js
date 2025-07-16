@@ -70,7 +70,7 @@ if (!userId) {
         if (response.ok) {
           
           alert("Added medication.");
-          window.location.href = "index.html";
+          window.location.href = "caregiverHomeScreen.html";
         }
         else {
           alert("Error: " + data.error);
