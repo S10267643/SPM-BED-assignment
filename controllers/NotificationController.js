@@ -15,8 +15,8 @@ async function getNotification(req, res) {
 }
 
 async function createNotification(req, res) {
-  const { userId, ringtone, vibration, repeat, youtube } = req.body;
-  if (!userId || !ringtone || !vibration || repeat == null) {
+  const { userId, title, enableNotification ,youtube } = req.body;
+  if (!userId || !title || !enableNotification  == null) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
@@ -26,7 +26,7 @@ async function createNotification(req, res) {
       // User already has a notification, do not allow duplicate creation
       return res.status(409).json({ error: "Notification already exists. Use update instead." });
     }
-    await NotificationModel.insertNotification({ userId, ringtone, vibration, repeat, youtube });
+    await NotificationModel.insertNotification({ userId, title, enableNotification, youtube });
     res.status(201).json({ message: "Notification created successfully" });
   } catch (err) {
     console.error("Create Notification Error:", err);
@@ -36,8 +36,8 @@ async function createNotification(req, res) {
 
 async function editNotification(req, res) {
   const userId = parseInt(req.params.userId);
-  const { ringtone, vibration, repeat, youtube } = req.body;
-  if (!userId || !ringtone || !vibration || repeat == null) {
+  const { title, enableNotification, youtube } = req.body;
+  if (!userId || !title || !enableNotification  == null) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
@@ -46,7 +46,7 @@ async function editNotification(req, res) {
     if (!existing) {
       return res.status(404).json({ error: "Notification not found. Create it first." });
     }
-    await NotificationModel.updateNotification({ userId, ringtone, vibration, repeat, youtube });
+    await NotificationModel.updateNotification({ userId, title, enableNotification, youtube });
     res.json({ message: "Notification updated successfully" });
   } catch (err) {
     console.error("Edit Notification Error:", err);

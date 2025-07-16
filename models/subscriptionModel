@@ -1,0 +1,60 @@
+const sql = require("mssql");
+const dbConfig = require("../dbConfig");
+/*const bodyParser = require("body-parser");
+app.use(bodyParser.json());
+app.use(function (req, res, next) {
+  // Website you wish to allow to connect
+  res.setHeader("Access-Control-Allow-Origin", "*");
+
+  // Request methods you wish to allow
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+
+  // Request headers you wish to allow
+  res.setHeader("Access-Control-Allow-Headers", "*");
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader("Access-Control-Allow-Credentials", true);
+
+  // Pass to next layer of middleware
+  next();
+});
+*/
+
+async function getNotificationEnabledByUserId(userId,enableNotification){
+  let connection;
+  connection = await sql.connect(dbConfig);
+ const query=`
+ select from custom_Notifications
+ 
+ where userId = @userId
+ `
+}
+
+
+
+
+async function updateNotificationTokenByUserid(userId, notificationToken)  {
+  let connection;
+  connection = await sql.connect(dbConfig);
+console.log(JSON.stringify(notificationToken));
+console.log(userId);
+
+   const query = `
+        UPDATE custom_Notifications
+        SET notificationToken = @notificationToken
+        WHERE userId = @userId
+      `;
+    
+    const request = connection.request()
+      .input("userId", userId)
+      .input("notificationToken", JSON.stringify(notificationToken));
+ await request.query(query);
+}
+module.exports = {
+updateNotificationTokenByUserid
+
+};
