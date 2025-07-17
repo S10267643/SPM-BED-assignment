@@ -134,11 +134,86 @@ async function authenticateUser(email, plainPassword) {
   return user;
 }
 
+async function storeOTP(email, otp, expiresAt) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const query = `
+      INSERT INTO password_reset_otps (email, otp, expires_at)
+      VALUES (@Email, @Otp, @ExpiresAt);
+    `;
+    await connection.request()
+      .input("Email", email)
+      .input("Otp", otp)
+      .input("ExpiresAt", expiresAt)
+      .query(query);
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function getOTPRecord(email) {
+  const connection = await sql.connect(dbConfig);
+  const result = await connection.request()
+    .input("email", sql.VarChar, email)
+    .query(`
+      SELECT TOP 1 otp, expires_at 
+      FROM password_reset_otps 
+      WHERE email = @email 
+      ORDER BY created_at DESC
+    `);
+
+  if (result.recordset.length === 0) {
+    return null;
+  }
+
+  return {
+    storedOtp: result.recordset[0].otp,
+    otpExpirationTime: new Date(result.recordset[0].expires_at).getTime()
+  };
+}
+
+
+async function deleteOTP(email) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    await connection.request()
+      .input("Email", email)
+      .query("DELETE FROM password_reset_otps WHERE email = @Email");
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function resetPassword(email, newPassword) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await connection.request()
+      .input("Email", email)
+      .input("Password", hashedPassword)
+      .query("UPDATE users SET password = @Password WHERE email = @Email");
+
+    // Delete any OTPs after password reset for security
+    await deleteOTP(email);
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
 module.exports = {
   getAllUsers,
   getUserById,
   createUser,
   findUserByEmail,
   getUserByUsername,
-  authenticateUser
+  authenticateUser,
+  storeOTP,
+  getOTPRecord,
+  deleteOTP,
+  resetPassword,
 };
