@@ -134,7 +134,17 @@ document.addEventListener("DOMContentLoaded", function () {
       this.classList.add('active');
     });
   });
+
+  document.querySelectorAll('[data-target]').forEach(item => {
+    item.addEventListener('click', function() {
+        window.location.href = this.dataset.target;
+    });
 });
+
+
+
+});
+
 
 // Navigation functionality
 document.querySelectorAll('.nav-item').forEach(item => {
