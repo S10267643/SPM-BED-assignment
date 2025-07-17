@@ -31,7 +31,7 @@ class TranslationModel {
       // 1. Verify user exists
       const userCheck = await transaction.request()
         .input('userId', sql.Int, userId)
-        .query('SELECT user_id FROM users WHERE user_id = @userId');
+        .query('SELECT userId FROM users WHERE userId = @userId');
       
       if (userCheck.recordset.length === 0) {
         throw new Error('User not found');
@@ -41,8 +41,8 @@ class TranslationModel {
       const updateResult = await transaction.request()
         .input('userId', sql.Int, userId)
         .input('language', sql.NVarChar(10), language === 'zh' ? 'Chinese' : 'English')
-        .query(`UPDATE users SET preferred_language = @language 
-                WHERE user_id = @userId`);
+        .query(`UPDATE users SET preferredLanguage = @language 
+                WHERE userId = @userId`);
       
       
       // Commit transaction
