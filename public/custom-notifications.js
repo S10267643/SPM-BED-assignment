@@ -1,3 +1,5 @@
+const publicKey="BBA0RdnN6B1oZRiZ_g8TWfNXWWq_9OyOEeyITcZSxxil3tStxNTQw3mxEKwrOfDcJ42FEOh6qtB4ClmyyTwGM7I"
+
 function extractYouTubeID(url) {
   const regExp = /^.*(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/))([^#&?]{11}).*/;
   const match = url.match(regExp);
@@ -33,7 +35,6 @@ const formButtons = document.getElementById("formButtons");
 const messageOverlay = document.getElementById("messageOverlay");
 const messageText = document.getElementById("messageText");
 
-// Update vibration label
 
 // YouTube preview
 document.getElementById("youtube").addEventListener("input", function () {
@@ -49,7 +50,7 @@ function showMessageAndRedirect(msg) {
   function clickHandler() {
     messageOverlay.classList.add("hidden");
     messageOverlay.removeEventListener("click", clickHandler);
-    window.location.href = "index.html";
+    window.location.href = "elderlyHomeScreen.html";
   }
   messageOverlay.addEventListener("click", clickHandler);
 }
@@ -67,7 +68,7 @@ function getFormData() {
   return {
     userId,
     title: form.title.value.trim(),
-    enable: form.enable,
+    enable: enable.value,
     youtube: form.youtube.value.trim() || null
   };
 }
@@ -113,8 +114,13 @@ async function loadNotification() {
 
     form.title.value = notif.title;
     form.youtube.value = notif.youtube_link || "";
-    form.enable.value = notif.enable ;
-
+    //form.enable.value = notif.enableNotification ;
+    console.log(notif.enableNotification );
+    if (notif.enableNotification){
+      enable.checked = true;
+    } else {
+      enable.checked = false;
+    }
     if (notif.youtube_link) {
       const id = extractYouTubeID(notif.youtube_link);
       preview.innerHTML = id
@@ -148,6 +154,7 @@ async function handleCreate(event) {
     if (!res.ok) throw new Error("Failed to create notification");
 
     showMessageAndRedirect("Notification created successfully!");
+    updatePushNotificationToken();
   } catch (err) {
     showError(err.message);
   }
@@ -157,7 +164,7 @@ async function handleUpdate(event) {
   event.preventDefault();
   clearError();
   const data = getFormData();
-
+console.log(data)
   try {
     const res = await fetch(`/api/notifications/${userId}`, {
       method: "PUT",
@@ -168,6 +175,7 @@ async function handleUpdate(event) {
     if (!res.ok) throw new Error("Failed to update notification");
 
     showMessageAndRedirect("Notification updated successfully!");
+    updatePushNotificationToken();
   } catch (err) {
     showError(err.message);
   }
@@ -187,9 +195,66 @@ async function handleDelete(event) {
     if (!res.ok) throw new Error("Failed to delete notification");
 
     showMessageAndRedirect("Notification deleted successfully!");
+    
   } catch (err) {
     showError(err.message);
   }
 }
+
+
+//update push notification token
+function updatePushNotificationToken(){
+  // Check for service worker
+  if ("serviceWorker" in navigator) {
+    send().catch((err) => console.error(err));
+  }
+}
+
+// Register SW, Register Push, Send PushW
+async function send() {
+
+  // Register Service Worker
+  console.log("Registering service worker...");
+  const register = await navigator.serviceWorker.register("./sw.js", {
+    scope: "/",
+  });
+  console.log("Service Worker Registered...");
+
+  // Register Push
+  console.log("Registering Push...");
+  const notificationToken = await register.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array(publicKey),
+  });
+  console.log("Push Registered...");
+
+  // send Notification token
+  console.log("Sending Push...");
+  await fetch("http://localhost:3000/api/subscribe", {
+    method: "POST",
+    body: JSON.stringify({userId,notificationToken}),
+    headers: {
+      "content-type": "application/json",
+    },
+  });
+  console.log("Push Sent...");
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, "+")
+    .replace(/_/g, "/");
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+
 
 loadNotification();

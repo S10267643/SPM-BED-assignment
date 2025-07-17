@@ -35,8 +35,7 @@ const medicationHistoryController = require("./controllers/medicationHistoryCont
 const medicationValidation = require("./middlewares/medicationValidation");
 const medicationController = require("./controllers/medicationController");
 
-//for sending notifications
-const subscriptionController=require("./controllers/subscriptionController")
+
 
 // Middleware
 app.use(express.json());
@@ -54,6 +53,9 @@ app.put("/api/notifications/:userId", notificationController.editNotification);
 app.delete("/api/notifications/:userId", notificationController.deleteNotification);
 app.get("/api/notifications/:userId", notificationController.getNotification);
 
+app.post("/api/subscribe", notificationController.updateNotificationTokenByUserid);
+
+
 //medicationSchedule routes
 app.post('/api/medications', verifyJWT, medicationValidation.validateMedication, medicationController.addMedicine);
 app.get('/api/medications/:id', medicationValidation.validateMedicationId, medicationController.getMedicationById);
@@ -69,8 +71,7 @@ app.get('/api/medicationHistory/user/:userId', medicationHistoryController.getMe
 app.get("/api/translations", translationController.getTranslations);
 app.post("/api/update-language", translationController.updateLanguagePreference);
 
-//subscription
-app.post("/api/subscribe", subscriptionController.updateSubscriptionByUserid);
+
 
 
 

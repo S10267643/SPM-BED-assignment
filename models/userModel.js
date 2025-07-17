@@ -23,7 +23,7 @@ async function getUserById(id) {
   try {
     connection = await sql.connect(dbConfig);
     const request = connection.request().input("id", id);
-    const result = await request.query("SELECT * FROM users WHERE user_id = @id");
+    const result = await request.query("SELECT * FROM users WHERE userId = @id");
     return result.recordset[0] || null;
   } catch (error) {
     console.error("Database error:", error);
@@ -39,8 +39,8 @@ async function createUser(userData) {
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-      INSERT INTO users (name, email, phone, password, preferred_language, role)
-      VALUES (@name, @email, @phone, @password, @preferred_language, @role);
+      INSERT INTO users (name, email, phone, password, preferredLanguage, role)
+      VALUES (@name, @email, @phone, @password, @preferredLanguage, @role);
       SELECT SCOPE_IDENTITY() AS id;
     `;
 
@@ -49,7 +49,7 @@ async function createUser(userData) {
       .input("email", userData.email)
       .input("phone", userData.phone)
       .input("password", userData.password)
-      .input("preferred_language", userData.preferred_language || "English")
+      .input("preferredLanguage", userData.preferredLanguage || "English")
       .input("role", userData.role);
 
 
@@ -89,7 +89,7 @@ async function findUserByEmail(email) {
     connection = await sql.connect(dbConfig);
     const request = connection.request().input("email", email);
     const result = await request.query(`
-  SELECT user_id, name, email, password, role 
+  SELECT userId, name, email, password, role 
   FROM users 
   WHERE email = @email
 `);

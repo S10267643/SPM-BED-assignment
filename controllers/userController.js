@@ -18,7 +18,7 @@ async function getUserById(req, res) {
 // Register new user
 async function createUser(req, res) {
   try {
-    const { name, email, phone, password, preferred_language, role } = req.body;
+    const { name, email, phone, password, preferredLanguage, role } = req.body;
 
     // Check required fields
     if (!name || !email || !password) {
@@ -45,7 +45,7 @@ async function createUser(req, res) {
       email,
       phone,
       password: hashedPassword,
-      preferred_language,
+      preferredLanguage,
       role
     });
 
@@ -74,7 +74,7 @@ async function loginUser(req, res) {
     }
     
     const token = jwt.sign(
-      { userId: user.user_id, role: user.role }, // role can be "elderly" or "caregiver"
+      { userId: user.userId, role: user.role }, // role can be "elderly" or "caregiver"
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
@@ -83,7 +83,7 @@ async function loginUser(req, res) {
     res.status(200).json({ 
     message: "Login successful", 
     token,
-    userId: user.user_id,
+    userId: user.userId,
     role: user.role 
 });
 
