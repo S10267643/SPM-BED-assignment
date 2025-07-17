@@ -84,8 +84,6 @@ async function findUserByEmail(email) {
 
   let connection;
   try {
-    console.log(dbConfig);
-    console.log(process.env.DB_USER)
     connection = await sql.connect(dbConfig);
     const request = connection.request().input("email", email);
     const result = await request.query(`

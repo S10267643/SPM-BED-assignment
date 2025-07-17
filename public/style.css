@@ -445,3 +445,7 @@ input[type="text"], select {
 .btn.cancel:hover {
   background-color: #f0fafa;
 }
+
+a {
+    text-decoration: none;
+}
