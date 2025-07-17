@@ -33,23 +33,28 @@ if (!userId) {
     const medName = document.getElementById("medName").value.trim();
     const dosage = document.getElementById("dosage").value.trim();
     const time = document.getElementById("time").value;
+    const refillThreshold = document.getElementById("refillThreshold").value.trim();
+    const supplyQuantity = document.getElementById("supplyQuantity").value.trim();
+
 
 
     const selectedDays = Array.from(document.querySelectorAll(".day.selected"))
-      .map(day => parseInt(day.id.trim()));
+      .map(day =>(day.id.trim()));
     console.log(selectedDays);
     if (!medName || !dosage || selectedDays.length === 0 || !time) {
       alert("Please fill in all fields.");
       return;
     }
 
-    for (const day of selectedDays) {
+    
       const medicationData = {
         user_id: userId,
+        refillThreshold: refillThreshold,
+        supplyQuantity: supplyQuantity,
         medication_name: medName,
         dosage: dosage,
         medication_time: time,
-        day_of_week: day
+        day_of_week: selectedDays
       };
 
 
@@ -85,5 +90,5 @@ if (!userId) {
 
     
     
-  });
+  );
 });

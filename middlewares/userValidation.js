@@ -78,11 +78,7 @@ function validateLogin(req, res, next) {
   next();
 }
 
-module.exports = {
-  validateUser,
-  validateUserId,
-  validateLogin,
-  validateLanguage: (req, res, next) => {
+function validateLanguage  (req, res, next) {
     const { error } = languageSchema.validate(req.body, { abortEarly: false });
     if (error) {
       const messages = error.details.map((d) => d.message).join(", ");
@@ -90,4 +86,46 @@ module.exports = {
     }
     next();
   }
+
+const sendOtpSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
+const verifyOtpSchema = Joi.object({
+  email: Joi.string().email().required(),
+  otp: Joi.string().length(6).required(),
+});
+
+const resetPasswordSchema = Joi.object({
+  email: Joi.string().email().required(),
+  newPassword: Joi.string().min(8).required(),
+});
+
+function validateSendOtp(req, res, next) {
+  const { error } = sendOtpSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details.map(d => d.message).join(", ") });
+  next();
+}
+
+function validateVerifyOtp(req, res, next) {
+  const { error } = verifyOtpSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details.map(d => d.message).join(", ") });
+  next();
+}
+
+function validateResetPassword(req, res, next) {
+  const { error } = resetPasswordSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.details.map(d => d.message).join(", ") });
+  next();
+}
+
+
+module.exports = {
+  validateUser,
+  validateUserId,
+  validateLogin,
+  validateLanguage,
+  validateSendOtp,
+  validateVerifyOtp,
+  validateResetPassword,
 };

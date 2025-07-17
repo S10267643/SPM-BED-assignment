@@ -18,10 +18,7 @@ const port = process.env.PORT || 3000;
 
 //user Controllers
 const userController = require("./controllers/userController");
-const {
-  validateUser,
-  validateUserId,
-} = require("./middlewares/userValidation"); // import User Validation Middleware
+const userValidation = require("./middlewares/userValidation");
 
 // notification controller
 const notificationController = require("./controllers/NotificationController");
@@ -43,9 +40,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 // User routes
-app.get("/users/:id", validateUserId, userController.getUserById); //for future use when view/edit profile
-app.post("/users", validateUser, userController.createUser);
+app.get("/users/:id", userValidation.validateUserId, userController.getUserById); //for future use when view/edit profile
+app.post("/users", userValidation.validateUser, userController.createUser);
 app.post("/users/login", userController.loginUser);
+
+// Forget password routes
+app.post("/users/send-otp", userValidation.validateSendOtp, userController.sendOTP);
+app.post("/users/verify-otp", userValidation.validateVerifyOtp, userController.verifyOTP);
+app.post("/users/reset-password", userValidation.validateResetPassword, userController.resetPassword);
 
 // Custom notifications routes 
 app.post("/api/notifications", notificationController.createNotification);
