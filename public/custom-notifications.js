@@ -1,10 +1,5 @@
 const publicKey="BBA0RdnN6B1oZRiZ_g8TWfNXWWq_9OyOEeyITcZSxxil3tStxNTQw3mxEKwrOfDcJ42FEOh6qtB4ClmyyTwGM7I"
 
-function extractYouTubeID(url) {
-  const regExp = /^.*(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/))([^#&?]{11}).*/;
-  const match = url.match(regExp);
-  return match ? match[1] : null;
-}
 
 // 🔒 Decode JWT to get user ID
 function getUserIdFromToken() {
@@ -36,13 +31,7 @@ const messageOverlay = document.getElementById("messageOverlay");
 const messageText = document.getElementById("messageText");
 
 
-// YouTube preview
-document.getElementById("youtube").addEventListener("input", function () {
-  const id = extractYouTubeID(this.value);
-  preview.innerHTML = id
-    ? `<iframe width="100%" height="170" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`
-    : "";
-});
+
 
 function showMessageAndRedirect(msg) {
   messageText.textContent = msg;
@@ -68,8 +57,8 @@ function getFormData() {
   return {
     userId,
     title: form.title.value.trim(),
-    enable: enable.value,
-    youtube: form.youtube.value.trim() || null
+    enable: enable.checked ? "true":"false" ,
+    imageLink: form.imageLink.value.trim() || null
   };
 }
 
@@ -113,22 +102,15 @@ async function loadNotification() {
     const notif = await res.json();
 
     form.title.value = notif.title;
-    form.youtube.value = notif.youtube_link || "";
-    //form.enable.value = notif.enableNotification ;
+    form.imageLink.value = notif.imageLink || "";
+    
     console.log(notif.enableNotification );
     if (notif.enableNotification){
       enable.checked = true;
     } else {
       enable.checked = false;
     }
-    if (notif.youtube_link) {
-      const id = extractYouTubeID(notif.youtube_link);
-      preview.innerHTML = id
-        ? `<iframe width="100%" height="170" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`
-        : "";
-    } else {
-      preview.innerHTML = "";
-    }
+    
 
     clearError();
     renderButtons(true);
@@ -254,7 +236,6 @@ function urlBase64ToUint8Array(base64String) {
   }
   return outputArray;
 }
-
 
 
 loadNotification();

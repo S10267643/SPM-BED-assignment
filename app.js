@@ -56,7 +56,7 @@ app.delete("/api/notifications/:userId", notificationController.deleteNotificati
 app.get("/api/notifications/:userId", notificationController.getNotification);
 
 app.post("/api/subscribe", notificationController.updateNotificationTokenByUserid);
-
+app.get("/api/sendNotifications", notificationController.sendNotifications);
 
 //medicationSchedule routes
 app.post('/api/medications', verifyJWT, medicationValidation.validateMedication, medicationController.addMedicine);

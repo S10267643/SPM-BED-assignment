@@ -10,44 +10,44 @@ async function getNotificationByUserId(userId) {
   return result.recordset.length > 0 ? result.recordset[0] : null;
 }
 
-async function insertNotification({ userId, title, enable, youtube }) {
+async function insertNotification({ userId, title, enable, imageLink }) {
   let connection;
   connection = await sql.connect(dbConfig);
-  console.log(enable)
-if (enable=="true"){
-en=1
-}
-else{
-  en=0
-}
+  console.log(enable);
+  if (enable=="true"){
+    en=1;
+  } else {
+    en=0;
+  }
 
   await sql.query`
-    INSERT INTO custom_notifications (userId, title, enableNotification, youtubeLink)
-    VALUES (${userId}, ${title}, ${en}, ${youtube})
+    INSERT INTO custom_notifications (userId, title, enableNotification, imageLink)
+    VALUES (${userId}, ${title}, ${en}, ${imageLink})
   `;
 }
 
-async function updateNotification({ userId, title, enable, youtube}) {
-  await sql.connect(dbConfig);
+async function updateNotification({ userId, title, enable, imageLink}) {
+   let connection;
+  connection = await sql.connect(dbConfig);
   console.log(enable);
   if (enable=="true"){
-en=1
-}
-else{
-  en=0
-}
+    en=1
+  } else {
+    en=0
+  }
 
   await sql.query`
     UPDATE custom_notifications SET
       title = ${title},
       enableNotification = ${en},
-      youtubeLink = ${youtube}
+      imageLink = ${imageLink}
     WHERE userId = ${userId}
   `;
 }
 
 async function deleteNotification(userId) {
-  await sql.connect(dbConfig);
+    let connection;
+  connection = await sql.connect(dbConfig);
   await sql.query`
     DELETE FROM custom_notifications WHERE userId = ${userId}
   `;
@@ -55,29 +55,44 @@ async function deleteNotification(userId) {
 
 
 
-// find the all elderly's med supply where notification is enabled for today, 
-async function getMedSupplyAndNotificationEnabled(){
-await sql.connect(dbConfig);
+// find the all elderly's med supply where notification is enabled for today,
+// find all the med logs for today
+
+async function getMedSupplyAndEnabledAndLog(){
+  let connection;
+  connection = await sql.connect(dbConfig);
 
 //calculate day of week
-today = new Date().getDay(); //0 is sunday, 6 is saturday
-
-const result = await sql.query`
-    SELECT * FROM user_medication_supply INNER JOIN custom_notifications
-    ON user_medication_supply.userId=custom_notifications.userId
-    WHERE enableNotification = 1 and medDayOfWeek like '%${today}%'
+const today = "%"+ new Date().getDay() + "%";
+console.log(today);
+result = await sql.query`
+    SELECT JT.userId, JT.notificationToken, JT.title,JT.medName,JT.imageLink, mTime FROM (
+    SELECT m.supplyId, m.userId, n.notificationToken, n.title, med.medName, n.imageLink, s.value as mTime  
+	FROM user_medication_supply m
+	CROSS APPLY string_split( m.medTime, ',') s
+    INNER JOIN custom_notifications n
+	ON m.userId=n.userId
+  INNER JOIN medications med 
+  on med.medId=m.medId
+    WHERE n.enableNotification = 1 and m.medDayOfWeek like ${today} ) as JT
+	LEFT JOIN medication_logs l
+	ON JT.supplyId = l.supplyId
+	where l.logId is null
   `;
-
-}
-
-// find all the med logs for today
-async function getAllMedLogsToday(){
-  
+  return result.recordset;
 }
 
 
-//for each send notification
-
+async function getTitleByUserId(userId){
+    let connection;
+  connection = await sql.connect(dbConfig);
+  const result = await sql.query`
+  SELECT title FROM custom_notifications
+  WHERE userId = ${userId}
+  `;
+  console.log(result.recordset[0].title);
+  return result.recordset.length > 0 ? result.recordset[0].title : null;
+}
 
 
 
@@ -106,6 +121,7 @@ module.exports = {
   insertNotification,
   updateNotification,
   deleteNotification,
-  //getNotificationEnabledByUserId,
-  updateNotificationTokenByUserid
+  getMedSupplyAndEnabledAndLog,
+  updateNotificationTokenByUserid,
+  getTitleByUserId
 };
