@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title data-translate="title">DailyDose</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/png" href="images/favicon.png">
+    <script src="changeLanguage.js"></script>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-content">
+            <h1>Edit Emergency Contacts</h1>
+            <form id="editContactForm">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="relationship">Relationship</label>
+                    <select id="relationship" required>
+                        <option value="">Select relationship</option>
+                        <option value="son">Son</option>
+                        <option value="daughter">Daughter</option>
+                        <option value="spouse">Spouse</option>
+                        <option value="parent">Parent</option>
+                        <option value="sibling">Sibling</option>
+                        <option value="doctor">Doctor</option>
+                        <option value="caregiver">Caregiver</option>
+                        <option value="friend">Friend</option>
+                        <option value="neighbor">Neighbor</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn outline">Cancel</button>
+                    <button type="submit" class="btn filled">Edit Contact</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

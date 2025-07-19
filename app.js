@@ -2,23 +2,19 @@ const path = require("path");
 const express = require("express");
 const sql = require("mssql");
 const dotenv = require("dotenv");
-// Load environment variables
-dotenv.config();
+
+dotenv.config(); // Load environment variables
+
 const verifyJWT = require("./middlewares/verifyJWT");
-
-
-
-
-
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-
-
-//user Controllers
 const userController = require("./controllers/userController");
 const userValidation = require("./middlewares/userValidation");
+
+const emergencyController = require("./controllers/emergencyController");
+const { validateContact } = require("./middlewares/emergencyValidation");
 
 // notification controller
 const notificationController = require("./controllers/NotificationController");
@@ -31,8 +27,6 @@ const medicationHistoryController = require("./controllers/medicationHistoryCont
 //medicationSchedule controllers
 const medicationValidation = require("./middlewares/medicationValidation");
 const medicationController = require("./controllers/medicationController");
-
-
 
 // Middleware
 app.use(express.json());
@@ -48,6 +42,12 @@ app.post("/users/login", userController.loginUser);
 app.post("/users/send-otp", userValidation.validateSendOtp, userController.sendOTP);
 app.post("/users/verify-otp", userValidation.validateVerifyOtp, userController.verifyOTP);
 app.post("/users/reset-password", userValidation.validateResetPassword, userController.resetPassword);
+
+// Emergency Contact routes
+app.get("/emergency-contacts", emergencyController.getAllContacts);
+app.post("/emergency-contacts", validateContact, emergencyController.addContact);
+app.put("/emergency-contacts/:id", validateContact, emergencyController.updateContact);
+app.delete("/emergency-contacts/:id", emergencyController.deleteContact);
 
 // Custom notifications routes 
 app.post("/api/notifications", notificationController.createNotification);
