@@ -23,7 +23,7 @@ async function getUserById(id) {
   try {
     connection = await sql.connect(dbConfig);
     const request = connection.request().input("id", id);
-    const result = await request.query("SELECT * FROM users WHERE user_id = @id");
+    const result = await request.query("SELECT * FROM users WHERE userId = @id");
     return result.recordset[0] || null;
   } catch (error) {
     console.error("Database error:", error);
@@ -39,8 +39,8 @@ async function createUser(userData) {
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-      INSERT INTO users (name, email, phone, password, preferred_language, role)
-      VALUES (@name, @email, @phone, @password, @preferred_language, @role);
+      INSERT INTO users (name, email, phone, password, preferredLanguage, role)
+      VALUES (@name, @email, @phone, @password, @preferredLanguage, @role);
       SELECT SCOPE_IDENTITY() AS id;
     `;
 
@@ -49,7 +49,7 @@ async function createUser(userData) {
       .input("email", userData.email)
       .input("phone", userData.phone)
       .input("password", userData.password)
-      .input("preferred_language", userData.preferred_language || "English")
+      .input("preferredLanguage", userData.preferredLanguage || "English")
       .input("role", userData.role);
 
 
@@ -81,12 +81,13 @@ async function createUser(userData) {
 
 
 async function findUserByEmail(email) {
+
   let connection;
   try {
     connection = await sql.connect(dbConfig);
     const request = connection.request().input("email", email);
     const result = await request.query(`
-  SELECT user_id, name, email, password, role 
+  SELECT userId, name, email, password, role 
   FROM users 
   WHERE email = @email
 `);
@@ -131,11 +132,86 @@ async function authenticateUser(email, plainPassword) {
   return user;
 }
 
+async function storeOTP(email, otp, expiresAt) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const query = `
+      INSERT INTO password_reset_otps (email, otp, expires_at)
+      VALUES (@Email, @Otp, @ExpiresAt);
+    `;
+    await connection.request()
+      .input("Email", email)
+      .input("Otp", otp)
+      .input("ExpiresAt", expiresAt)
+      .query(query);
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function getOTPRecord(email) {
+  const connection = await sql.connect(dbConfig);
+  const result = await connection.request()
+    .input("email", sql.VarChar, email)
+    .query(`
+      SELECT TOP 1 otp, expires_at 
+      FROM password_reset_otps 
+      WHERE email = @email 
+      ORDER BY created_at DESC
+    `);
+
+  if (result.recordset.length === 0) {
+    return null;
+  }
+
+  return {
+    storedOtp: result.recordset[0].otp,
+    otpExpirationTime: new Date(result.recordset[0].expires_at).getTime()
+  };
+}
+
+
+async function deleteOTP(email) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    await connection.request()
+      .input("Email", email)
+      .query("DELETE FROM password_reset_otps WHERE email = @Email");
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function resetPassword(email, newPassword) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await connection.request()
+      .input("Email", email)
+      .input("Password", hashedPassword)
+      .query("UPDATE users SET password = @Password WHERE email = @Email");
+
+    // Delete any OTPs after password reset for security
+    await deleteOTP(email);
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
 module.exports = {
   getAllUsers,
   getUserById,
   createUser,
   findUserByEmail,
   getUserByUsername,
-  authenticateUser
+  authenticateUser,
+  storeOTP,
+  getOTPRecord,
+  deleteOTP,
+  resetPassword,
 };

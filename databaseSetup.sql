@@ -109,3 +109,10 @@ contactName VARCHAR(100) NOT NULL,
 phoneNumber VARCHAR(15), 
 
 ); 
+
+CREATE TABLE password_reset_otps (
+    email VARCHAR(255) NOT NULL,
+    otp VARCHAR(10) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    created_at DATETIME DEFAULT GETDATE()
+);

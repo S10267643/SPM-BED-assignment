@@ -10,27 +10,24 @@
 </head>
 <body>
   <div id="wrapper">
-    <a href="Settings.html" id="backArrow" data-translate="back_to_settings">← Settings</a>
+    <a href="elderlySettings.html" id="backArrow" data-translate="back_to_settings">← Settings</a>
 
     <div class="container">
       <h2 data-translate="notifications_header">Custom Notifications</h2>
       <form id="notificationForm" novalidate>
-        <label for="ringtone" data-translate="ringtone_label">Ringtone:</label>
-        <input type="text" id="ringtone" name="ringtone" placeholder="Enter ringtone name or URL" required autocomplete="off" data-translate="ringtone_placeholder">
 
-        <label for="vibration" data-translate="vibration_label">Vibration:</label>
-        <select id="vibration" name="vibration" required>
-          <option value="on" data-translate="vibration_on">On</option>
-          <option value="off" data-translate="vibration_off">Off</option>
-        </select>
+        <label for="title" data-translate="title_label">Title:</label>
+        <input type="text" id="title" name="title" placeholder="Enter text here" required autocomplete="off" data-translate="ringtone_placeholder">
 
-        <label for="repeat" data-translate="repeat_label">Repeat Count:</label>
-        <input type="number" id="repeat" name="repeat" min="1" placeholder="Enter repeat count" required data-translate="repeat_placeholder">
+        <label for="enablePushNotifications" data-translate="enable_label">Enable Push Notifications:</label>
+        <input type="checkbox" id="enable" name="enable" value="true"></input>
+        <input type="hidden" name="enable" value="false"/>  
+  
 
-        <label for="youtube" data-translate="youtube_label">YouTube Link (optional):</label>
-        <input type="url" id="youtube" name="youtube" placeholder="Enter YouTube video URL" autocomplete="off" data-translate="youtube_placeholder">
+        <label for="imageLink" data-translate="imageLink_label">Image (optional):</label>
+        <input type="url" id="imageLink" name="imageLink" placeholder="Enter image URL" autocomplete="off" data-translate="img_placeholder">
       
-      <div id="preview"></div>
+      
       <div id="message"></div>
       <div id="formButtons"></div>
       
