@@ -90,6 +90,7 @@ class TranslationModel {
       daily_summary: "Daily Summary",
       custom_notification: "Custom Notifications",
       medical_history: "Medical History",
+      credits: "Credits",
 
       // addmedicine.html
       add_medication_title: "Add Medication",
