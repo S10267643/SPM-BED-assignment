@@ -24,9 +24,13 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       localStorage.setItem("token", data.token);
       localStorage.setItem('userId', String(data.userId)); 
       localStorage.setItem("role", data.role); 
-
+      console.log(localStorage.getItem("role"))
       alert("Login successful!");
-      window.location.href = "elderlyHomeScreen.html";
+        if(localStorage.getItem("role")=='Caregiver'){
+          window.location.href ="caregiverHomeScreen.html";
+        }else { window.location.href = "elderlyHomeScreen.html";}
+      
+     
     } else {
       alert(data.error || "Login failed");
     }
