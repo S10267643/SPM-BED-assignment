@@ -28,6 +28,19 @@ if (!userId) {
     });
   });
 
+  //select all and deselect all buttons
+  const selectAllBtn = document.getElementById("selectAllDays");
+const deselectAllBtn = document.getElementById("deselectAllDays");
+
+selectAllBtn.addEventListener("click", () => {
+  dayElements.forEach(day => day.classList.add("selected"));
+});
+
+deselectAllBtn.addEventListener("click", () => {
+  dayElements.forEach(day => day.classList.remove("selected"));
+});
+
+
   // Handle confirm button click
   confirmBtn.addEventListener("click", async () => {
     const medName = document.getElementById("medName").value.trim();
