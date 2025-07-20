@@ -80,14 +80,14 @@ async function loginUser(req, res) {
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
-    // Return BOTH token AND user ID
+    // Return token, user ID, role and name
     res.status(200).json({ 
     message: "Login successful", 
     token,
     userId: user.userId,
-    role: user.role 
-});
-
+    role: user.role,
+    name: user.name
+  });
 
   } catch (err) {
     console.error("Login error:", err);

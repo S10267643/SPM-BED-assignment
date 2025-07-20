@@ -24,7 +24,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       localStorage.setItem("token", data.token);
       localStorage.setItem('userId', String(data.userId)); 
       localStorage.setItem("role", data.role); 
-      console.log(localStorage.getItem("role"))
+      localStorage.setItem("userName", data.name);
       alert("Login successful!");
         if(localStorage.getItem("role")=='Caregiver'){
           window.location.href ="caregiverHomeScreen.html";

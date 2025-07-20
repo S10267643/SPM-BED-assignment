@@ -108,12 +108,18 @@ function loadCheckboxStates() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  // Display User Name
+  const userName = localStorage.getItem("userName");
+  console.log("name:", userName);
+  if (userName) {
+    document.getElementById("welcomeMessage").textContent = `Hello, ${userName}!`;
+  }
+
   // Hide Add Pills nav for Elderly
-    const role = localStorage.getItem("role"); // stored at login
-    console.log("Role:", role);
-    const addPillsNav = document.getElementById("addPillsNav");
-    if (role === "Elderly" && addPillsNav) {
-    addPillsNav.style.display = "none";
+  const role = localStorage.getItem("role"); // stored at login
+  const addPillsNav = document.getElementById("addPillsNav");
+  if (role === "Elderly" && addPillsNav) {
+  addPillsNav.style.display = "none";
   }
 
   // Load checkbox states
@@ -212,3 +218,10 @@ function urlBase64ToUint8Array(base64String) {
   }
   return outputArray;
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const userName = localStorage.getItem("userName");
+  if (userName) {
+    document.getElementById("welcomeMessage").textContent = `Hello, ${userName}!`;
+  }
+});
