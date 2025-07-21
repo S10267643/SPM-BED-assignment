@@ -46,8 +46,8 @@ app.post("/users/reset-password", userValidation.validateResetPassword, userCont
 // Emergency Contact routes
 app.get('/api/emergency-contacts', verifyJWT, emergencyController.getAllEmergencyContactsByUser);
 app.post('/api/emergency-contacts', verifyJWT, emergencyController.createEmergencyContact);
-app.get('/api/emergency-contacts/:id', emergencyController.getEmergencyContactById);
-app.put('/api/emergency-contacts/:id', emergencyController.updateEmergencyContact);
+app.get('/api/emergency-contacts/:id', verifyJWT, emergencyController.getEmergencyContactById);
+app.put('/api/emergency-contacts/:id', verifyJWT, emergencyController.updateEmergencyContact);
 app.delete('/api/emergency-contacts/:id',verifyJWT, emergencyController.deleteEmergencyContact);
 
 // Custom notifications routes 

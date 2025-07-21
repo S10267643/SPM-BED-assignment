@@ -8,7 +8,7 @@ function verifyJWT(req, res, next) {
     return res.status(401).json({ message: "Unauthorized - No token provided" });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET || "your_secret_key", (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(403).json({ message: "Forbidden - Invalid or expired token" });
     }
@@ -26,7 +26,9 @@ function verifyJWT(req, res, next) {
       //Elderly users view and manage emergency contacts
       "POST /api/emergency-contacts": ["Elderly"],
       "GET /api/emergency-contacts": ["Elderly"],
-      "DELETE /api/emergency-contacts/[0-9]+": ["Elderly"]
+      "DELETE /api/emergency-contacts/[0-9]+": ["Elderly"],
+      "GET /api/emergency-contacts/[0-9]+": ["Elderly"],
+      "PUT /api/emergency-contacts/[0-9]+": ["Elderly"],
     };
 
     // Build a key like "POST /medications/123"
