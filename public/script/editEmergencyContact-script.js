@@ -38,6 +38,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         phoneNumber: document.getElementById("phone").value.replace(/\D/g, ""),
       };
 
+      const phone = updatedContact.phoneNumber;
+
+      if (!/^[89]\d{7}$/.test(phone)) {
+        alert("Phone number must be 8 digits and start with 8 or 9");
+        return;
+      }
+
       const updateResponse = await fetch(`http://localhost:3000/api/emergency-contacts/${id}`, {
         method: "PUT",
         headers: {

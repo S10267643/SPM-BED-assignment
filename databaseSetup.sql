@@ -106,7 +106,9 @@ contactName VARCHAR(100) NOT NULL,
 phoneNumber VARCHAR(15), 
 relationship VARCHAR(50),
 userId INT NOT NULL,
-FOREIGN KEY (userId) REFERENCES users(userId)
+FOREIGN KEY (userId) REFERENCES users(userId),
+CONSTRAINT UQ_User_ContactName UNIQUE (userId, contactName),
+CONSTRAINT UQ_User_PhoneNumber UNIQUE (userId, phoneNumber)
 ); 
 
 CREATE TABLE password_reset_otps (

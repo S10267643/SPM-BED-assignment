@@ -6,12 +6,17 @@ document.getElementById('addContactForm').addEventListener('submit', async (e) =
       contactName: document.getElementById('name').value.trim(),
       phoneNumber: document.getElementById('phone').value.replace(/\D/g, ''),
       relationship: document.getElementById('relationship').value,
-      // userId will come from your auth system
     };
 
     // Basic validation
     if (!contactData.contactName || !contactData.phoneNumber) {
       throw new Error('Please fill all required fields');
+    }
+
+    const phone = contactData.phoneNumber;
+
+    if (!/^[89]\d{7}$/.test(phone)) {
+      throw new Error('Phone number must be 8 digits and start with 8 or 9');
     }
 
     const response = await fetch('http://localhost:3000/api/emergency-contacts', {
@@ -31,10 +36,11 @@ document.getElementById('addContactForm').addEventListener('submit', async (e) =
     }
 
     const data = await response.json();
-    
+
     if (!response.ok) {
-      throw new Error(data.message || 'Request failed');
+      throw new Error(data.error || data.message || 'Request failed');
     }
+
 
     alert('Contact created successfully!');
     window.location.href = 'emergencyContact.html';

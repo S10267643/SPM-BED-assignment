@@ -142,6 +142,63 @@ async function deleteEmergencyContact(contactId) {
   }
 }
 
+async function findDuplicateContact(userId, contactName, phoneNumber) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const result = await connection.request()
+      .input('userId', sql.Int, userId)
+      .input('contactName', sql.NVarChar, contactName)
+      .input('phoneNumber', sql.VarChar, phoneNumber)
+      .query(`
+        SELECT * FROM emergency_contacts
+        WHERE userId = @userId AND (contactName = @contactName OR phoneNumber = @phoneNumber)
+      `);
+    return result.recordset;
+  } catch (err) {
+    throw err;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function findContactByPhone(phoneNumber) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const result = await connection.request()
+      .input("phoneNumber", sql.VarChar(15), phoneNumber)
+      .query(`
+        SELECT * FROM emergency_contacts 
+        WHERE phoneNumber = @phoneNumber
+      `);
+    return result.recordset[0];
+    console.error("Database error (findContactByPhone):", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function findContactByName(userId, contactName) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const result = await connection.request()
+      .input("userId", sql.Int, userId)
+      .input("contactName", sql.NVarChar, contactName)
+      .query(`
+        SELECT * FROM emergency_contacts
+        WHERE userId = @userId AND contactName = @contactName
+      `);
+    return result.recordset[0]; // return first matching contact or undefined
+  } catch (error) {
+    console.error("Database error in findContactByName:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
 
 module.exports = {
   getAllEmergencyContactsByUserId,
@@ -149,4 +206,7 @@ module.exports = {
   getEmergencyContactById,
   updateEmergencyContact,
   deleteEmergencyContact,
+  findDuplicateContact,
+  findContactByPhone,
+  findContactByName
 };
