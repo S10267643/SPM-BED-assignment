@@ -1,15 +1,18 @@
 const emergencyModel = require("../models/emergencyModel");
 
-// Get all emergency contacts
-async function getAllEmergencyContacts(req, res) {
+// Get all emergency contacts for the logged-in user
+async function getAllEmergencyContactsByUser(req, res) {
   try {
-    const contacts = await emergencyModel.getAllEmergencyContacts();
+    const userId = req.user.userId; // pulled from JWT
+
+    const contacts = await emergencyModel.getAllEmergencyContactsByUserId(userId);
     res.json(contacts);
   } catch (error) {
     console.error("Controller error:", error);
     res.status(500).json({ error: "Error retrieving emergency contacts" });
   }
 }
+
 
 // Get emergency contact by ID
 async function getEmergencyContactById(req, res) {
@@ -121,7 +124,7 @@ async function deleteEmergencyContact(req, res) {
 }
 
 module.exports = {
-  getAllEmergencyContacts,
+  getAllEmergencyContactsByUser,
   getEmergencyContactById,
   createEmergencyContact,
   updateEmergencyContact,

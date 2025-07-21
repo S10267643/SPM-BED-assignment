@@ -23,8 +23,10 @@ function verifyJWT(req, res, next) {
       // Elderly users can mark medications as taken
       "POST /api/medications/[0-9]+/taken": ["Elderly"],
 
-      //Elderly users can add emergency contacts
-      "POST /api/emergency-contacts": ["Elderly"]
+      //Elderly users view and manage emergency contacts
+      "POST /api/emergency-contacts": ["Elderly"],
+      "GET /api/emergency-contacts": ["Elderly"],
+      "DELETE /api/emergency-contacts/[0-9]+": ["Elderly"]
     };
 
     // Build a key like "POST /medications/123"

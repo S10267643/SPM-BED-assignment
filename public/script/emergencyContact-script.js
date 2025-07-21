@@ -1,50 +1,67 @@
-document.addEventListener("DOMContentLoaded", fetchContacts);
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = localStorage.getItem("token");
 
-async function fetchContacts() {
-  const res = await fetch("/emergency-contacts");
-  const contacts = await res.json();
-  const list = document.getElementById("contactList");
-  list.innerHTML = "";
-  contacts.forEach(c => {
-    const li = document.createElement("li");
-    li.textContent = `${c.name} - ${c.phone}`;
-    li.innerHTML += ` <button onclick="editContact(${c.id}, '${c.name}', '${c.phone}')">Edit</button>
-                      <button onclick="deleteContact(${c.id})">Delete</button>`;
-    list.appendChild(li);
-  });
-}
-
-function showAddForm() {
-  document.getElementById("contactForm").style.display = "block";
-}
-
-async function submitContact() {
-  const name = document.getElementById("contactName").value;
-  const phone = document.getElementById("contactPhone").value;
-  await fetch("/emergency-contacts", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, phone })
-  });
-  fetchContacts();
-}
-
-async function editContact(id, name, phone) {
-  const newName = prompt("Edit name:", name);
-  const newPhone = prompt("Edit phone:", phone);
-  if (newName && newPhone) {
-    await fetch(`/emergency-contacts/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newName, phone: newPhone })
+  try {
+    const response = await fetch("http://localhost:3000/api/emergency-contacts", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
     });
-    fetchContacts();
-  }
-}
 
-async function deleteContact(id) {
-  await fetch(`/emergency-contacts/${id}`, {
-    method: "DELETE"
-  });
-  fetchContacts();
-}
+    if (!response.ok) {
+      throw new Error("Failed to fetch emergency contacts");
+    }
+
+    const contacts = await response.json();
+    const container = document.getElementById("contactList");
+
+    if (contacts.length === 0) {
+      container.innerHTML = "<p>No emergency contacts found.</p>";
+      return;
+    }
+
+    contacts.forEach((contact) => {
+      const div = document.createElement("div");
+      div.className = "contact-card";
+      div.innerHTML = `
+        <h3>${contact.contactName}</h3>
+        <p><strong>Phone:</strong> <a href="tel:${contact.phoneNumber}">${contact.phoneNumber}</a></p>
+        <p><strong>Relationship:</strong> ${contact.relationship}</p>
+        <button class="edit-btn" data-id="${contact.contactId}">Edit</button>
+        <button class="delete-btn" data-id="${contact.contactId}">Delete</button>
+      `;
+      container.appendChild(div);
+
+      const deleteBtn = div.querySelector(".delete-btn");
+      deleteBtn.addEventListener("click", async () => {
+        if (confirm("Are you sure you want to delete this contact?")) {
+          try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:3000/api/emergency-contacts/${contact.contactId}`, {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            if (!response.ok) {
+              const data = await response.json();
+              throw new Error(data.error || "Failed to delete contact");
+            }
+
+            alert("Contact deleted successfully");
+            window.location.reload(); // Refresh the list
+          } catch (err) {
+            console.error("Delete error:", err);
+            alert("Failed to delete contact");
+          }
+        }
+      });
+
+    });
+  } catch (err) {
+    console.error("Error loading contacts:", err);
+    document.getElementById("contactList").innerHTML = `<p>Error: ${err.message}</p>`;
+  }
+});

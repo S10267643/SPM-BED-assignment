@@ -100,7 +100,7 @@ createDate Date
 
  );  
 
-CREATE TABLE emergency_contact( 
+CREATE TABLE emergency_contacts( 
 contactId INT PRIMARY KEY IDENTITY(1,1), 
 contactName VARCHAR(100) NOT NULL,
 phoneNumber VARCHAR(15), 

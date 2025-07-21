@@ -1,15 +1,15 @@
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
-// Get all emergency contacts
-async function getAllEmergencyContactsByUser(userId) {
+// Get all emergency contacts for a specific user
+async function getAllEmergencyContactsByUserId(userId) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
     const result = await connection.request()
       .input("userId", sql.Int, userId)
       .query(`
-        SELECT * FROM emergency_contact 
+        SELECT * FROM emergency_contacts
         WHERE userId = @userId
         ORDER BY contactName
       `);
@@ -22,13 +22,14 @@ async function getAllEmergencyContactsByUser(userId) {
   }
 }
 
+
 // Create new emergency contact
 async function createEmergencyContact(contactData) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-      INSERT INTO emergency_contact 
+      INSERT INTO emergency_contacts
         (contactName, phoneNumber, relationship, userId)
       VALUES 
         (@contactName, @phoneNumber, @relationship, @userId);
@@ -61,7 +62,7 @@ async function getEmergencyContactById(contactId) {
       .input("contactId", sql.Int, contactId);
     const result = await request.query(`
       SELECT contactId, contactName, phoneNumber, relationship
-      FROM emergency_contact
+      FROM emergency_contacts
       WHERE contactId = @contactId
     `);
     return result.recordset[0] || null;
@@ -85,7 +86,7 @@ async function updateEmergencyContact(contactId, contactData) {
       .input("relationship", sql.VarChar, contactData.relationship);
 
     const result = await request.query(`
-      UPDATE emergency_contact
+      UPDATE emergency_contacts
       SET 
         contactName = @contactName,
         phoneNumber = @phoneNumber,
@@ -122,7 +123,7 @@ async function deleteEmergencyContact(contactId) {
       .input("contactId", sql.Int, contactId);
 
     const result = await request.query(`
-      DELETE FROM emergency_contact
+      DELETE FROM emergency_contacts
       WHERE contactId = @contactId
     `);
 
@@ -143,7 +144,7 @@ async function deleteEmergencyContact(contactId) {
 
 
 module.exports = {
-  getAllEmergencyContactsByUser,
+  getAllEmergencyContactsByUserId,
   createEmergencyContact,
   getEmergencyContactById,
   updateEmergencyContact,
