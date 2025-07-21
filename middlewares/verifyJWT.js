@@ -21,7 +21,10 @@ function verifyJWT(req, res, next) {
       "DELETE /api/medications/[0-9]+": ["Caregiver"],
 
       // Elderly users can mark medications as taken
-      "POST /api/medications/[0-9]+/taken": ["Elderly"]
+      "POST /api/medications/[0-9]+/taken": ["Elderly"],
+
+      //Elderly users can add emergency contacts
+      "POST /api/emergency-contacts": ["Elderly"]
     };
 
     // Build a key like "POST /medications/123"

@@ -1,43 +1,129 @@
 const emergencyModel = require("../models/emergencyModel");
 
-async function getAllContacts(req, res) {
+// Get all emergency contacts
+async function getAllEmergencyContacts(req, res) {
   try {
-    const contacts = await emergencyModel.getAllContacts();
+    const contacts = await emergencyModel.getAllEmergencyContacts();
     res.json(contacts);
-  } catch (err) {
-    res.status(500).json({ error: "Error fetching contacts" });
+  } catch (error) {
+    console.error("Controller error:", error);
+    res.status(500).json({ error: "Error retrieving emergency contacts" });
   }
 }
 
-async function addContact(req, res) {
-  try {
-    const { name, phone } = req.body;
-    await emergencyModel.addContact(name, phone);
-    res.status(201).json({ message: "Contact added" });
-  } catch (err) {
-    res.status(500).json({ error: "Error adding contact" });
-  }
-}
-
-async function updateContact(req, res) {
+// Get emergency contact by ID
+async function getEmergencyContactById(req, res) {
   try {
     const id = parseInt(req.params.id);
-    const { name, phone } = req.body;
-    await emergencyModel.updateContact(id, name, phone);
-    res.json({ message: "Contact updated" });
-  } catch (err) {
-    res.status(500).json({ error: "Error updating contact" });
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid contact ID" });
+    }
+
+    const contact = await emergencyModel.getEmergencyContactById(id);
+    if (!contact) {
+      return res.status(404).json({ error: "Emergency contact not found" });
+    }
+
+    res.json(contact);
+  } catch (error) {
+    console.error("Controller error:", error);
+    res.status(500).json({ error: "Error retrieving emergency contact" });
   }
 }
 
-async function deleteContact(req, res) {
+// Create new emergency contact
+async function createEmergencyContact(req, res) {
+  try {
+    const { contactName, phoneNumber, relationship } = req.body;
+    const userId = req.user.userId;
+
+    if (!contactName || !phoneNumber || !relationship) {
+      return res.status(400).json({ 
+        error: "All fields are required" 
+      });
+    }
+
+    const contactId = await emergencyModel.createEmergencyContact({
+      contactName,
+      phoneNumber,
+      relationship,
+      userId
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Contact created',
+      contactId
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    
+    if (error.number === 547) { // Foreign key violation
+      return res.status(400).json({ error: "Invalid user" });
+    }
+    
+    if (error.number === 2627) { // Duplicate key
+      return res.status(400).json({ error: "Phone number already exists" });
+    }
+
+    res.status(500).json({ error: "Server error" });
+  }
+}
+
+// Update emergency contact by ID
+async function updateEmergencyContact(req, res) {
   try {
     const id = parseInt(req.params.id);
-    await emergencyModel.deleteContact(id);
-    res.json({ message: "Contact deleted" });
-  } catch (err) {
-    res.status(500).json({ error: "Error deleting contact" });
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid contact ID" });
+    }
+
+    // Check if contact exists
+    const existingContact = await emergencyModel.getEmergencyContactById(id);
+    if (!existingContact) {
+      return res.status(404).json({ error: "Emergency contact not found" });
+    }
+
+    // Check for duplicate phone number (excluding current contact)
+    if (req.body.phoneNumber && req.body.phoneNumber !== existingContact.phoneNumber) {
+      const duplicateContact = await emergencyModel.findContactByPhone(req.body.phoneNumber);
+      if (duplicateContact && duplicateContact.contactId !== id) {
+        return res.status(400).json({ error: "Phone number already exists in another contact" });
+      }
+    }
+
+    const updatedContact = await emergencyModel.updateEmergencyContact(id, req.body);
+    res.json(updatedContact);
+  } catch (error) {
+    console.error("Controller error:", error);
+    res.status(500).json({ error: "Error updating emergency contact" });
   }
 }
 
-module.exports = { getAllContacts, addContact, updateContact, deleteContact };
+// Delete emergency contact by ID
+async function deleteEmergencyContact(req, res) {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ error: "Invalid contact ID" });
+    }
+
+    const result = await emergencyModel.deleteEmergencyContact(id);
+    if (!result) {
+      return res.status(404).json({ error: "Emergency contact not found" });
+    }
+
+    res.json({ message: "Emergency contact deleted successfully" });
+  } catch (error) {
+    console.error("Controller error:", error);
+    res.status(500).json({ error: "Error deleting emergency contact" });
+  }
+}
+
+module.exports = {
+  getAllEmergencyContacts,
+  getEmergencyContactById,
+  createEmergencyContact,
+  updateEmergencyContact,
+  deleteEmergencyContact,
+};

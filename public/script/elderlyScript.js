@@ -110,7 +110,6 @@ function loadCheckboxStates() {
 document.addEventListener("DOMContentLoaded", function () {
   // Display User Name
   const userName = localStorage.getItem("userName");
-  console.log("name:", userName);
   if (userName) {
     document.getElementById("welcomeMessage").textContent = `Hello, ${userName}!`;
   }

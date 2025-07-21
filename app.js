@@ -44,10 +44,11 @@ app.post("/users/verify-otp", userValidation.validateVerifyOtp, userController.v
 app.post("/users/reset-password", userValidation.validateResetPassword, userController.resetPassword);
 
 // Emergency Contact routes
-app.get("/emergency-contacts", emergencyController.getAllContacts);
-app.post("/emergency-contacts", validateContact, emergencyController.addContact);
-app.put("/emergency-contacts/:id", validateContact, emergencyController.updateContact);
-app.delete("/emergency-contacts/:id", emergencyController.deleteContact);
+app.get('/api/emergency-contacts', emergencyController.getAllEmergencyContacts);
+app.post('/api/emergency-contacts', verifyJWT, emergencyController.createEmergencyContact);
+app.get('/api/emergency-contacts/:id', emergencyController.getEmergencyContactById);
+app.put('/api/emergency-contacts/:id', emergencyController.updateEmergencyContact);
+app.delete('/api/emergency-contacts/:id', emergencyController.deleteEmergencyContact);
 
 // Custom notifications routes 
 app.post("/api/notifications", notificationController.createNotification);

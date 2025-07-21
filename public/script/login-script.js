@@ -22,7 +22,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       }
       // Save token to localStorage
       localStorage.setItem("token", data.token);
-      localStorage.setItem('userId', String(data.userId)); 
+      localStorage.setItem('userId', data.userId); 
       localStorage.setItem("role", data.role); 
       localStorage.setItem("userName", data.name);
       alert("Login successful!");

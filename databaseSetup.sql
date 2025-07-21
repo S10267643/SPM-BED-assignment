@@ -100,14 +100,13 @@ createDate Date
 
  );  
 
-Create Table Emergency_Contacts( 
-
-contactsId INT PRIMARY KEY IDENTITY(1,1), 
-
-contactName VARCHAR(100) NOT NULL, 
-
+CREATE TABLE emergency_contact( 
+contactId INT PRIMARY KEY IDENTITY(1,1), 
+contactName VARCHAR(100) NOT NULL,
 phoneNumber VARCHAR(15), 
-
+relationship VARCHAR(50),
+userId INT NOT NULL,
+FOREIGN KEY (userId) REFERENCES users(userId)
 ); 
 
 CREATE TABLE password_reset_otps (
