@@ -32,6 +32,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         <button class="delete-btn" data-id="${contact.contactId}">Delete</button>
       `;
       container.appendChild(div);
+      
+      const editBtn = div.querySelector(".edit-btn");
+      editBtn.addEventListener("click", () => {
+        window.location.href = `editEmergencyContact.html?id=${contact.contactId}`;
+      });
 
       const deleteBtn = div.querySelector(".delete-btn");
       deleteBtn.addEventListener("click", async () => {
@@ -58,7 +63,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
       });
-
     });
   } catch (err) {
     console.error("Error loading contacts:", err);
