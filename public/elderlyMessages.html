@@ -8,14 +8,25 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <script src="script/changeLanguage.js"></script>
 </head>
-<body>
-
-    
+<body>   
 
 
     <div class="modal">
   <div class="modal-content">
-            
+
+            <div class="header">
+                <h1 data-translate="messages">Messages</h1>
+            </div>
+
+            <div class="message-section">
+                <div class="caregiver-selector">
+                    <label for="caregiverDropdown" data-translate="select_caregiver">Select Caregiver:</label>
+                    <select id="caregiverDropdown" class="dropdown">
+                        <option value="" data-translate="select_option">-- Select a Caregiver --</option>->
+                    </select>
+
+
+
             <div class="navigation">
                 <div class="nav-item active" data-translate="messages">Messages</div>
                 <a class="nav-item" data-translate="medication" href="elderlyHomeScreen.html" >Medication</a>
@@ -26,6 +37,6 @@
             
     </div>
 
-    <script src="script/script.js"></script>
+    <script src="script/messages-script.js"></script>
 </body>
 </html>
