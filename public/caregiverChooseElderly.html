@@ -1,0 +1,61 @@
+<body>
+  <div class="modal">
+    <div class="modal-content">
+
+      <!-- Top: Header -->
+      <div class="addmedication-button" onclick="location.href='caregiverSettings.html'">☰</div>
+      <div class="header">
+        <h1 data-translate="welcome_message">Hello, User!</h1>
+        <div class="date" id="currentDate"></div>
+        <link rel="stylesheet" href="css/style.css" />
+      </div>
+
+      <!-- Middle: Person Dropdown -->
+      <div class="person-selector">
+        <label for="elderlyDropdown" class="person-dropdown-label" data-translate="choose_elderly">Choose Elderly</label>
+        <select id="elderlyDropdown" class="person-dropdown">
+            <option value="1">Js enter first for test</option>
+          <!-- Options loaded by JS later -->
+        </select>
+      </div>
+      <div class="view-medication-container">
+        <button class="view-medication-btn" onclick="location.href='caregiverHomeScreen.html'">View Medication</button>
+      </div>
+
+
+      <!-- Spacer to push content up -->
+      <div style="flex-grow: 1;"></div>
+
+      <!-- Bottom: Navigation -->
+      <div class="navigation">
+        <div class="nav-item" onclick="location.href='caregiverMessages.html'" data-translate="messages">Messages</div>
+        <div class="nav-item active" data-translate="medication">Medication</div>
+        <div class="nav-item" onclick="location.href='caregiverAddmedicine.html'" data-translate="add_pills">Add pills</div>
+        <div class="nav-item" data-translate="emergency">Emergency</div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Set current date
+    document.getElementById("currentDate").textContent = new Date().toLocaleDateString('en-SG', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    // Future API hook to populate dropdown
+    // fetch('/api/users')
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     const dropdown = document.getElementById('elderlyDropdown');
+    //     data.forEach(user => {
+    //       const option = document.createElement('option');
+    //       option.value = user.id;
+    //       option.textContent = user.name;
+    //       dropdown.appendChild(option);
+    //     });
+    //   });
+  </script>
+</body>
