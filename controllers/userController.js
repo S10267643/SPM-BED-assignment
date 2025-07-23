@@ -208,6 +208,25 @@ async function resetPassword(req, res) {
   }
 }
 
+
+async function updateUser(req, res) {
+  const userId = parseInt(req.params.id);
+  const { name, email, phone, password } = req.body;
+
+  if (!name || !email || !phone) {
+    return res.status(400).json({ error: "Name, email, and phone are required" });
+  }
+
+  try {
+    const result = await userModel.updateUserById(userId, { name, email, phone, password });
+    res.json(result);
+  } catch (err) {
+    console.error("Update user error:", err);
+    res.status(500).json({ error: "Failed to update user profile" });
+  }
+}
+
+
 module.exports = {
   getUserById,
   createUser,
@@ -216,4 +235,5 @@ module.exports = {
   verifyOTP,
   getUsersByRole,
   resetPassword,
+  updateUser
 };

@@ -6,35 +6,44 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <script src="script/changeLanguage.js"></script>
+    <script src="script/elderlyChange-Language.js"></script>
 </head>
 <body>   
-
-
     <div class="modal">
-  <div class="modal-content">
-
+        <div class="modal-content">
             <div class="header">
                 <h1 data-translate="messages">Messages</h1>
             </div>
 
             <div class="message-section">
+                <!-- Caregiver Selection -->
                 <div class="caregiver-selector">
                     <label for="caregiverDropdown" data-translate="select_caregiver">Select Caregiver:</label>
                     <select id="caregiverDropdown" class="dropdown">
-                        <option value="" data-translate="select_option">-- Select a Caregiver --</option>->
+                        <option value="" data-translate="select_option">-- Select a Caregiver --</option>
                     </select>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="confirmCaregiver">
+                        <label for="confirmCaregiver" data-translate="confirm_selection">Confirm selection</label>
+                    </div>
+                </div>
 
-
+                <!-- Message Area (Hidden Initially) -->
+                <div id="messageArea" class="hidden">
+                    <div class="conversation-container" id="conversationContainer"></div>
+                    <div class="message-input">
+                        <textarea id="messageInput" placeholder="Type your message here..." rows="3"></textarea>
+                        <button id="sendButton" data-translate="send">Send</button>
+                    </div>
+                </div>
+            </div>
 
             <div class="navigation">
                 <div class="nav-item active" data-translate="messages">Messages</div>
-                <a class="nav-item" data-translate="medication" href="elderlyHomeScreen.html" >Medication</a>
-                <div class="nav-item" data-translate="emergency">Emergency</div>
+                <a class="nav-item" data-translate="medication" href="elderlyHomeScreen.html">Medication</a>
+                <a class="nav-item" data-translate="emergency" href="emergencyContacts.html">Emergency</a>
             </div>
-
         </div>
-            
     </div>
 
     <script src="script/messages-script.js"></script>

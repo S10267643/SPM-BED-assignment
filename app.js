@@ -28,6 +28,9 @@ const medicationHistoryController = require("./controllers/medicationHistoryCont
 const medicationValidation = require("./middlewares/medicationValidation");
 const medicationController = require("./controllers/medicationController");
 
+// messages controller
+const messageController = require("./controllers/messagesController");
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -37,7 +40,10 @@ app.use(express.static(path.join(__dirname, "public")));
 app.get("/users/:id", userValidation.validateUserId, userController.getUserById); //for future use when view/edit profile
 app.post("/users", userValidation.validateUser, userController.createUser);
 app.post("/users/login", userController.loginUser);
-app.get("/users", userController.getUsersByRole); // Get users by role
+//app.get("/users", userController.getUsersByRole); // Get users by role
+app.put("/users/:id", userController.updateUser);
+
+
 
 // Forget password routes
 app.post("/users/send-otp", userValidation.validateSendOtp, userController.sendOTP);
@@ -74,6 +80,13 @@ app.get('/api/medicationHistory/user/:userId', medicationHistoryController.getMe
 // Translation routes
 app.get("/api/translations", translationController.getTranslations);
 app.post("/api/update-language", translationController.updateLanguagePreference);
+
+// Message routes
+app.get("/api/messages/user/:userId", messageController.getMessages);
+app.get("/api/messages/conversation/:elderlyId/:caregiverId", messageController.getConversation);
+app.post("/api/messages", messageController.sendMessage);
+app.put("/api/messages/:messageId", messageController.editMessage); 
+app.delete("/api/messages/:messageId", messageController.deleteMessage);
 
 
 
