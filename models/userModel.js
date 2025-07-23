@@ -220,6 +220,40 @@ async function resetPassword(email, newPassword) {
   }
 }
 
+
+
+
+async function updateUserById(userId, { name, email, phone, password }) {
+  const pool = await sql.connect(dbConfig);
+
+  let query = `
+    UPDATE users
+    SET name = @name,
+        email = @email,
+        phone = @phone
+  `;
+
+  const request = pool.request()
+    .input("name", sql.VarChar(100), name)
+    .input("email", sql.VarChar(100), email)
+    .input("phone", sql.VarChar(15), phone)
+    .input("userId", sql.Int, userId);
+
+  if (password && password.trim() !== "") {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    query += `, password = @password`;
+    request.input("password", sql.VarChar(255), hashedPassword);
+  }
+
+  query += ` WHERE userId = @userId`;
+
+  await request.query(query);
+  return { message: "User profile updated successfully" };
+}
+
+
+
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -232,4 +266,5 @@ module.exports = {
   getOTPRecord,
   deleteOTP,
   resetPassword,
+  updateUserById
 };
