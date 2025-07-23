@@ -116,6 +116,23 @@ async function getUserByUsername(username) {
     if (connection) await connection.close();
   }
 }
+//Find user by role
+async function getUserByRole(role) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const request = connection.request().input("role", role);
+    const result = await request.query("SELECT * FROM users WHERE role = @role");
+    return result.recordset || [];
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+
 
 async function authenticateUser(email, plainPassword) {
   const user = await findUserByEmail(email);
@@ -209,6 +226,7 @@ module.exports = {
   createUser,
   findUserByEmail,
   getUserByUsername,
+  getUserByRole,
   authenticateUser,
   storeOTP,
   getOTPRecord,

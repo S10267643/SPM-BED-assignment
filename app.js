@@ -37,6 +37,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.get("/users/:id", userValidation.validateUserId, userController.getUserById); //for future use when view/edit profile
 app.post("/users", userValidation.validateUser, userController.createUser);
 app.post("/users/login", userController.loginUser);
+app.get("/users", userController.getUsersByRole); // Get users by role
 
 // Forget password routes
 app.post("/users/send-otp", userValidation.validateSendOtp, userController.sendOTP);

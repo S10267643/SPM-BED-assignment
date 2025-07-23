@@ -36,26 +36,11 @@
 
     </div>
   </div>
+    <script src="script/caregiverChangeLanguage.js"></script>
+    <script src="script/caregiverChooseElderly.js"></script>
 
-  <script>
-    // Set current date
-    document.getElementById("currentDate").textContent = new Date().toLocaleDateString('en-SG', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric'
-    });
+    
 
-    // Future API hook to populate dropdown
-    // fetch('/api/users')
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     const dropdown = document.getElementById('elderlyDropdown');
-    //     data.forEach(user => {
-    //       const option = document.createElement('option');
-    //       option.value = user.id;
-    //       option.textContent = user.name;
-    //       dropdown.appendChild(option);
-    //     });
-    //   });
-  </script>
+
+  
 </body>
