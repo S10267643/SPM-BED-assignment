@@ -617,3 +617,104 @@ a {
     align-items: center;
     margin-top: 20px;
 }
+
+/* Message Section Styles */
+.message-section {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.caregiver-selector {
+    margin-bottom: 20px;
+}
+
+.dropdown {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    font-size: 1rem;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.checkbox-container input[type="checkbox"] {
+    margin-right: 10px;
+    width: auto;
+}
+
+.hidden {
+    display: none;
+}
+
+.conversation-container {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 15px;
+    max-width: 70%;
+}
+
+.message.sent {
+    background-color: #00ADB5;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 0;
+}
+
+.message.received {
+    background-color: #e5e5ea;
+    color: black;
+    margin-right: auto;
+    border-bottom-left-radius: 0;
+}
+
+.message-input {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.message-input textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    resize: none;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.message-input button {
+    align-self: flex-end;
+    padding: 8px 20px;
+    background-color: #00ADB5;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.message-input button:hover {
+    background-color: #00939a;
+}
+
+.message-timestamp {
+    font-size: 0.7rem;
+    color: #777;
+    margin-top: 3px;
+    text-align: right;
+}
