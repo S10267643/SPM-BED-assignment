@@ -84,7 +84,7 @@ result = await sql.query`
 
 
 async function getTitleByUserId(userId){
-    let connection;
+  let connection;
   connection = await sql.connect(dbConfig);
   const result = await sql.query`
   SELECT title FROM custom_notifications
