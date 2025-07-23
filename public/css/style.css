@@ -475,3 +475,145 @@ a {
     margin: 3px 0;
     color: #000000;
 }
+
+/* Existing CSS remains unchanged */
+
+/* --- Person Selector Section --- */
+.person-selector {
+    width: 100%;
+    margin: 30px 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.person-dropdown-label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: block;
+    color: #555;
+    font-size: 1rem;
+}
+
+.person-dropdown {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #ddd;
+    border-radius: 25px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    margin-top: 6px;
+    transition: border-color 0.3s ease;
+    background-color: #fff;
+    color: #333;
+}
+
+.person-dropdown:focus {
+    border-color: #00ADB5;
+    outline: none;
+}
+
+.view-medication-btn {
+    margin-top: 20px;
+    display:  flex;
+    justify-content: center;
+    background-color: #007BFF;
+    color: #ffffff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+.view-medication-btn:hover {
+    background-color: #0056b3;
+}
+
+.person-card {
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+}
+
+.person-card:hover {
+    border-color: #00ADB5;
+    background-color: #f0fafa;
+}
+
+.person-info {
+    margin-left: 10px;
+}
+
+.person-info h4 {
+    margin: 0 0 5px;
+    font-size: 1rem;
+    color: #000;
+}
+
+.person-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    background-color: #00ADB5;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    height: 90vh;
+    width: 23vw;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid #333;
+    border-radius: 5px;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.navigation {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+    margin-top: auto;
+}
+
+.view-medication-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
