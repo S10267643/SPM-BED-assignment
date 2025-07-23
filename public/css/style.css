@@ -863,6 +863,7 @@ a {
   text-align: center;
   appearance: none;
   line-height: 1.2;
+  margin-top: 20px;
 }
 
 .time-select-wrapper select:not(:last-child) {
