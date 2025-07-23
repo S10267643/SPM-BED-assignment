@@ -10,46 +10,50 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Current user (elderly) - retrieved from localStorage
     const currentUser = {
         id: localStorage.getItem('userId'),
+        name: localStorage.getItem('userName'), 
         role: localStorage.getItem('userRole') || 'Elderly'
     };
 
     // Load caregivers into dropdown
     async function loadCaregivers() {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('Authentication required. Please log in.');
-            }
-
-            const response = await fetch('/api/users?role=Caregiver', { // Changed endpoint
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to fetch caregivers');
-            }
-            
-            const caregivers = await response.json();
-            caregiverDropdown.innerHTML = '<option value="">-- Select a Caregiver --</option>';
-            
-            caregivers.forEach(caregiver => {
-                const option = document.createElement('option');
-                option.value = caregiver.userId;  // Matches your userModel structure
-                option.textContent = caregiver.name; // Using name from userModel
-                caregiverDropdown.appendChild(option);
-            });
-        } catch (error) {
-            console.error('Error loading caregivers:', error);
-            alert(error.message || 'Failed to load caregivers. Please try again.');
-            
-            if (error.message.includes('authentication') || error.message.includes('log in')) {
-                window.location.href = '/login';
-            }
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Authentication required. Please log in.');
         }
+
+        const response = await fetch('/users?role=Caregiver', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // First check if we got an HTML error page
+        const responseText = await response.text();
+        if (responseText.startsWith('<!DOCTYPE')) {
+            throw new Error('Server returned HTML error page. Check backend implementation.');
+        }
+
+        // Now try to parse as JSON
+        const caregivers = JSON.parse(responseText);
+        
+        caregiverDropdown.innerHTML = '<option value="">-- Select a Caregiver --</option>';
+        
+        caregivers.forEach(caregiver => {
+            const option = document.createElement('option');
+            option.value = caregiver.userId;
+            option.textContent = caregiver.name;
+            caregiverDropdown.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error loading caregivers:', error);
+        alert(error.message || 'Failed to load caregivers. Please try again.');
+        
+        if (error.message.includes('authentication') || error.message.includes('log in')) {
+            window.location.href = '/login';
+        }
+    }
     }
 
     // Toggle message area based on checkbox
@@ -94,13 +98,25 @@ document.addEventListener('DOMContentLoaded', async function() {
         messages.forEach(msg => {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message');
+            messageDiv.dataset.messageId = msg.messageId;
+            messageDiv.dataset.messageContent = msg.message; // Store raw message separately
             
-            // Determine if message is sent or received
-            if (msg.elderlyId === currentUser.id) {
+            const isFromCurrentUser = msg.elderlyId == currentUser.id;
+            const editBtn = isFromCurrentUser 
+                ? `<button class="edit-btn" data-message-id="${msg.messageId}">✏️</button>`
+                : '';
+            
+            if (isFromCurrentUser) {
                 messageDiv.classList.add('sent');
                 messageDiv.innerHTML = `
-                    <div>${msg.message}</div>
-                    <div class="message-timestamp">${formatTimestamp(msg.timestamp)}</div>
+                    <div class="message-content">
+                        <strong>${currentUser.name || 'You'}:</strong> 
+                        <span class="message-text">${msg.message}</span>
+                    </div>
+                    <div class="message-actions">
+                        ${editBtn}
+                        <div class="message-timestamp">${formatTimestamp(msg.timestamp)}</div>
+                    </div>
                 `;
             } else {
                 messageDiv.classList.add('received');
@@ -112,15 +128,73 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             conversationContainer.appendChild(messageDiv);
         });
+
+        // Add edit handlers
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', handleEditMessage);
+        });
         
-        // Scroll to bottom
         conversationContainer.scrollTop = conversationContainer.scrollHeight;
     }
 
-    // Format timestamp
+    async function handleEditMessage(e) {
+        const messageId = e.target.dataset.messageId;
+        const messageDiv = e.target.closest('.message');
+        // Get the raw message content from dataset instead of parsing HTML
+        const currentText = messageDiv.dataset.messageContent;
+        
+        // Replace with editable input (without username)
+        messageDiv.innerHTML = `
+            <div class="edit-container">
+                <strong>${currentUser.name || 'You'}:</strong>
+                <input type="text" value="${currentText}" class="edit-input">
+                <div class="edit-actions">
+                    <button class="save-edit">Save</button>
+                    <button class="cancel-edit">Cancel</button>
+                </div>
+            </div>
+        `;
+        
+        messageDiv.querySelector('.edit-input').focus();
+        
+        // Handle save
+        messageDiv.querySelector('.save-edit').addEventListener('click', async () => {
+            const newText = messageDiv.querySelector('.edit-input').value.trim();
+            if (newText && newText !== currentText) {
+                try {
+                    const response = await fetch(`/api/messages/${messageId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({ message: newText })
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to update message');
+                    
+                    // Refresh conversation after edit
+                    loadConversation(currentUser.id, caregiverDropdown.value);
+                } catch (error) {
+                    console.error('Error updating message:', error);
+                    alert('Failed to update message');
+                }
+            }
+        });
+        
+        // Handle cancel
+        messageDiv.querySelector('.cancel-edit').addEventListener('click', () => {
+            loadConversation(currentUser.id, caregiverDropdown.value);
+        });
+    }
+
+    // Format timestamp to show exact UTC time from database
     function formatTimestamp(timestamp) {
         const date = new Date(timestamp);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+        const hours = date.getUTCHours().toString().padStart(2, '0');
+        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+        
+        return `${hours}:${minutes}`; 
     }
 
     // Send message

@@ -923,7 +923,7 @@ a {
 .btn.cancel:hover {
   background-color: #f0fafa;
 }
-=======
+
 /* Message Section Styles */
 .message-section {
     width: 100%;
@@ -959,7 +959,7 @@ a {
 }
 
 .conversation-container {
-    height: 300px;
+    height: 100px;
     overflow-y: auto;
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -996,7 +996,7 @@ a {
 }
 
 .message-input textarea {
-    width: 100%;
+    width: 95%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -1005,7 +1005,7 @@ a {
 }
 
 .message-input button {
-    align-self: flex-end;
+    align-self: flex-start;
     padding: 8px 20px;
     background-color: #00ADB5;
     color: white;
@@ -1016,6 +1016,31 @@ a {
 
 .message-input button:hover {
     background-color: #00939a;
+}
+
+.message-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+}
+
+.edit-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 8px;
 }
 
 .message-timestamp {
