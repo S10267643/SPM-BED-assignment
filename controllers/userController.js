@@ -102,6 +102,28 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+//Get user by role
+async function getUsersByRole(req, res) {
+  const role = req.query.role;
+
+  if (!role) {
+    return res.status(400).json({ error: "Missing role query parameter" });
+  }
+
+  try {
+    const users = await userModel.getUserByRole(role);
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users by role:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+
+
+// Send OTP to user's email
+
+
 
 async function sendOTP(req, res) {
   const { email } = req.body;
@@ -211,6 +233,7 @@ module.exports = {
   loginUser,
   sendOTP,
   verifyOTP,
+  getUsersByRole,
   resetPassword,
   updateUser
 };

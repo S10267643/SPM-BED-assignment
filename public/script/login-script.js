@@ -27,7 +27,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       localStorage.setItem("userName", data.name);
       alert("Login successful!");
         if(localStorage.getItem("role")=='Caregiver'){
-          window.location.href ="caregiverHomeScreen.html";
+          window.location.href ="caregiverChooseElderly.html";
         }else { window.location.href = "elderlyHomeScreen.html";}
       
      
