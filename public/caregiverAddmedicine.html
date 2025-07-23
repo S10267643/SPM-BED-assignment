@@ -1,61 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title data-translate="add_medication_title">Add Medication</title>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/caregiverAddmedicine.css">
-  <script src="script/changeLanguage.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Medication</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="addmedication-container">
-  <h2 data-translate="add_medication_header">Add Medication</h2>
+  <div class="addmedication-container">
+    <h2>Add Medication</h2>
 
-  <label for="medName" data-translate="medication_name_label">Name Of Medication</label>
-  <input type="text" id="medName" name="medName">
+    <label for="medName">Medication Name</label>
+    <input type="text" id="medName" placeholder="e.g. Panadol" />
 
-  <label data-translate="date_label">Date</label>
-  <div class="date-picker">
-    <div class="day" id="Mon" data-translate="day_mon">Mon</div>
-    <div class="day" id="Tue" data-translate="day_tue">Tue</div>
-    <div class="day" id="Wed" data-translate="day_wed">Wed</div>
-    <div class="day" id="Thu" data-translate="day_thu">Thu</div>
-    <div class="day" id="Fri" data-translate="day_fri">Fri</div>
-    <div class="day" id="Sat" data-translate="day_sat">Sat</div>  
-    <div class="day" id="Sun" data-translate="day_sun">Sun</div>
+    <label for="dosage">Dosage</label>
+    <input type="text" id="dosage" placeholder="e.g. 2 pills" />
+
+    <label for="supplyQuantity">Supply Quantity</label>
+    <input type="text" id="supplyQuantity" />
+
+    <label for="refillThreshold">Refill Threshold</label>
+    <input type="text" id="refillThreshold" />
+
+    <label>Select Days</label>
+    <div class="date-picker">
+      <div class="day" id="Mon">Mon</div>
+      <div class="day" id="Tue">Tue</div>
+      <div class="day" id="Wed">Wed</div>
+      <div class="day" id="Thu">Thu</div>
+      <div class="day" id="Fri">Fri</div>
+      <div class="day" id="Sat">Sat</div>
+      <div class="day" id="Sun">Sun</div>
+    </div>
+    <div class="actions">
+      <button type="button" id="selectAllDays" class="btn cancel">Select All</button>
+      <button type="button" id="deselectAllDays" class="btn cancel">Deselect All</button>
+    </div>
+
+    <label>Medication Time(s)</label>
+    <div class="time-select-section" id="timeSelectSection"></div>
+    <button type="button" id="addTimeSelect" class="add-time-btn">Add Another Time</button>
+
+    <div class="actions">
+      <button type="button" class="btn confirm">Confirm</button>
+      <button type="button" class="btn cancel" onclick="window.history.back()">Cancel</button>
+    </div>
   </div>
-  <div class="day-controls">
-  <button type="button" id="selectAllDays">Select All</button>
-  <button type="button" id="deselectAllDays">Deselect All</button>
-</div>
 
-    <label for="dosage" data-translate="dosage_label">Dosage</label>
-    <input type="text" id="dosage" name="dosage" class="dosage-select" placeholder="Enter dosage (e.g., 2 tablets)">
-
-
-  <label for="time" data-translate="time_label">Alert Time</label>
-  <select id="time" class="time-select">
-    <option value="06:00:00">06:00</option>
-    <option value="09:00:00">09:00</option>
-    <option value="12:00:00">12:00</option>
-    <option value="15:00:00">15:00</option>
-    <option value="18:30:00">18:30</option>
-    <option value="21:00:00">21:00</option>
-  </select>
-<label for="refillThreshold" data-translate="refill_threshold_label">Refill Threshold</label>
-<input type="number" id="refillThreshold" name="refillThreshold" placeholder="Enter threshold (e.g., 5)" min = "0">
-
-<label for="supplyQuantity" data-translate="supply_quantity_label">Current Supply Quantity</label>
-<input type="number" id="supplyQuantity" name="supplyQuantity" placeholder="Enter supply quantity (e.g., 30)" min = "0">
-
-  
-
-  <div class="actions">
-    <a href="caregiverHomeScreen.html" class="btn cancel" data-translate="cancel_button">Cancel</a>
-    <button class="btn confirm" data-translate="confirm_button">Confirm</button>
-  </div>
-</div>
-
-<script src="script/caregiverAddmedscript.js"></script>
+  <script src="script/caregiverAddmedscript.js"></script>
 </body>
 </html>

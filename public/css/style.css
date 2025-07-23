@@ -617,3 +617,309 @@ a {
     align-items: center;
     margin-top: 20px;
 }
+
+/* --- Add Medication Section --- */
+.addmedication-container {
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    width: 20vw;
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-y: auto;
+    max-height: 80vh;
+}
+
+.addmedication-container label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    display: block;
+    color: #555;
+    font-size: 1rem;
+}
+
+.addmedication-container input[type="text"],
+.addmedication-container select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    border-radius: 25px;
+    border: 1.5px solid #ddd;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.addmedication-container input[type="text"]:focus,
+.addmedication-container select:focus {
+    border-color: #00ADB5;
+    outline: none;
+}
+
+.time-select-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.time-select-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.time-select-wrapper select {
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 25px;
+    font-size: 1rem;
+    border: 1.5px solid #ddd;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+    appearance: none;
+}
+
+.time-select-wrapper select:focus {
+    border-color: #00ADB5;
+    outline: none;
+}
+
+.add-time-btn {
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 1rem;
+    border: none;
+    background-color: #00ADB5;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.add-time-btn:hover {
+    background-color: #00939a;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-bottom: 10px;
+    gap: 15px;
+}
+
+.actions .btn {
+    width: 100%;
+    max-width: 280px;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+.actions .btn.cancel {
+    border: 2px solid #00ADB5;
+    background-color: white;
+    color: #00ADB5;
+}
+
+.btn.confirm {
+    background-color: #00ADB5;
+    color: white;
+    border: none;
+}
+
+.btn.confirm:hover {
+    background-color: #00939a;
+}
+
+.btn.cancel:hover {
+    background-color: #f0fafa;
+}
+
+.time-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid #ddd;
+  border-radius: 25px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  background-color: white;
+  width: 100%;
+  box-shadow: 0 0 0 1px #ddd;
+  height: 42px;
+}
+
+.time-select-wrapper select {
+    display: flex;
+  flex: 1;
+  padding: 12px 14xpx;
+  font-size: 1rem;
+  border: none;
+  appearance: none;
+  background-color: transparent;
+  color: #333;
+  box-shadow: none;
+  outline: none;
+  text-align: center;
+  align-items: center;
+  padding-top: 25px;
+}
+
+.time-select-wrapper select:not(:last-child) {
+  border-right: 1.5px solid #ddd;
+}
+
+/* === Add Medication Specific Styles === */
+.addmedication-container {
+  padding-top: 30px;
+  display: flex;
+  flex-direction: column;
+  width: 20vw;
+  border: 1px solid #333;
+  padding: 20px;
+  border-radius: 8px;
+  overflow-y: auto;
+  max-height: 80vh;
+  margin: 0 auto;
+}
+
+.addmedication-container label {
+  font-weight: bold;
+  margin-bottom: 6px;
+  display: block;
+  color: #555;
+  font-size: 1rem;
+}
+
+.addmedication-container input[type="text"],
+.addmedication-container select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  border-radius: 25px;
+  border: 1.5px solid #ddd;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.addmedication-container input[type="text"]:focus,
+.addmedication-container select:focus {
+  border-color: #00ADB5;
+  outline: none;
+}
+
+.time-block-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.time-select-section {
+  width: 100%;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 10px auto;
+}
+
+.time-select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1.2px solid #ccc;
+  border-radius: 18px;
+  overflow: hidden;
+  background-color: white;
+  width: 100%;
+  max-width: 250px;
+  height: 38px;
+  margin: 8px auto;
+}
+
+.time-select-wrapper select {
+  flex: 1;
+  height: 100%;
+  padding: 6px 10px 4px 10px;
+  font-size: 0.85rem;
+  border: none;
+  background-color: transparent;
+  color: #333;
+  outline: none;
+  text-align: center;
+  appearance: none;
+  line-height: 1.2;
+}
+
+.time-select-wrapper select:not(:last-child) {
+  border-right: 1px solid #ccc;
+}
+
+.add-time-btn {
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  border: none;
+  background-color: #00ADB5;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 10px auto;
+  display: block;
+}
+
+.add-time-btn:hover {
+  background-color: #00939a;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.actions .btn {
+  max-width: 140px;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+.actions .btn.cancel {
+  border: 2px solid #00ADB5;
+  background-color: white;
+  color: #00ADB5;
+}
+
+.btn.confirm {
+  background-color: #00ADB5;
+  color: white;
+  border: none;
+}
+
+.btn.confirm:hover {
+  background-color: #00939a;
+}
+
+.btn.cancel:hover {
+  background-color: #f0fafa;
+}
