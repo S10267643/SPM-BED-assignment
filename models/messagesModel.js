@@ -94,10 +94,31 @@ async function deleteMessage(messageId) {
   }
 }
 
+async function getMessagesForCaregiver(caregiverId) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const result = await sql.query`
+      SELECT m.*, u.name as elderlyName
+      FROM messages m
+      JOIN users u ON m.elderlyId = u.userId
+      WHERE m.caregiverId = ${caregiverId}
+      ORDER BY m.timestamp DESC
+    `;
+    return result.recordset;
+  } catch (err) {
+    console.error("Error getting caregiver messages:", err);
+    throw err;
+  } finally {
+    if (connection) connection.close();
+  }
+}
+
 module.exports = {
   getMessagesByUserId,
   getConversation,
   createMessage,
   updateMessage,
   deleteMessage,
+  getMessagesForCaregiver
 };

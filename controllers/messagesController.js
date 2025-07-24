@@ -80,11 +80,25 @@ async function deleteMessage(req, res) {
   }
 }
 
+async function getMessagesForCaregiver(req, res) {
+  const caregiverId = parseInt(req.query.caregiverId); // Get ID from query params
+  if (!caregiverId) return res.status(400).json({ error: "Missing caregiverId" });
+
+  try {
+    const messages = await MessageModel.getMessagesForCaregiver(caregiverId);
+    res.json(messages);
+  } catch (err) {
+    console.error("Get Messages Error:", err);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
 
 module.exports = {
   getMessages,
   getConversation,
   sendMessage,
   deleteMessage,
-  editMessage
+  editMessage,
+  getMessagesForCaregiver
 };

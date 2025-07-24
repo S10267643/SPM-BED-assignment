@@ -1,105 +1,225 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    // DOM Elements
-    const caregiverDropdown = document.getElementById('caregiverDropdown');
-    const confirmCheckbox = document.getElementById('confirmCaregiver');
-    const messageArea = document.getElementById('messageArea');
-    const conversationContainer = document.getElementById('conversationContainer');
-    const messageInput = document.getElementById('messageInput');
-    const sendButton = document.getElementById('sendButton');
-    
-    // Current user (elderly) - retrieved from localStorage
+    // Verify user data exists
     const currentUser = {
         id: localStorage.getItem('userId'),
-        name: localStorage.getItem('userName'), 
-        role: localStorage.getItem('userRole') || 'Elderly'
+        name: localStorage.getItem('userName'),
+        role: localStorage.getItem('role')
     };
 
-    // Load caregivers into dropdown
-    async function loadCaregivers() {
-    try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            throw new Error('Authentication required. Please log in.');
-        }
-
-        const response = await fetch('/users?role=Caregiver', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        // First check if we got an HTML error page
-        const responseText = await response.text();
-        if (responseText.startsWith('<!DOCTYPE')) {
-            throw new Error('Server returned HTML error page. Check backend implementation.');
-        }
-
-        // Now try to parse as JSON
-        const caregivers = JSON.parse(responseText);
-        
-        caregiverDropdown.innerHTML = '<option value="">-- Select a Caregiver --</option>';
-        
-        caregivers.forEach(caregiver => {
-            const option = document.createElement('option');
-            option.value = caregiver.userId;
-            option.textContent = caregiver.name;
-            caregiverDropdown.appendChild(option);
-        });
-    } catch (error) {
-        console.error('Error loading caregivers:', error);
-        alert(error.message || 'Failed to load caregivers. Please try again.');
-        
-        if (error.message.includes('authentication') || error.message.includes('log in')) {
-            window.location.href = '/login';
-        }
-    }
+    if (!currentUser.id || !currentUser.role) {
+        console.error('User data not found in localStorage');
+        return;
     }
 
-    // Toggle message area based on checkbox
-    confirmCheckbox.addEventListener('change', function() {
-        messageArea.classList.toggle('hidden', !this.checked);
-        if (this.checked && caregiverDropdown.value) {
-            loadConversation(currentUser.id, caregiverDropdown.value);
-        }
-    });
+    console.log('Initializing messaging for:', currentUser.role);
+    
+    // Initialize based on role
+    if (currentUser.role === 'Caregiver') {
+        initializeCaregiverInterface();
+    } else if (currentUser.role === 'Elderly') {
+        initializeElderlyInterface();
+    }
 
-    // Load conversation when caregiver is selected
-    caregiverDropdown.addEventListener('change', function() {
-        if (confirmCheckbox.checked && this.value) {
-            loadConversation(currentUser.id, this.value);
+    // ======================
+    // CAREGIVER INTERFACE
+    // ======================
+    async function initializeCaregiverInterface() {
+        const messageInbox = document.getElementById('messageInbox');
+        const caregiverInboxSection = document.getElementById('caregiverInboxSection');
+        
+        if (!messageInbox || !caregiverInboxSection) {
+            console.log('Caregiver interface elements not found');
+            return;
         }
-    });
 
-    // Load conversation between elderly and caregiver
-    async function loadConversation(elderlyId, caregiverId) {
+        // Show loading state
+        messageInbox.innerHTML = '<div class="no-messages">Loading messages...</div>';
+        
+        // Make sure section is visible
+        caregiverInboxSection.style.display = 'block';
+        
+        // Load messages after a slight delay to ensure DOM is ready
+        setTimeout(() => loadMessageInbox(), 100);
+    }
+
+    async function loadMessageInbox() {
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`/api/messages/conversation/${elderlyId}/${caregiverId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
+            const response = await fetch(`/api/messages/caregiver?caregiverId=${currentUser.id}`);
+            if (!response.ok) throw new Error('Failed to load messages');
+            
+            const messages = await response.json();
+            
+            if (messages.length === 0) {
+                document.getElementById('messageInbox').innerHTML = 
+                    '<div class="no-messages">No messages yet</div>';
+            } else {
+                renderMessageInbox(messages);
+            }
+        } catch (error) {
+            console.error('Error loading messages:', error);
+            document.getElementById('messageInbox').innerHTML = 
+                '<div class="no-messages">Error loading messages</div>';
+        }
+    }
+
+        function renderMessageInbox(messages) {
+        messageInbox.innerHTML = messages.length ? '' : '<div class="no-messages">No messages</div>';
+        
+        messages.forEach(msg => {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'inbox-message';
+            messageDiv.innerHTML = `
+                <div class="inbox-message-header">
+                    <span class="inbox-sender">${msg.elderlyName}</span>
+                    <span class="inbox-time">${formatTimestamp(msg.timestamp)}</span>
+                </div>
+                <div class="inbox-content">${msg.message}</div>
+                <button class="mark-read-btn" data-message-id="${msg.messageId}">Mark as Read</button>
+            `;
+            messageDiv.onclick = (e) => {
+                // Only view conversation if the click wasn't on the mark as read button
+                if (!e.target.classList.contains('mark-read-btn')) {
+                    viewConversation(msg.elderlyId);
                 }
+            };
+            messageInbox.appendChild(messageDiv);
+        });
+
+        // Add event listeners to all mark as read buttons
+        document.querySelectorAll('.mark-read-btn').forEach(btn => {
+            btn.addEventListener('click', handleMarkAsRead);
+        });
+    }
+
+    async function handleMarkAsRead(e) {
+        e.stopPropagation(); // Prevent the parent div's click handler from firing
+        const messageId = e.target.dataset.messageId;
+        
+        try {
+            const response = await fetch(`/api/messages/${messageId}`, {
+                method: 'DELETE'
             });
             
+            if (!response.ok) throw new Error('Failed to mark message as read');
+            
+            // Reload the inbox after successful deletion
+            loadMessageInbox();
+        } catch (error) {
+            console.error('Error marking message as read:', error);
+            alert('Failed to mark message as read. Please try again.');
+        }
+    }
+    
+
+    // ======================
+    // ELDERLY INTERFACE
+    // ======================
+    function initializeElderlyInterface() {
+        const caregiverDropdown = document.getElementById('caregiverDropdown');
+        const confirmCheckbox = document.getElementById('confirmCaregiver');
+        const messageArea = document.getElementById('messageArea');
+        const conversationContainer = document.getElementById('conversationContainer');
+        
+        // Only proceed if we have the required elements
+        if (!caregiverDropdown || !confirmCheckbox || !messageArea || !conversationContainer) {
+            console.log('Elderly interface elements not found - may be on wrong page');
+            return;
+        }
+
+        const sendButton = document.getElementById('sendButton');
+        const messageInput = document.getElementById('messageInput');
+
+        // Load caregivers dropdown
+        loadCaregivers();
+
+        // Setup event listeners
+        confirmCheckbox.addEventListener('change', toggleMessageArea);
+        caregiverDropdown.addEventListener('change', handleCaregiverChange);
+        if (sendButton) sendButton.addEventListener('click', sendMessage);
+
+        async function loadCaregivers() {
+            try {
+                const response = await fetch('/users?role=Caregiver');
+                const caregivers = await response.json();
+                
+                caregiverDropdown.innerHTML = '<option value="">-- Select --</option>';
+                caregivers.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.userId;
+                    option.textContent = c.name;
+                    caregiverDropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading caregivers:', error);
+            }
+        }
+
+        function toggleMessageArea() {
+            messageArea.classList.toggle('hidden', !this.checked);
+            if (this.checked && caregiverDropdown.value) {
+                loadConversation(currentUser.id, caregiverDropdown.value);
+            }
+        }
+
+        function handleCaregiverChange() {
+            if (confirmCheckbox.checked && this.value) {
+                loadConversation(currentUser.id, this.value);
+            }
+        }
+
+        async function sendMessage() {
+            const messageText = messageInput.value.trim();
+            if (!messageText || !caregiverDropdown.value) return;
+            
+            try {
+                const response = await fetch('/api/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        elderlyId: currentUser.id,
+                        caregiverId: caregiverDropdown.value,
+                        message: messageText
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to send message');
+                
+                messageInput.value = '';
+                loadConversation(currentUser.id, caregiverDropdown.value);
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+        }
+    }
+
+    // ======================
+    // SHARED FUNCTIONS
+    // ======================
+    async function loadConversation(elderlyId, caregiverId) {
+        const conversationContainer = document.getElementById('conversationContainer');
+        if (!conversationContainer) return;
+        
+        try {
+            const response = await fetch(`/api/messages/conversation/${elderlyId}/${caregiverId}`);
             if (!response.ok) throw new Error('Failed to load conversation');
             
             const messages = await response.json();
             renderConversation(messages);
         } catch (error) {
             console.error('Error loading conversation:', error);
-            alert('Failed to load messages. Please try again.');
         }
     }
 
-    // Render conversation messages
     function renderConversation(messages) {
-        conversationContainer.innerHTML = '';
+        const container = document.getElementById('conversationContainer');
+        if (!container) return;
         
+        container.innerHTML = '';
         messages.forEach(msg => {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message');
             messageDiv.dataset.messageId = msg.messageId;
-            messageDiv.dataset.messageContent = msg.message; // Store raw message separately
+            messageDiv.dataset.messageContent = msg.message;
             
             const isFromCurrentUser = msg.elderlyId == currentUser.id;
             const editBtn = isFromCurrentUser 
@@ -126,24 +246,37 @@ document.addEventListener('DOMContentLoaded', async function() {
                 `;
             }
             
-            conversationContainer.appendChild(messageDiv);
+            container.appendChild(messageDiv);
         });
 
-        // Add edit handlers
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', handleEditMessage);
         });
         
-        conversationContainer.scrollTop = conversationContainer.scrollHeight;
+        container.scrollTop = container.scrollHeight;
+    }
+
+    async function viewConversation(elderlyId) {
+        const conversationContainer = document.getElementById('conversationContainer');
+        if (!conversationContainer) return;
+        
+        try {
+            const response = await fetch(`/api/messages/conversation/${elderlyId}/${currentUser.id}`);
+            if (!response.ok) throw new Error('Failed to load conversation');
+            
+            const messages = await response.json();
+            renderConversation(messages);
+            conversationContainer.classList.remove('hidden');
+        } catch (error) {
+            console.error('Error loading conversation:', error);
+        }
     }
 
     async function handleEditMessage(e) {
         const messageId = e.target.dataset.messageId;
         const messageDiv = e.target.closest('.message');
-        // Get the raw message content from dataset instead of parsing HTML
         const currentText = messageDiv.dataset.messageContent;
         
-        // Replace with editable input (without username)
         messageDiv.innerHTML = `
             <div class="edit-container">
                 <strong>${currentUser.name || 'You'}:</strong>
@@ -157,75 +290,40 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         messageDiv.querySelector('.edit-input').focus();
         
-        // Handle save
         messageDiv.querySelector('.save-edit').addEventListener('click', async () => {
             const newText = messageDiv.querySelector('.edit-input').value.trim();
             if (newText && newText !== currentText) {
                 try {
                     const response = await fetch(`/api/messages/${messageId}`, {
                         method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('token')}`
-                        },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ message: newText })
                     });
                     
                     if (!response.ok) throw new Error('Failed to update message');
                     
-                    // Refresh conversation after edit
-                    loadConversation(currentUser.id, caregiverDropdown.value);
+                    const caregiverDropdown = document.getElementById('caregiverDropdown');
+                    if (caregiverDropdown && caregiverDropdown.value) {
+                        loadConversation(currentUser.id, caregiverDropdown.value);
+                    }
                 } catch (error) {
                     console.error('Error updating message:', error);
-                    alert('Failed to update message');
                 }
             }
         });
         
-        // Handle cancel
         messageDiv.querySelector('.cancel-edit').addEventListener('click', () => {
-            loadConversation(currentUser.id, caregiverDropdown.value);
+            const caregiverDropdown = document.getElementById('caregiverDropdown');
+            if (caregiverDropdown && caregiverDropdown.value) {
+                loadConversation(currentUser.id, caregiverDropdown.value);
+            }
         });
     }
 
-    // Format timestamp to show exact UTC time from database
     function formatTimestamp(timestamp) {
         const date = new Date(timestamp);
         const hours = date.getUTCHours().toString().padStart(2, '0');
         const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-        
-        return `${hours}:${minutes}`; 
+        return `${hours}:${minutes}`;
     }
-
-    // Send message
-    sendButton.addEventListener('click', async function() {
-        const messageText = messageInput.value.trim();
-        if (!messageText || !caregiverDropdown.value) return;
-        
-        try {
-            const response = await fetch('/api/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({
-                    elderlyId: currentUser.id,
-                    caregiverId: caregiverDropdown.value,
-                    message: messageText
-                })
-            });
-            
-            if (!response.ok) throw new Error('Failed to send message');
-            
-            messageInput.value = '';
-            loadConversation(currentUser.id, caregiverDropdown.value);
-        } catch (error) {
-            console.error('Error sending message:', error);
-            alert('Failed to send message. Please try again.');
-        }
-    });
-
-    // Initial load
-    loadCaregivers();
 });

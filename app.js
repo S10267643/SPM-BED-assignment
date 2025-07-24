@@ -87,6 +87,7 @@ app.get("/api/messages/conversation/:elderlyId/:caregiverId", messageController.
 app.post("/api/messages", messageController.sendMessage);
 app.put("/api/messages/:messageId", messageController.editMessage); 
 app.delete("/api/messages/:messageId", messageController.deleteMessage);
+app.get("/api/messages/caregiver", messageController.getMessagesForCaregiver);
 
 
 
