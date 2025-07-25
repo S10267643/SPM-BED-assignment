@@ -26,6 +26,42 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  const dropdown = document.getElementById("elderlyDropdown");
+
+  if (dropdown) {
+    fetch("/users?role=elderly")
+      .then(response => {
+        if (!response.ok) throw new Error("Failed to fetch users");
+        return response.json();
+      })
+      .then(users => {
+        if (users.length === 0) {
+          const noOption = document.createElement("option");
+          noOption.textContent = "No elderly users found";
+          noOption.disabled = true;
+          dropdown.appendChild(noOption);
+        } else {
+          users.forEach(user => {
+            const option = document.createElement("option");
+            option.value = user.userId;
+            option.textContent = user.name;
+            dropdown.appendChild(option);
+          });
+        }
+      })
+      .catch(err => {
+        console.error("Error loading elderly users:", err);
+        const errorOption = document.createElement("option");
+        errorOption.textContent = "Error loading users";
+        errorOption.disabled = true;
+        dropdown.appendChild(errorOption);
+      });
+  }
+
+
+
+
+
   document.getElementById("selectAllDays").addEventListener("click", () => {
     dayElements.forEach(day => day.classList.add("selected"));
   });
@@ -100,9 +136,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const medicationData = {
-      user_id: userId,
+      user_id: elderlyID,
       refillThreshold,
-      supplyQuantity,
+      supplyQuantity, 
       medication_name: medName,
       dosage,
       medication_time: medicationTimes,

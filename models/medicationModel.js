@@ -6,16 +6,21 @@ async function addMedicine(medicationData) {
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-        INSERT INTO medication_schedule (user_id, medication_name, dosage, time, day_of_week)
-        VALUES (@user_id, @medication_name, @dosage, @time, @day_of_week)
-      `;
+      INSERT INTO user_medication_supply 
+      (userId, medId, pillsLeft, dosage, refillThreshold, supplyQuantity, medTime, medDayOfWeek, createDate)
+      VALUES (@userId, @medId, @pillsLeft, @dosage, @refillThreshold, @supplyQuantity, @medTime, @medDayOfWeek, @createDate)
+    `;
     
     const request = connection.request()
-      .input("user_id", medicationData.user_id)
-      .input("medication_name", medicationData.medication_name)
+      .input("userId", medicationData.userId)
+      .input("medId", medicationData.medId)
+      .input("pillsLeft", medicationData.pillsLeft)
       .input("dosage", medicationData.dosage)
-      .input("time", medicationData.medication_time)
-      .input("day_of_week", medicationData.day_of_week);
+      .input("refillThreshold", medicationData.refillThreshold)
+      .input("supplyQuantity", medicationData.supplyQuantity)
+      .input("medTime", medicationData.medTime)
+      .input("medDayOfWeek", medicationData.medDayOfWeek)
+      .input("createDate", new Date());
 
     await request.query(query);
   } catch (error) {
@@ -31,11 +36,10 @@ async function getAllMedications() {
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-        SELECT id, user_id, medication_name, dosage, time, day_of_week 
-        FROM medication_schedule
-        ORDER BY day_of_week, time
-      `;
-    
+      SELECT supplyId, userId, medId, pillsLeft, dosage, refillThreshold, supplyQuantity, medTime, medDayOfWeek, createDate
+      FROM user_medication_supply
+      ORDER BY createDate DESC
+    `;
     const result = await connection.request().query(query);
     return result.recordset;
   } catch (error) {
@@ -51,14 +55,25 @@ async function getAllMedicationsByUserId(userId) {
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-        SELECT id, user_id, medication_name, dosage, time, day_of_week 
-        FROM medication_schedule
-        WHERE user_id = @user_id
-        ORDER BY day_of_week, time
-      `;
+      SELECT 
+        s.supplyId,
+        s.userId,
+        m.medName AS medication_name,
+        s.dosage,
+        s.medTime AS medication_time,
+        s.medDayOfWeek,
+        s.pillsLeft,
+        s.refillThreshold,
+        s.supplyQuantity,
+        s.createDate
+      FROM user_medication_supply s
+      JOIN medications m ON s.medId = m.medId
+      WHERE s.userId = @userId
+      ORDER BY s.createDate DESC
+    `;
     
     const request = connection.request()
-      .input("user_id", userId);
+      .input("userId", userId);
 
     const result = await request.query(query);
     return result.recordset;
@@ -70,21 +85,21 @@ async function getAllMedicationsByUserId(userId) {
   }
 }
 
-async function getMedicationById(medicationId) {
+async function getMedicationById(supplyId) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-        SELECT id, user_id, medication_name, dosage, time, day_of_week 
-        FROM medication_schedule
-        WHERE id = @id
-      `;
+      SELECT supplyId, userId, medId, pillsLeft, dosage, refillThreshold, supplyQuantity, medTime, medDayOfWeek, createDate
+      FROM user_medication_supply
+      WHERE supplyId = @supplyId
+    `;
     
     const request = connection.request()
-      .input("id", medicationId);
+      .input("supplyId", supplyId);
 
     const result = await request.query(query);
-    return result.recordset[0]; // Return the first (and only) record
+    return result.recordset[0];
   } catch (error) {
     console.error("Database error:", error);
     throw error;
@@ -93,25 +108,31 @@ async function getMedicationById(medicationId) {
   }
 }
 
-async function updateMedicine(medicationId, medicationData) {
+async function updateMedicine(supplyId, medicationData) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-        UPDATE medication_schedule 
-        SET medication_name = @medication_name,
-            dosage = @dosage,
-            time = @time,
-            day_of_week = @day_of_week
-        WHERE id = @id
-      `;
+      UPDATE user_medication_supply 
+      SET medId = @medId,
+          pillsLeft = @pillsLeft,
+          dosage = @dosage,
+          refillThreshold = @refillThreshold,
+          supplyQuantity = @supplyQuantity,
+          medTime = @medTime,
+          medDayOfWeek = @medDayOfWeek
+      WHERE supplyId = @supplyId
+    `;
     
     const request = connection.request()
-      .input("id", medicationId)
-      .input("medication_name", medicationData.medication_name)
+      .input("supplyId", supplyId)
+      .input("medId", medicationData.medId)
+      .input("pillsLeft", medicationData.pillsLeft)
       .input("dosage", medicationData.dosage)
-      .input("time", medicationData.medication_time)
-      .input("day_of_week", medicationData.day_of_week);
+      .input("refillThreshold", medicationData.refillThreshold)
+      .input("supplyQuantity", medicationData.supplyQuantity)
+      .input("medTime", medicationData.medTime)
+      .input("medDayOfWeek", medicationData.medDayOfWeek);
 
     await request.query(query);
   } catch (error) {
@@ -122,19 +143,67 @@ async function updateMedicine(medicationId, medicationData) {
   }
 }
 
-async function deleteMedicine(medicationId) {
+async function deleteMedicine(supplyId) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const query = `DELETE FROM user_medication_supply WHERE supplyId = @supplyId`;
+    
+    const request = connection.request().input("supplyId", supplyId);
+    await request.query(query);
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function updatePillsLeft(supplyId, pillsConsumed) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
     const query = `
-        DELETE FROM medication_schedule 
-        WHERE id = @id
-      `;
+      UPDATE user_medication_supply 
+      SET pillsLeft = pillsLeft - @pillsConsumed
+      WHERE supplyId = @supplyId AND pillsLeft >= @pillsConsumed
+    `;
     
     const request = connection.request()
-      .input("id", medicationId);
+      .input("supplyId", supplyId)
+      .input("pillsConsumed", pillsConsumed);
 
-    await request.query(query);
+    const result = await request.query(query);
+    return result.rowsAffected[0] > 0;
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function getMedicationsNeedingRefill(userId = null) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    let query = `
+      SELECT supplyId, userId, medId, pillsLeft, dosage, refillThreshold, supplyQuantity, medTime, medDayOfWeek, createDate
+      FROM user_medication_supply
+      WHERE pillsLeft <= refillThreshold
+    `;
+    
+    const request = connection.request();
+    
+    if (userId) {
+      query += ` AND userId = @userId`;
+      request.input("userId", userId);
+    }
+    
+    query += ` ORDER BY pillsLeft ASC`;
+
+    const result = await request.query(query);
+    return result.recordset;
   } catch (error) {
     console.error("Database error:", error);
     throw error;
@@ -149,5 +218,7 @@ module.exports = {
   getAllMedicationsByUserId, 
   getMedicationById, 
   updateMedicine, 
-  deleteMedicine 
+  deleteMedicine,
+  updatePillsLeft,
+  getMedicationsNeedingRefill
 };

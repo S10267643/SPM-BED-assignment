@@ -1,94 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CaregiverHomePage</title>
-    <script src="script/changeLanguage.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-translate="title">DailyDose</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <script src="script/caregiverChangeLanguage.js"></script>
 </head>
 <body>
-    <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8" />
-    <title data-translate="title">DailyDose</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/style.css" />
-    <link rel="icon" type="image/png" href="images/favicon.png">
-    <script src="script/caregiverChangeLanguage.js"></script>
-</head>
-<body>
+  <div class="modal">
+    <div class="modal-content">
+      <div class="addmedication-button" onclick="location.href='caregiverSettings.html'">☰</div>
 
-    
+      <div class="header">
+        <h1 data-translate="welcome_message">Hello, User!</h1>
+        <div class="date" id="currentDate"></div>
+      </div>
 
+      <div class="calendar">
+        <div class="calendar-day" data-translate="day_mon">Mon</div>
+        <div class="calendar-day" data-translate="day_tue">Tue</div>
+        <div class="calendar-day" data-translate="day_wed">Wed</div>
+        <div class="calendar-day" data-translate="day_thu">Thu</div>
+        <div class="calendar-day" data-translate="day_fri">Fri</div>
+        <div class="calendar-day" data-translate="day_sat">Sat</div>
+        <div class="calendar-day" data-translate="day_sun">Sun</div>
+        <div class="calendar-day"></div><div class="calendar-day"></div><div class="calendar-day"></div>
+        <div class="calendar-day"></div><div class="calendar-day"></div><div class="calendar-day"></div>
+        <div class="calendar-day"></div>
+      </div>
 
-    <div class="modal">
-  <div class="modal-content">
-    <div class="addmedication-button" onclick="location.href='caregiverSettings.html'">☰</div>
-    
-    <div class="header">
-      <h1 data-translate="welcome_message">Hello, User!</h1>
-      <div class="date" id="currentDate"></div>
+      <div class="medication-list">
+        <!-- Filled dynamically by JS -->
+      </div>
+
+      <div class="navigation">
+        <div class="nav-item active" data-translate="medication">Medication</div>
+        <div class="nav-item" id="addPillsNav" onclick="location.href='caregiverAddmedicine.html'" data-translate="add_pills">Add pills</div>
+        <div class="nav-item" data-translate="emergency">Emergency</div>
+      </div>
     </div>
+  </div>
 
-            
-            <div class="calendar">
-                <div class="calendar-day" data-translate="day_mon">Mon</div>
-                <div class="calendar-day" data-translate="day_tue">Tue</div>
-                <div class="calendar-day" data-translate="day_wed">Wed</div>
-                <div class="calendar-day" data-translate="day_thu">Thu</div>
-                <div class="calendar-day" data-translate="day_fri">Fri</div>
-                <div class="calendar-day" data-translate="day_sat">Sat</div>
-                <div class="calendar-day" data-translate="day_sun">Sun</div>
-                
-                <!-- Empty slots that will be filled by JavaScript -->
-                <div class="calendar-day"></div>
-                <div class="calendar-day"></div>
-                <div class="calendar-day"></div>
-                <div class="calendar-day"></div>
-                <div class="calendar-day"></div>
-                <div class="calendar-day"></div>
-                <div class="calendar-day"></div>
-            </div>
-            
-            <div class="medication-list">
-                <div class="medication-item">
-                    <div class="medication-content">
-                        <div class="medication-name">Medication 1</div>
-                        <div class="medication-time">9:00 AM</div>
-                    </div>
-                    <input type="checkbox" class="medication-checkbox">
-                </div>
-                
-                <div class="medication-item">
-                    <div class="medication-content">
-                        <div class="medication-name">Medication 2</div>
-                        <div class="medication-time">1:00 PM</div>
-                    </div>
-                    <input type="checkbox" class="medication-checkbox">
-                </div>
-                
-                <div class="medication-item">
-                    <div class="medication-content">
-                        <div class="medication-name">Medication 3</div>
-                        <div class="medication-time">9:00 PM</div>
-                    </div>
-                    <input type="checkbox" class="medication-checkbox">
-                </div>
-            </div>
-            
-            <div class="navigation">
-                <div class="nav-item active" data-translate="medication">Medication</div>
-                <div class="nav-item" id="addPillsNav" onclick="location.href='caregiverAddmedicine.html'" data-translate="add_pills">Add pills</div>
-                <div class="nav-item" data-translate="emergency">Emergency</div>
-            </div>
-
-        </div>
-            
-    </div>
-
-    <script src="script/caregiverScript.js"></script>
-</body>
-</html>
+  <script src="script/caregiverScript.js"></script>
 </body>
 </html>
