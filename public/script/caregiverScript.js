@@ -73,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   function formatTime24to12(timeStr) {
+    if (!timeStr || !timeStr.includes(":")) return timeStr;
     const [hour, minute] = timeStr.split(':');
     const h = parseInt(hour, 10);
     const ampm = h >= 12 ? 'PM' : 'AM';
@@ -81,14 +82,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function formatDays(dayString) {
-    const dayMap = {
-      "1": "Mon", "2": "Tue", "3": "Wed",
-      "4": "Thu", "5": "Fri", "6": "Sat", "7": "Sun"
-    };
+    if (!dayString || typeof dayString !== "string") return "";
     return dayString
       .split(',')
-      .map(d => dayMap[d.trim()])
-      .filter(Boolean)
+      .map(d => d.trim().charAt(0).toUpperCase() + d.trim().slice(1).toLowerCase())
       .join(', ');
   }
 
