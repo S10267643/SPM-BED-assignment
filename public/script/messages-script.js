@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             const isFromCurrentUser = msg.elderlyId == currentUser.id;
             const editBtn = isFromCurrentUser 
-                ? `<button class="edit-btn" data-message-id="${msg.messageId}">✏️</button>`
+                ? `<button class="edit-msg-btn" data-message-id="${msg.messageId}">✏️</button>`
                 : '';
             
             if (isFromCurrentUser) {
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             container.appendChild(messageDiv);
         });
 
-        document.querySelectorAll('.edit-btn').forEach(btn => {
+        document.querySelectorAll('.edit-msg-btn').forEach(btn => {
             btn.addEventListener('click', handleEditMessage);
         });
         
