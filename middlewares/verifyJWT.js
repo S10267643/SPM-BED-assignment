@@ -28,7 +28,21 @@ function verifyJWT(req, res, next) {
       "GET /api/emergency-contacts": ["Elderly"],
       "DELETE /api/emergency-contacts/[0-9]+": ["Elderly"],
       "GET /api/emergency-contacts/[0-9]+": ["Elderly"],
-      "PUT /api/emergency-contacts/[0-9]+": ["Elderly"],
+        "PUT /api/emergency-contacts/[0-9]+": ["Elderly"],
+
+        // Caregiver can add, update, delete medication history
+        "POST /api/medication-history": ["Caregiver"],
+        "PUT /api/medication-history/[0-9]+": ["Caregiver"],
+        "DELETE /api/medication-history/[0-9]+": ["Caregiver"],
+
+        // Both Caregiver and Elderly can view history (summary and details)
+        "GET /api/medication-history": ["Caregiver", "Elderly"],
+        "GET /api/medication-history/[0-9]+": ["Caregiver", "Elderly"],
+
+        // Both roles can view daily summaries
+        "GET /api/daily-summaries": ["Caregiver", "Elderly"],
+        "GET /api/daily-summaries/by-date": ["Caregiver", "Elderly"], // <-- ADD THIS LINE
+
     };
 
     // Build a key like "POST /medications/123"
