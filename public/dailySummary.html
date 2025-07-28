@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daily Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f4f4f4;
+        }
+
+        h2 {
+            margin-top: 40px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: #fff;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #e0e0e0;
+        }
+
+        .taken {
+            color: green;
+            font-weight: bold;
+        }
+
+        .missed {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Medication Daily Summary</h1>
+
+    <label for="summaryDate">Choose a date:</label>
+    <input type="date" id="summaryDate" />
+    <button onclick="fetchSummaryByDate()">Get Summary</button>
+
+    <div id="summary"></div>
+
+    <script>
+        async function fetchSummaryByDate() {
+            const date = document.getElementById("summaryDate").value;
+            if (!date) return alert("Please select a date");
+
+            try {
+                const res = await fetch(`/api/daily-summaries/by-date?date=${date}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+                });
+
+                const container = document.getElementById("summary");
+                container.innerHTML = "";
+
+                if (!res.ok) {
+                    container.textContent = "No summary found for this date.";
+                    return;
+                }
+
+                const summary = await res.json();
+
+                const heading = document.createElement("h2");
+                heading.textContent = `Date: ${summary.summaryDate}`;
+                container.appendChild(heading);
+
+                const table = document.createElement("table");
+                const thead = document.createElement("thead");
+                thead.innerHTML = `<tr><th>Medication</th><th>Time</th><th>Status</th></tr>`;
+                table.appendChild(thead);
+
+                const tbody = document.createElement("tbody");
+                summary.entries.forEach(entry => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                <td>${entry.medName}</td>
+                <td>${entry.time}</td>
+                <td class="${entry.taken ? 'taken' : 'missed'}">${entry.taken ? '✔' : '✘'}</td>
+              `;
+                    tbody.appendChild(row);
+                });
+
+                table.appendChild(tbody);
+                container.appendChild(table);
+            } catch (err) {
+                console.error("Error fetching summary:", err);
+                document.getElementById("summary").textContent = "Error loading summary.";
+            }
+        }
+    </script>
+</body>
+</html>
