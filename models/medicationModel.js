@@ -1,23 +1,59 @@
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
-async function addMedicine(medicationData) {
+async function addMedicine(data) {
   let connection;
+
   try {
     connection = await sql.connect(dbConfig);
-    const query = `
-        INSERT INTO medication_schedule (user_id, medication_name, dosage, time, day_of_week)
-        VALUES (@user_id, @medication_name, @dosage, @time, @day_of_week)
-      `;
     
-    const request = connection.request()
-      .input("user_id", medicationData.user_id)
-      .input("medication_name", medicationData.medication_name)
-      .input("dosage", medicationData.dosage)
-      .input("time", medicationData.medication_time)
-      .input("day_of_week", medicationData.day_of_week);
+    //Validate foreign keys
+    const userCheck = await connection.request()
+      .input("userId", data.userId)
+      .query("SELECT userId FROM users WHERE userId = @userId");
+    
+    if (userCheck.recordset.length === 0) {
+      throw new Error("User not found");
+    }
 
-    await request.query(query);
+    const medCheck = await connection.request()
+      .input("medId", data.medId)
+      .query("SELECT medId FROM medications WHERE medId = @medId");
+    
+    if (medCheck.recordset.length === 0) {
+      throw new Error("Medication not found");
+    }
+
+    //Check for duplicate medication for same user
+    const duplicateCheck = await connection.request()
+      .input("userId", data.userId)
+      .input("medId", data.medId)
+      .query("SELECT supplyId FROM user_medication_supply WHERE userId = @userId AND medId = @medId");
+    
+    if (duplicateCheck.recordset.length > 0) {
+      throw new Error("This medication is already assigned to this user");
+    }
+
+    const query = `
+      INSERT INTO user_medication_supply (userId, medId, dosage, refillThreshold, supplyQuantity, pillsLeft, medTime, medDayOfWeek, createDate)
+      VALUES (@userId, @medId, @dosage, @refillThreshold, @supplyQuantity, @pillsLeft, @medTime, @medDayOfWeek, @createDate)
+    `;
+
+    const request = connection.request()
+      .input("userId", data.userId)
+      .input("medId", data.medId)
+      .input("dosage", data.dosage)
+      .input("refillThreshold", data.refillThreshold)
+      .input("supplyQuantity", data.supplyQuantity)
+      .input("pillsLeft", data.supplyQuantity) 
+      .input("medTime", data.medication_time)  
+      .input("medDayOfWeek", data.day_of_week) 
+      .input("createDate", new Date());
+
+    const result = await request.query(query);
+    
+    return { success: true, rowsAffected: result.rowsAffected[0] };
+    
   } catch (error) {
     console.error("Database error:", error);
     throw error;
@@ -30,13 +66,11 @@ async function getAllMedications() {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
-    const query = `
-        SELECT id, user_id, medication_name, dosage, time, day_of_week 
-        FROM medication_schedule
-        ORDER BY day_of_week, time
-      `;
-    
-    const result = await connection.request().query(query);
+    const result = await connection.request().query(`
+      SELECT supplyId, userId, medId, dosage, refillThreshold, supplyQuantity, pillsLeft, medTime, medDayOfWeek, createDate
+      FROM user_medication_supply
+      ORDER BY createDate DESC
+    `);
     return result.recordset;
   } catch (error) {
     console.error("Database error:", error);
@@ -50,17 +84,15 @@ async function getAllMedicationsByUserId(userId) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
-    const query = `
-        SELECT id, user_id, medication_name, dosage, time, day_of_week 
-        FROM medication_schedule
-        WHERE user_id = @user_id
-        ORDER BY day_of_week, time
-      `;
-    
-    const request = connection.request()
-      .input("user_id", userId);
-
-    const result = await request.query(query);
+    const result = await connection.request()
+      .input("userId", userId)
+      .query(`
+        SELECT s.supplyId, s.userId, s.medId, m.medName AS medication_name, s.dosage, s.medTime AS medication_time, s.medDayOfWeek, s.refillThreshold, s.supplyQuantity, s.pillsLeft, s.createDate
+        FROM user_medication_supply s
+        JOIN medications m ON s.medId = m.medId
+        WHERE s.userId = @userId
+        ORDER BY s.createDate DESC`
+      );
     return result.recordset;
   } catch (error) {
     console.error("Database error:", error);
@@ -70,21 +102,72 @@ async function getAllMedicationsByUserId(userId) {
   }
 }
 
-async function getMedicationById(medicationId) {
+async function getMedicationById(supplyId) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
-    const query = `
-        SELECT id, user_id, medication_name, dosage, time, day_of_week 
-        FROM medication_schedule
-        WHERE id = @id
-      `;
+    const result = await connection.request()
+      .input("supplyId", supplyId)
+      .query(`
+        SELECT supplyId, userId, medId, dosage, refillThreshold, supplyQuantity, pillsLeft, medTime, medDayOfWeek, createDate
+        FROM user_medication_supply
+        WHERE supplyId = @supplyId
+      `);
+    return result.recordset[0];
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  } finally {
+    if (connection) await connection.close();
+  }
+}
+
+async function updateMedicine(supplyId, data) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
     
+    // Check if record exists first
+    const existsCheck = await connection.request()
+      .input("supplyId", supplyId)
+      .query("SELECT supplyId FROM user_medication_supply WHERE supplyId = @supplyId");
+    
+    if (existsCheck.recordset.length === 0) {
+      throw new Error("Medication record not found");
+    }
+
+    // Validate medId exists
+    const medCheck = await connection.request()
+      .input("medId", data.medId)
+      .query("SELECT medId FROM medications WHERE medId = @medId");
+    
+    if (medCheck.recordset.length === 0) {
+      throw new Error("Medication not found");
+    }
+
+    const query = `
+      UPDATE user_medication_supply 
+      SET medId = @medId, dosage = @dosage, refillThreshold = @refillThreshold, supplyQuantity = @supplyQuantity, medTime = @medTime, medDayOfWeek = @medDayOfWeek
+      WHERE supplyId = @supplyId
+    `;
+
     const request = connection.request()
-      .input("id", medicationId);
+      .input("supplyId", supplyId)
+      .input("medId", data.medId)
+      .input("dosage", data.dosage)
+      .input("refillThreshold", data.refillThreshold)
+      .input("supplyQuantity", data.supplyQuantity)
+      .input("medTime", data.medication_time)
+      .input("medDayOfWeek", data.day_of_week);
 
     const result = await request.query(query);
-    return result.recordset[0]; // Return the first (and only) record
+    
+    if (result.rowsAffected[0] === 0) {
+      throw new Error("No rows were updated");
+    }
+    
+    return { success: true, rowsAffected: result.rowsAffected[0] };
+    
   } catch (error) {
     console.error("Database error:", error);
     throw error;
@@ -93,27 +176,26 @@ async function getMedicationById(medicationId) {
   }
 }
 
-async function updateMedicine(medicationId, medicationData) {
+async function deleteMedicine(supplyId) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
-    const query = `
-        UPDATE medication_schedule 
-        SET medication_name = @medication_name,
-            dosage = @dosage,
-            time = @time,
-            day_of_week = @day_of_week
-        WHERE id = @id
-      `;
     
-    const request = connection.request()
-      .input("id", medicationId)
-      .input("medication_name", medicationData.medication_name)
-      .input("dosage", medicationData.dosage)
-      .input("time", medicationData.medication_time)
-      .input("day_of_week", medicationData.day_of_week);
+    // Check if record exists first
+    const existsCheck = await connection.request()
+      .input("supplyId", supplyId)
+      .query("SELECT supplyId FROM user_medication_supply WHERE supplyId = @supplyId");
+    
+    if (existsCheck.recordset.length === 0) {
+      throw new Error("Medication record not found");
+    }
 
-    await request.query(query);
+    const result = await connection.request()
+      .input("supplyId", supplyId)
+      .query("DELETE FROM user_medication_supply WHERE supplyId = @supplyId");
+    
+    return { success: true, rowsAffected: result.rowsAffected[0] };
+    
   } catch (error) {
     console.error("Database error:", error);
     throw error;
@@ -122,32 +204,28 @@ async function updateMedicine(medicationId, medicationData) {
   }
 }
 
-async function deleteMedicine(medicationId) {
+async function getAllMedicationNames() {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
-    const query = `
-        DELETE FROM medication_schedule 
-        WHERE id = @id
-      `;
-    
-    const request = connection.request()
-      .input("id", medicationId);
-
-    await request.query(query);
-  } catch (error) {
-    console.error("Database error:", error);
-    throw error;
+    const result = await connection.request().query(`
+      SELECT medId, medName FROM medications ORDER BY medName
+    `);
+    return result.recordset;
+  } catch (err) {
+    console.error("Error fetching medication names:", err);
+    throw err;
   } finally {
     if (connection) await connection.close();
   }
 }
 
-module.exports = { 
-  addMedicine, 
-  getAllMedications, 
-  getAllMedicationsByUserId, 
-  getMedicationById, 
-  updateMedicine, 
-  deleteMedicine 
+module.exports = {
+  addMedicine,
+  getAllMedications,
+  getAllMedicationsByUserId,
+  getMedicationById,
+  updateMedicine,
+  deleteMedicine,
+  getAllMedicationNames
 };

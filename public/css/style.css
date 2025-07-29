@@ -869,6 +869,8 @@ a {
   justify-content: center;
   gap: 12px;
   margin-top: 20px;
+  display:  flex;
+  position: flex;
 }
 
 .actions .btn {
@@ -880,6 +882,7 @@ a {
   cursor: pointer;
   box-sizing: border-box;
   display: inline-block;
+  
 }
 
 .actions .btn.cancel {

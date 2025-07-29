@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. Display current day and date
+  // Display current day and date
   const currentDateEl = document.getElementById("currentDate");
   if (currentDateEl) {
     const today = new Date();
@@ -102,5 +102,29 @@ updateCalendar(today);
         errorOption.disabled = true;
         dropdown.appendChild(errorOption);
       });
+  }
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const dropdown = document.getElementById("elderlyDropdown");
+  const button = document.querySelector(".view-medication-btn");
+
+  if (dropdown && button) {
+    button.addEventListener("click", () => {
+      const selectedValue = dropdown.value;
+
+      if (!selectedValue) {
+        alert("Please select an elderly user before continuing.");
+        return;
+      }
+
+      //Save to localStorage
+      localStorage.setItem("chosenuserID", selectedValue);
+      console.log("Saved chosenuserID:", selectedValue);
+      // Redirect to caregiverHomeScreen.html
+      window.location.href = "caregiverHomeScreen.html";
+
+    });
   }
 });
