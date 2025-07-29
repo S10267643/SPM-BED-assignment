@@ -27,27 +27,33 @@ document.addEventListener("DOMContentLoaded", () => {
         const content = document.createElement("div");
         content.className = "medication-content";
 
+        // Medication Name
         const name = document.createElement("div");
         name.className = "medication-name";
         name.textContent = med.medication_name;
+        content.appendChild(name);
 
+        // Time (from CSV string)
         const time = document.createElement("div");
         time.className = "medication-time";
-        time.textContent = `Time: ${formatTime24to12(med.medication_time)}`;
+        const timesArray = med.medication_time.split(',').map(t => t.trim());
+        const formattedTimes = timesArray.map(formatTime24to12).join(', ');
+        time.textContent = `Time: ${formattedTimes}`;
+        content.appendChild(time);
 
+        // Dosage
         const dosage = document.createElement("div");
         dosage.className = "medication-time";
         dosage.textContent = `Dosage: ${med.dosage}`;
+        content.appendChild(dosage);
 
+        // Days (CSV string like "Mon,Tue")
         const days = document.createElement("div");
         days.className = "medication-time";
         days.textContent = `Days: ${formatDays(med.medDayOfWeek)}`;
-
-        content.appendChild(name);
-        content.appendChild(time);
-        content.appendChild(dosage);
         content.appendChild(days);
 
+        // Checkbox
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.className = "medication-checkbox";
@@ -72,8 +78,9 @@ document.addEventListener("DOMContentLoaded", () => {
       list.innerHTML = "<div class='medication-item'>Failed to load medications.</div>";
     });
 
+  // Convert 24-hour time to AM/PM unless already in AM/PM format
   function formatTime24to12(timeStr) {
-    if (!timeStr || !timeStr.includes(":")) return timeStr;
+    if (!timeStr || /AM|PM/i.test(timeStr)) return timeStr;
     const [hour, minute] = timeStr.split(':');
     const h = parseInt(hour, 10);
     const ampm = h >= 12 ? 'PM' : 'AM';
@@ -81,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return `${h12}:${minute} ${ampm}`;
   }
 
+  // Format CSV days like "mon,tue" → "Mon, Tue"
   function formatDays(dayString) {
     if (!dayString || typeof dayString !== "string") return "";
     return dayString

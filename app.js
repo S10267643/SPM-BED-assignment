@@ -23,7 +23,8 @@ const notificationController = require("./controllers/NotificationController");
 const translationController = require("./controllers/translationController");
 
 //medicationHistory controller
-const medicationHistoryController = require("./controllers/medicationHistoryController")
+const medicationHistoryController = require("./controllers/medicationHistoryController");
+
 //medicationSchedule controllers
 const medicationValidation = require("./middlewares/medicationValidation");
 const medicationController = require("./controllers/medicationController");
@@ -43,8 +44,6 @@ app.post("/users/login", userController.loginUser);
 app.get("/users", userController.getUsersByRole); // Get users by role
 app.put("/users/:id", userController.updateUser);
 
-
-
 // Forget password routes
 app.post("/users/send-otp", userValidation.validateSendOtp, userController.sendOTP);
 app.post("/users/verify-otp", userValidation.validateVerifyOtp, userController.verifyOTP);
@@ -55,7 +54,7 @@ app.get('/api/emergency-contacts', verifyJWT, emergencyController.getAllEmergenc
 app.post('/api/emergency-contacts', verifyJWT, emergencyController.createEmergencyContact);
 app.get('/api/emergency-contacts/:id', verifyJWT, emergencyController.getEmergencyContactById);
 app.put('/api/emergency-contacts/:id', verifyJWT, emergencyController.updateEmergencyContact);
-app.delete('/api/emergency-contacts/:id',verifyJWT, emergencyController.deleteEmergencyContact);
+app.delete('/api/emergency-contacts/:id', verifyJWT, emergencyController.deleteEmergencyContact);
 
 // Custom notifications routes 
 app.post("/api/notifications", notificationController.createNotification);
@@ -68,8 +67,12 @@ app.get("/api/sendNotifications", notificationController.sendNotifications);
 
 //medicationSchedule routes
 app.post('/api/medications', verifyJWT, medicationValidation.validateMedication, medicationController.addMedicine);
+
+// ✅ New route to return all medications for dropdown
+app.get('/api/medications/all', medicationController.getAllMedicationNames);
+
 app.get('/api/medications/:id', medicationValidation.validateMedicationId, medicationController.getMedicationById);
-app.get('/api/medications/user/:userId',medicationController.getAllMedicationsByUserId);
+app.get('/api/medications/user/:userId', medicationController.getAllMedicationsByUserId);
 app.put('/api/medications/:id', medicationValidation.validateMedicationId, medicationValidation.validateUpdateMedication, medicationController.updateMedicine);
 app.delete('/api/medications/:id', medicationValidation.validateMedicationId, medicationController.deleteMedicine);
 
@@ -88,14 +91,6 @@ app.post("/api/messages", messageController.sendMessage);
 app.put("/api/messages/:messageId", messageController.editMessage); 
 app.delete("/api/messages/:messageId", messageController.deleteMessage);
 app.get("/api/messages/caregiver", messageController.getMessagesForCaregiver);
-
-
-
-
-
-
-
-
 
 // Start server
 app.listen(port, () => {
