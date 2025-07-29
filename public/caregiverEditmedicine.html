@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Medication</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="addmedication-container">
+    <h2>Edit Medication</h2>
+
+    <label for="elderlyDropdown">Elderly Name</label>
+      <select id="elderlyDropdown" aria-placeholder="Choose Elderly">
+  
+    </select> 
+
+
+
+    <label for="medName">Medication Name</label>
+    <select id="medName">
+      <option disabled selected value="">Choose Medication</option>
+    </select>
+
+
+    <label for="dosage">Dosage</label>
+    <input type="text" id="dosage" placeholder="e.g. 2 pills" />
+
+    <label for="supplyQuantity">Supply Quantity</label>
+    <input type="text" id="supplyQuantity" />
+
+    <label for="refillThreshold">Refill Threshold</label>
+    <input type="text" id="refillThreshold" />
+
+    <label>Select Days</label>
+    <div class="date-picker">
+      <div class="day" id="Mon">Mon</div>
+      <div class="day" id="Tue">Tue</div>
+      <div class="day" id="Wed">Wed</div>
+      <div class="day" id="Thu">Thu</div>
+      <div class="day" id="Fri">Fri</div>
+      <div class="day" id="Sat">Sat</div>
+      <div class="day" id="Sun">Sun</div>
+    </div>
+    <div class="actions">
+      <button type="button" id="selectAllDays" class="btn cancel">Select All</button>
+      <button type="button" id="deselectAllDays" class="btn cancel">Deselect All</button>
+    </div>
+
+    <label>Medication Time(s)</label>
+    <div class="time-select-section" id="timeSelectSection"></div>
+    <button type="button" id="addTimeSelect" class="add-time-btn">Add Another Time</button>
+
+    <div class="actions">
+      <button type="button" class="btn confirm">Confirm</button>
+      <button type="button" class="btn cancel" onclick="window.history.back()">Cancel</button>
+    </div>
+  </div>
+
+  <script src="script/caregiverEditmedscript.js"></script>
+</body>
+</html> 
