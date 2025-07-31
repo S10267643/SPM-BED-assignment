@@ -1,4 +1,4 @@
-const MarkAsReadModel = require("../models/markasreadModel");
+const MarkAsReadModel = require("../models/markasdoneModel");
 
 async function createMedicationLog(req, res) {
   const { userId, medId } = req.body;

@@ -32,8 +32,8 @@ const medicationController = require("./controllers/medicationController");
 // messages controller
 const messageController = require("./controllers/messagesController");
 
-// MarkasRead controller
-const markasreadController = require("./controllers/markasreadController");
+// MarkasDone controller
+const markasdoneController = require("./controllers/markasdoneController");
 
 // Middleware
 app.use(express.json());
@@ -96,8 +96,8 @@ app.delete("/api/messages/:messageId", messageController.deleteMessage);
 app.get("/api/messages/caregiver", messageController.getMessagesForCaregiver);
 
 // Mark as Read routes
-app.post("/api/medication-logs", markasreadController.createMedicationLog);
-app.delete("/api/medication-logs", markasreadController.deleteMedicationLog);
+app.post("/api/medication-logs", markasdoneController.createMedicationLog);
+app.delete("/api/medication-logs", markasdoneController.deleteMedicationLog);
 
 // Start server
 app.listen(port, () => {
