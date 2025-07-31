@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Medication History</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            margin: 5px;
+        }
+
+        #formSection, #detailSection {
+            display: none;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Medication History for Selected Elderly</h1>
+
+    <button onclick="fetchMedicationHistory()">Refresh List</button>
+    <button onclick="showAddForm()">Add New Record</button>
+
+    <table id="historyTable">
+        <thead>
+            <tr>
+                <th>Medication</th>
+                <th>Dosage</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- Add/Edit Form -->
+    <div id="formSection">
+        <h3 id="formTitle">Add Medication History</h3>
+        <form id="historyForm">
+            <input type="hidden" id="historyId" />
+            <label>Medication ID: <input type="number" id="medId" required /></label><br />
+            <label>Dosage: <input type="text" id="dosage" required /></label><br />
+            <label>Pills Left: <input type="number" id="pillsLeft" required /></label><br />
+            <label>Notes: <textarea id="notes"></textarea></label><br />
+            <button type="submit">Save</button>
+            <button type="button" onclick="hideForm()">Cancel</button>
+        </form>
+    </div>
+
+    <!-- Detail View -->
+    <div id="detailSection">
+        <h3>Medication Details</h3>
+        <p><strong>Name:</strong> <span id="detailName"></span></p>
+        <p><strong>Dosage:</strong> <span id="detailDosage"></span></p>
+        <p><strong>Notes:</strong> <span id="detailNotes"></span></p>
+        <button onclick="document.getElementById('detailSection').style.display='none'">Close</button>
+    </div>
+
+    <script>
+        const userId = localStorage.getItem("chosenuserID");
+        const token = localStorage.getItem("token");
+
+        async function fetchMedicationHistory() {
+            const res = await fetch(`/api/medication-history?userId=${userId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            const tableBody = document.querySelector("#historyTable tbody");
+            tableBody.innerHTML = "";
+
+            if (res.ok) {
+                const data = await res.json();
+                data.forEach(record => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                            <td><a href="#" onclick="showDetails(${record.historyId})">${record.medication_name}</a></td>
+                            <td>${record.dosage}</td>
+                            <td>
+                                <button onclick="editRecord(${record.historyId})">Edit</button>
+                                <button onclick="deleteRecord(${record.historyId})">Delete</button>
+                            </td>
+                        `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                tableBody.innerHTML = "<tr><td colspan='3'>No records found</td></tr>";
+            }
+        }
+
+        function showAddForm() {
+            document.getElementById("formTitle").textContent = "Add Medication History";
+            document.getElementById("historyForm").reset();
+            document.getElementById("historyId").value = "";
+            document.getElementById("formSection").style.display = "block";
+        }
+
+        function hideForm() {
+            document.getElementById("formSection").style.display = "none";
+        }
+
+        async function editRecord(id) {
+            const res = await fetch(`/api/medication-history/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (!res.ok) return alert("Failed to fetch record");
+
+            const data = await res.json();
+            document.getElementById("formTitle").textContent = "Edit Medication History";
+            document.getElementById("historyId").value = id;
+            document.getElementById("medId").value = data.medId || "";
+            document.getElementById("dosage").value = data.dosage || "";
+            document.getElementById("pillsLeft").value = data.pillsLeft || 0;
+            document.getElementById("notes").value = data.notes || "";
+            document.getElementById("formSection").style.display = "block";
+        }
+
+        async function deleteRecord(id) {
+            if (!confirm("Are you sure you want to delete this record?")) return;
+
+            const res = await fetch(`/api/medication-history/${id}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (res.ok) {
+                alert("Deleted!");
+                fetchMedicationHistory();
+            } else {
+                alert("Failed to delete");
+            }
+        }
+
+        async function showDetails(id) {
+            const res = await fetch(`/api/medication-history/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (!res.ok) {
+                alert("Failed to fetch details");
+                return;
+            }
+
+            const detail = await res.json();
+            document.getElementById("detailName").textContent = detail.medication_name;
+            document.getElementById("detailDosage").textContent = detail.dosage;
+            document.getElementById("detailNotes").textContent = detail.notes || "None";
+            document.getElementById("detailSection").style.display = "block";
+        }
+
+        document.getElementById("historyForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const id = document.getElementById("historyId").value;
+            const payload = {
+                userId,
+                medId: document.getElementById("medId").value,
+                dosage: document.getElementById("dosage").value,
+                pillsLeft: document.getElementById("pillsLeft").value,
+                notes: document.getElementById("notes").value,
+            };
+
+            const res = await fetch(`/api/medication-history${id ? `/${id}` : ""}`, {
+                method: id ? "PUT" : "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                hideForm();
+                fetchMedicationHistory();
+            } else {
+                alert("Failed to save");
+            }
+        });
+
+        // Load data on startup
+        fetchMedicationHistory();
+    </script>
+</body>
+</html>

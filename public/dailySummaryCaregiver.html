@@ -1,16 +1,17 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Daily Medication Summary</title>
+    <title>Caregiver - View Daily Summary</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial;
             padding: 20px;
         }
 
         button {
-            margin: 5px;
+            margin: 5px 10px 5px 0;
+            padding: 6px 12px;
         }
 
         table {
@@ -26,20 +27,23 @@
         }
 
         th {
-            background-color: #f0f0f0;
+            background-color: #f2f2f2;
         }
 
         #summarySection {
             display: none;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Daily Summary</h1>
+    <h2>Caregiver - Daily Summary for Elderly</h2>
 
-    <button onclick="generateToday()">Generate Today's Summary</button>
-    <button onclick="fetchSummary(-1)">View Yesterday's Summary</button>
-    <button onclick="fetchSummary(-2)">View 2 Days Ago</button>
+    <div>
+        <button onclick="fetchSummary(0)">View Today's Summary</button>
+        <button onclick="fetchSummary(-1)">View Yesterday's Summary</button>
+        <button onclick="fetchSummary(-2)">View 2 Days Ago</button>
+    </div>
 
     <div id="summarySection">
         <h3 id="summaryDateTitle"></h3>
@@ -57,6 +61,13 @@
 
     <script>
         const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("chosenuserID");
+
+        // Disable buttons if no elderly selected
+        if (!userId) {
+            alert("No elderly selected. Please go back and choose one.");
+            document.querySelectorAll("button").forEach(btn => btn.disabled = true);
+        }
 
         function formatStatus(taken) {
             return taken ? "✅ Taken" : "❌ Missed";
@@ -66,43 +77,29 @@
             document.getElementById("summaryDateTitle").textContent = `Summary for ${date}`;
             const tbody = document.getElementById("summaryTableBody");
             tbody.innerHTML = "";
+
             entries.forEach(entry => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-              <td>${entry.medName}</td>
-              <td>${entry.time}</td>
-              <td>${formatStatus(entry.taken)}</td>
-            `;
+                        <td>${entry.medName}</td>
+                        <td>${entry.time}</td>
+                        <td>${formatStatus(entry.taken)}</td>
+                    `;
                 tbody.appendChild(row);
             });
+
             document.getElementById("summarySection").style.display = "block";
         }
 
-        async function generateToday() {
-            try {
-                const res = await fetch("/api/daily-summaries", {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    displaySummary(data.summaryDate, data.entries);
-                } else {
-                    alert("Failed to generate today's summary");
-                }
-            } catch (err) {
-                console.error(err);
-                alert("An error occurred");
-            }
-        }
-
         async function fetchSummary(daysAgo) {
+            if (!userId) return;
+
             const date = new Date();
             date.setDate(date.getDate() + daysAgo);
             const isoDate = date.toISOString().split("T")[0];
 
             try {
-                const res = await fetch(`/api/daily-summaries/by-date?date=${isoDate}`, {
+                const res = await fetch(`/api/daily-summaries/user/${userId}/by-date?date=${isoDate}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -110,11 +107,11 @@
                     const data = await res.json();
                     displaySummary(data.summaryDate, data.entries);
                 } else {
-                    alert("No summary found for that date");
+                    alert("No summary found for this date.");
                 }
             } catch (err) {
-                console.error(err);
-                alert("Error fetching summary");
+                console.error("Error fetching summary:", err);
+                alert("An error occurred while fetching summary.");
             }
         }
     </script>
