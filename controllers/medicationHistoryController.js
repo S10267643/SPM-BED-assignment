@@ -9,7 +9,14 @@ const {
 // Caregiver & Senior: View summary
 async function fetchMedicalHistoryByUserId(req, res) {
     try {
-        const userId = req.user.userId; // From JWT
+        const userId = req.user.role === "Caregiver"
+            ? req.query.userId
+            : req.user.userId;
+
+        if (!userId) {
+            return res.status(400).json({ error: "Missing target user ID" });
+        }
+
         const result = await getMedicationHistoryByUserId(userId);
         res.status(200).json(result);
     } catch (err) {
@@ -17,6 +24,7 @@ async function fetchMedicalHistoryByUserId(req, res) {
         res.status(500).json({ error: "Internal server error" });
     }
 }
+
 
 // Caregiver & Senior: View individual record (full detail)
 async function fetchMedicalHistoryById(req, res) {

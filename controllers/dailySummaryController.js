@@ -1,11 +1,13 @@
-// controllers/dailySummaryController.js
-const { generateAndStoreDailySummary, getSummaryByDate } = require("../models/dailySummaryModel");
+const {
+    generateDailySummary,
+    getSummaryByDate
+} = require("../models/dailySummaryModel");
 
-// For authenticated users to view today's daily summary (or generate if not exists)
+// Elderly: generate or view today's summary
 async function getDailySummary(req, res) {
     try {
-        const userId = req.user.userId; // correct key from JWT
-        const result = await generateAndStoreDailySummary(userId);
+        const userId = req.user.userId;
+        const result = await generateDailySummary(userId);
         res.status(200).json(result);
     } catch (err) {
         console.error("Error generating daily summary:", err);
@@ -13,29 +15,44 @@ async function getDailySummary(req, res) {
     }
 }
 
-// For authenticated users to fetch a summary by a specific date
-async function getDailySummaryByDate(req, res) {
+// Elderly: view past summary by date
+async function getUserSummaryByDate(req, res) {
     try {
-        const userId = req.user.userId; // FIX: should be userId, not id
+        const userId = req.user.userId;
         const date = req.query.date;
+        if (!date) return res.status(400).json({ error: "Date parameter is required" });
 
-        if (!date) {
-            return res.status(400).json({ error: "Date parameter is required" });
-        }
+        const result = await getSummaryByDate(userId, date);
+        if (!result) return res.status(404).json({ message: "No summary found for that date" });
 
-        const summary = await getSummaryByDate(userId, date);
-        if (!summary) {
-            return res.status(404).json({ message: "No summary found for this date" });
-        }
-
-        res.status(200).json(summary);
-    } catch (error) {
-        console.error("Error fetching summary by date:", error);
+        res.status(200).json(result);
+    } catch (err) {
+        console.error("Error fetching summary by date:", err);
         res.status(500).json({ error: "Internal server error" });
     }
 }
 
+
+async function getElderlySummaryByDate(req, res) {
+    try {
+        const userId = parseInt(req.params.userId);  // 
+        const date = req.query.date;
+
+        if (!date) return res.status(400).json({ error: "Date parameter is required" });
+
+        const result = await getSummaryByDate(userId, date);
+        if (!result) return res.status(404).json({ message: "No summary found for that date" });
+
+        res.status(200).json(result);
+    } catch (err) {
+        console.error("Error fetching elderly summary:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+
 module.exports = {
     getDailySummary,
-    getDailySummaryByDate
+    getUserSummaryByDate,
+    getElderlySummaryByDate
 };
