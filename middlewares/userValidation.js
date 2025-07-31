@@ -26,6 +26,7 @@ const userSchema = Joi.object({
     "any.only": "Role must be either 'Elderly' or 'Caregiver'",
     "any.required": "Role is required"
   }),
+  captcha: Joi.string().required(),
 });
 
 

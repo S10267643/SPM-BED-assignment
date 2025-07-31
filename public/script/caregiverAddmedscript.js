@@ -321,7 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         if (response.ok) {
           alert("Medication added successfully!");
-          window.location.href = "caregiverHomeScreen.html";
+          window.location.href = "caregiverChooseElderly.html";
         } else {
           // Better error handling
           console.error("Server error:", data);

@@ -4,13 +4,20 @@ document.getElementById("loginForm").addEventListener("submit", async function (
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
+  // Get reCAPTCHA token
+  const captcha = grecaptcha.getResponse();
+  if (!captcha) {
+    alert("Please complete the CAPTCHA.");
+    return;
+  }
+
   try {
     const response = await fetch("/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, captcha }),
     });
 
     const data = await response.json();
