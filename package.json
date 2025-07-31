@@ -9,6 +9,7 @@
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mssql": "^11.0.1",
+    "node-fetch": "^3.3.2",
     "node-pushnotifications": "^2.1.0",
     "nodemailer": "^7.0.5",
     "web-push": "^3.6.7"
