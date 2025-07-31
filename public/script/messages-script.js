@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         // Show loading state
-        messageInbox.innerHTML = '<div class="no-messages">Loading messages...</div>';
+        messageInbox.innerHTML = '<div class="no-messages" data-translate="loading_messages">Loading messages...</div>';
         
         // Make sure section is visible
         caregiverInboxSection.style.display = 'block';
@@ -51,14 +51,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             
             if (messages.length === 0) {
                 document.getElementById('messageInbox').innerHTML = 
-                    '<div class="no-messages">No messages yet</div>';
+                    '<div class="no-messages" data-translate="no_messages">No messages yet</div>';
             } else {
                 renderMessageInbox(messages);
             }
         } catch (error) {
             console.error('Error loading messages:', error);
             document.getElementById('messageInbox').innerHTML = 
-                '<div class="no-messages">Error loading messages</div>';
+                '<div class="no-messages" data-translate="error_loading_messages">Error loading messages</div>';
         }
     }
 
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     <span class="inbox-time">${formatTimestamp(msg.timestamp)}</span>
                 </div>
                 <div class="inbox-content">${msg.message}</div>
-                <button class="mark-read-btn" data-message-id="${msg.messageId}">Mark as Read</button>
+                <button class="mark-read-btn" data-message-id="${msg.messageId}" data-translate="mark_as_read">Mark as Read</button>
             `;
             messageDiv.onclick = (e) => {
                 // Only view conversation if the click wasn't on the mark as read button
@@ -282,8 +282,8 @@ document.addEventListener('DOMContentLoaded', async function() {
                 <strong>${currentUser.name || 'You'}:</strong>
                 <input type="text" value="${currentText}" class="edit-input">
                 <div class="edit-actions">
-                    <button class="save-edit">Save</button>
-                    <button class="cancel-edit">Cancel</button>
+                    <button class="save-edit" data-translate="save">Save</button>
+                    <button class="cancel-edit" data-translate="cancel">Cancel</button>
                 </div>
             </div>
         `;

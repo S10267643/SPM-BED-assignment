@@ -39,15 +39,23 @@ function applyTranslations(translations) {
 
     if (!translatedText) return;
 
-    if (element.tagName === 'INPUT' && element.placeholder) {
+    // Handle input/textarea placeholders
+    if ((element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') && element.placeholder) {
       element.placeholder = translatedText;
-
-    } else if (element.children.length === 0) {
-      // Safe to replace if no child elements
+    }
+    // Handle input values (for buttons)
+    else if (element.tagName === 'INPUT' && element.value) {
+      element.value = translatedText;
+    }
+    // Handle button text content
+    else if (element.tagName === 'BUTTON') {
       element.textContent = translatedText;
-
-    } else {
-      // Don't overwrite HTML content that includes child tags (e.g., <a>)
+    }
+    // Handle regular text content
+    else if (element.children.length === 0) {
+      element.textContent = translatedText;
+    }
+    else {
       console.warn(`Skipped translation for ${key} to preserve HTML inside:`, element);
     }
   });

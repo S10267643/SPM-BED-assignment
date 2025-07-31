@@ -108,10 +108,25 @@ function loadCheckboxStates() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Display User Name
+
   const userName = localStorage.getItem("userName");
+  let preferredLanguage = localStorage.getItem("preferredLanguage") || 
+                         localStorage.getItem("language") || 
+                         'English'; // Default to English
+
+  // Normalize language value (handle case where backend uses 'Chinese' but frontend expects 'zh')
+  if (preferredLanguage === 'Chinese' || preferredLanguage === 'zh') {
+    preferredLanguage = 'Chinese';
+  }
+
   if (userName) {
-    document.getElementById("welcomeMessage").textContent = `Hello, ${userName}!`;
+    const welcomeMessage = document.getElementById("welcomeMessage");
+    
+    if (preferredLanguage === 'Chinese') {
+      welcomeMessage.textContent = `你好, ${userName}!`;
+    } else {
+      welcomeMessage.textContent = `Hello, ${userName}!`;
+    }
   }
 
   // Hide Add Pills nav for Elderly
@@ -218,9 +233,4 @@ function urlBase64ToUint8Array(base64String) {
   return outputArray;
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  const userName = localStorage.getItem("userName");
-  if (userName) {
-    document.getElementById("welcomeMessage").textContent = `Hello, ${userName}!`;
-  }
-});
+

@@ -5,7 +5,7 @@
       <!-- Top: Header -->
       <div class="addmedication-button" onclick="location.href='caregiverSettings.html'">☰</div>
       <div class="header">
-        <h1 data-translate="welcome_message">Hello, User!</h1>
+        <h1 id="welcomeMessage"></h1>
         <div class="date" id="currentDate"></div>
         <link rel="stylesheet" href="css/style.css" />
       </div>
@@ -40,9 +40,9 @@
 
       <!-- Middle: Message Inbox -->
       <div class="message-inbox-container" id="caregiverInboxSection">
-        <h3>Recent Messages</h3>
+        <h3 data-translate="recent_message">Recent Messages</h3>
         <div class="message-inbox" id="messageInbox">
-            <div class="no-messages">Loading messages...</div>
+            <div class="no-messages" data-translate="loading_messahes">Loading messages...</div>
         </div>
     </div>
       <!-- Middle: Person Dropdown -->
@@ -63,7 +63,7 @@
       <div class="navigation">
         <div class="nav-item active" data-translate="medication">Medication</div>
         <div class="nav-item" onclick="location.href='caregiverAddmedicine.html'" data-translate="add_pills">Add pills</div>
-        <div class="nav-item" onclick="location.href='caregiverDeletemedicine.html'" data-translate="delete_pills">Manage pills</div>
+        <div class="nav-item" onclick="location.href='caregiverDeletemedicine.html'" data-translate="manage_pills">Manage pills</div>
         <div class="nav-item" data-translate="emergency">Emergency</div>
       </div>
 

@@ -79,7 +79,7 @@ class TranslationModel {
       title: "DailyDose",
 
       // index.html
-      welcome_message: "Hello, User!",
+      welcome_message: "Hello,",
       messages: "Messages",
       medication: "Medication",
       add_pills: "Add pills",
@@ -91,6 +91,7 @@ class TranslationModel {
       custom_notification: "Custom Notifications",
       medical_history: "Medical History",
       credits: "Credits",
+      edit_profile: "Edit Profile",
 
       // addmedicine.html
       add_medication_title: "Add Medication",
@@ -139,6 +140,36 @@ class TranslationModel {
       name_placeholder: "Enter your full name",
       email_placeholder: "Enter your email",
       password_placeholder: "Create a password",
+      role_label: "Role:",
+      role_caregiver: "Caregiver",
+      role_elderly: "Elderly",
+
+      // elderlyEditProfile.html
+      phone_number: "Phone Number",
+      phone_placeholder: "Enter your phone number",
+      save_changes: "Save Changes",
+
+      //caregiverChooseElderly.html
+      choose_elderly: "Choose Elderly",
+      manage_pills: "Manage Pills",
+      recent_message: "Recent Messages",
+      loading_messages: "Loading messages...",
+      mark_as_read: "Mark as Read",
+
+      //caregiverAddMedicine.html
+
+      //elderlyMessages.html
+      select_caregiver: "Select Caregiver",
+      select_option: "Select a Caregiver",
+      confirm_selection: "Confirm Selection",
+      message_placeholder: "Type your message here...",
+      send: "Send",
+      no_messages: "No messages available",
+      loading_messages: "Loading messages...",
+      error_loading_messages: "Error loading messages",
+      save: "Save",
+      cancel: "Cancel",
+
 
 
 

@@ -9,7 +9,16 @@ async function loadTranslations(lang) {
     // Apply translations to the page
     document.querySelectorAll('[data-translate]').forEach(el => {
       const key = el.getAttribute('data-translate');
-      if (translations[key]) el.textContent = translations[key];
+      if (translations[key]) {
+        // Handle regular text elements
+        if (el.textContent) {
+          el.textContent = translations[key];
+        }
+        // Handle input placeholders
+        if (el.placeholder) {
+          el.placeholder = translations[key];
+        }
+      }
     });
   } catch (error) {
     console.error("Translation error:", error);
