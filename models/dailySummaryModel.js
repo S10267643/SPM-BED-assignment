@@ -1,61 +1,58 @@
 const sql = require("mssql");
 const dbConfig = require("../dbConfig");
 
-// Generates and stores today's summary if not already exists
-async function generateAndStoreDailySummary(userId) {
+function formatTime(date) {
+    const d = new Date(date);
+    return d.toTimeString().split(":").slice(0, 2).join(":"); // "HH:mm"
+}
+
+async function generateDailySummary(userId) {
     const pool = await sql.connect(dbConfig);
     const today = new Date().toISOString().split("T")[0];
 
-    // 1. Check for existing summary
-    const existing = await pool.request()
+    // 1. Delete any existing summary for today
+    await pool.request()
         .input("userId", sql.Int, userId)
         .input("summaryDate", sql.Date, today)
         .query(`
-            SELECT summaryId FROM daily_summaries
-            WHERE userId = @userId AND summaryDate = @summaryDate
+            DELETE FROM daily_summary_entries 
+            WHERE summaryId IN (
+                SELECT summaryId FROM daily_summaries
+                WHERE userId = @userId AND summaryDate = @summaryDate
+            );
+
+            DELETE FROM daily_summaries 
+            WHERE userId = @userId AND summaryDate = @summaryDate;
         `);
 
-    if (existing.recordset.length > 0) {
-        const summaryId = existing.recordset[0].summaryId;
-
-        const entries = await pool.request()
-            .input("summaryId", sql.Int, summaryId)
-            .query(`
-                SELECT medName, time, taken
-                FROM daily_summary_entries
-                WHERE summaryId = @summaryId
-            `);
-
-        return {
-            summaryDate: today,
-            entries: entries.recordset
-        };
-    }
-
-    // 2. Get scheduled meds
-    const scheduledQuery = await pool.request()
+    // 2. Get today's scheduled meds
+    const dayOfWeek = new Date().getDay(); // 0 = Sunday
+    const scheduled = await pool.request()
         .input("userId", sql.Int, userId)
         .query(`
-            SELECT DISTINCT ums.medId, m.medName, ums.medTime
+            SELECT ums.medId, m.medName, ums.medTime
             FROM user_medication_supply ums
             JOIN medications m ON ums.medId = m.medId
             WHERE ums.userId = @userId
+              AND (',' + ums.medDayOfWeek + ',' LIKE '%,' + CAST(${dayOfWeek} AS VARCHAR) + ',%')
         `);
-    const scheduledMeds = scheduledQuery.recordset;
 
-    // 3. Get taken meds today
-    const takenQuery = await pool.request()
+    // 3. Get today's logs
+    const logs = await pool.request()
         .input("userId", sql.Int, userId)
         .input("logDate", sql.Date, today)
         .query(`
-            SELECT DISTINCT medId
+            SELECT medId, LogTime
             FROM medication_logs
             WHERE userId = @userId AND logDate = @logDate
         `);
-    const takenMedIds = new Set(takenQuery.recordset.map(row => row.medId));
 
-    // 4. Insert summary record
-    const insertSummary = await pool.request()
+    const takenSet = new Set(
+        logs.recordset.map(log => `${log.medId}-${formatTime(log.LogTime)}`)
+    );
+
+    // 4. Insert new summary
+    const insert = await pool.request()
         .input("userId", sql.Int, userId)
         .input("summaryDate", sql.Date, today)
         .query(`
@@ -63,40 +60,65 @@ async function generateAndStoreDailySummary(userId) {
             OUTPUT INSERTED.summaryId
             VALUES (@userId, @summaryDate)
         `);
-    const summaryId = insertSummary.recordset[0].summaryId;
 
-    // 5. Insert entries
-    for (const med of scheduledMeds) {
-        const taken = takenMedIds.has(med.medId) ? 1 : 0;
+    const summaryId = insert.recordset[0].summaryId;
 
-        await pool.request()
-            .input("summaryId", sql.Int, summaryId)
-            .input("medId", sql.Int, med.medId)
-            .input("medName", sql.NVarChar(100), med.medName)
-            .input("time", sql.NVarChar(10), med.medTime)
-            .input("taken", sql.Bit, taken)
-            .query(`
-                INSERT INTO daily_summary_entries (summaryId, medId, medName, time, taken)
-                VALUES (@summaryId, @medId, @medName, @time, @taken)
-            `);
+    // 5. Insert all med/time rows
+    for (const { medId, medName, medTime } of scheduled.recordset) {
+        const times = medTime.split(",");
+        for (const time of times) {
+            const taken = takenSet.has(`${medId}-${time}`) ? 1 : 0;
+
+            await pool.request()
+                .input("summaryId", sql.Int, summaryId)
+                .input("medId", sql.Int, medId)
+                .input("medName", sql.NVarChar(255), medName)
+                .input("time", sql.VarChar(10), time)
+                .input("taken", sql.Bit, taken)
+                .query(`
+                    INSERT INTO daily_summary_entries (summaryId, medId, medName, time, taken)
+                    VALUES (@summaryId, @medId, @medName, @time, @taken)
+                `);
+        }
     }
 
-    // 6. Clean up old summaries
-    await cleanOldSummaries();
+    // 6. Cleanup old summaries
+    await deleteOldSummaries();
+
+    return await getSummaryByDate(userId, today);
+}
+
+async function getSummaryByDate(userId, date) {
+    const pool = await sql.connect(dbConfig);
+
+    const summary = await pool.request()
+        .input("userId", sql.Int, userId)
+        .input("summaryDate", sql.Date, date)
+        .query(`
+            SELECT summaryId FROM daily_summaries
+            WHERE userId = @userId AND summaryDate = @summaryDate
+        `);
+
+    if (summary.recordset.length === 0) return null;
+
+    const summaryId = summary.recordset[0].summaryId;
+
+    const entries = await pool.request()
+        .input("summaryId", sql.Int, summaryId)
+        .query(`
+            SELECT medName, time, taken
+            FROM daily_summary_entries
+            WHERE summaryId = @summaryId
+            ORDER BY time
+        `);
 
     return {
-        message: "Summary generated and saved",
-        summaryDate: today,
-        entries: scheduledMeds.map(med => ({
-            medName: med.medName,
-            time: med.medTime,
-            taken: takenMedIds.has(med.medId)
-        }))
+        summaryDate: date,
+        entries: entries.recordset
     };
 }
 
-// Deletes entries older than 2 days
-async function cleanOldSummaries() {
+async function deleteOldSummaries() {
     const pool = await sql.connect(dbConfig);
     await pool.request().query(`
         DELETE FROM daily_summary_entries
@@ -110,40 +132,7 @@ async function cleanOldSummaries() {
     `);
 }
 
-// Fetch summary by date
-async function getSummaryByDate(userId, date) {
-    const pool = await sql.connect(dbConfig);
-
-    const summaryResult = await pool.request()
-        .input("userId", sql.Int, userId)
-        .input("summaryDate", sql.Date, date)
-        .query(`
-            SELECT summaryId, summaryDate
-            FROM daily_summaries
-            WHERE userId = @userId AND summaryDate = @summaryDate
-        `);
-
-    if (summaryResult.recordset.length === 0) return null;
-
-    const summary = summaryResult.recordset[0];
-
-    const entriesResult = await pool.request()
-        .input("summaryId", sql.Int, summary.summaryId) //  This is required
-        .query(`
-            SELECT medName, time, taken
-            FROM daily_summary_entries  -- Use correct table
-            WHERE summaryId = @summaryId
-        `);
-
-    return {
-        summaryDate: summary.summaryDate,
-        entries: entriesResult.recordset
-    };
-}
-
-
 module.exports = {
-    generateAndStoreDailySummary,
-    cleanOldSummaries,
+    generateDailySummary,
     getSummaryByDate
 };
