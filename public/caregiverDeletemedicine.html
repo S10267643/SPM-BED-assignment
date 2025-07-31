@@ -5,17 +5,18 @@
   <title>Delete Medication</title>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/deletemedicine.css">
+  <script src="script/caregiverChangeLanguage.js"></script>
 </head>
 <body>
 
 <div class="addmedication-container">
     <a href="caregiverHomeScreen.html" class="back-btn">&#8592;</a>
     
-  <h2>Edit Medication</h2>
-  <h3>Pick Medicine</h3>
-  <label for="elderlyDropdown">Elderly Name</label>
-<select id="elderlyDropdown" aria-placeholder="Choose Elderly">
-  <option disabled selected value="">Choose Elderly</option>
+  <h2 data-translate="edit_medication">Edit Medication</h2>
+  <h3 data-translate="pick_medicine">Pick Medicine</h3>
+  <label for="elderlyDropdown" data-translate="elderly_name">Elderly Name</label>
+<select id="elderlyDropdown" aria-placeholder="Choose Elderly" data-translate="choose_elderly">
+  <option disabled selected value="" data-translate="choose_elderly">Choose Elderly</option>
 </select>
 
 
@@ -26,8 +27,8 @@
   </div>
 
   <div class="actions">
-    <a class="btn delete">Delete</a>
-    <button class="btn edit">Edit</button>
+    <a class="btn delete" data-translate="delete">Delete</a>
+    <button class="btn edit" data-translate="edit">Edit</button>
   </div>
 </div>
 

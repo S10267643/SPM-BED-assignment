@@ -81,6 +81,63 @@ function loadCheckboxStates() {
   });
 }
 
+// ---------- Checkbox Functions ----------
+async function handleMedicationCheckbox(checkbox, userId, medId) {
+  const isChecked = checkbox.checked;
+  const endpoint = '/api/medication-logs';
+  
+  try {
+    const response = await fetch(
+      isChecked ? endpoint : `${endpoint}?userId=${userId}&medId=${medId}`,
+      {
+        method: isChecked ? 'POST' : 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: isChecked ? JSON.stringify({ userId, medId }) : null
+      }
+    );
+
+    if (!response.ok) throw new Error(`Failed to ${isChecked ? 'log' : 'unlog'} medication`);
+
+    updateMedicationStyle(checkbox);
+    saveCheckboxState(checkbox);
+  } catch (error) {
+    console.error('Error:', error);
+    checkbox.checked = !isChecked;
+    updateMedicationStyle(checkbox);
+  }
+}
+
+async function loadInitialMedicationStates() {
+  const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token");
+  
+  if (!userId || !token) return;
+
+  try {
+    const response = await fetch(`/api/medication-logs/user/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    
+    if (response.ok) {
+      const logs = await response.json();
+      // Process logs to set initial checkbox states
+      document.querySelectorAll('.medication-checkbox').forEach(checkbox => {
+        const medId = checkbox.closest(".medication-item").getAttribute("data-medid");
+        const isTaken = logs.some(log => log.medId == medId);
+        checkbox.checked = isTaken;
+        updateMedicationStyle(checkbox);
+      });
+    }
+  } catch (error) {
+    console.error('Failed to load medication logs:', error);
+  }
+}
+
+
+
 // ---------- DOM Ready ----------
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -207,11 +264,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const saved = localStorage.getItem(key);
         if (saved === "true") checkbox.checked = true;
 
-        checkbox.addEventListener("change", function () {
-          const medId = item.getAttribute("data-medid");
-          const medName = item.getAttribute("data-name");
-          const medTime = item.getAttribute("data-time");
-          const taken = this.checked;
+        checkbox.addEventListener("change", function() {
+        const medId = item.getAttribute("data-medid");
+        const userId = localStorage.getItem("userId");
+        handleMedicationCheckbox(this, userId, medId);
+
 
           console.log({
             userId,
@@ -233,6 +290,7 @@ document.addEventListener("DOMContentLoaded", function () {
         list.appendChild(item);
       });
 
+      loadInitialMedicationStates();
       loadCheckboxStates();
     })
     .catch(err => {
@@ -247,6 +305,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
 
 // ---------- Push Notifications ----------
 if ("serviceWorker" in navigator) {

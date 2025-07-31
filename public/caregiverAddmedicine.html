@@ -11,29 +11,29 @@
   <div class="addmedication-container">
     <h2 data-translate="add_medication_title">Add Medication</h2>
 
-    <label for="elderlyDropdown">Elderly Name</label>
-      <select id="elderlyDropdown" aria-placeholder="Choose Elderly">
+    <label for="elderlyDropdown" data-translate="elderly_name">Elderly Name</label>
+      <select id="elderlyDropdown" aria-placeholder="Choose Elderly" data-translate="choose_elderly">
   
     </select> 
 
 
 
-    <label for="medName">Medication Name</label>
+    <label for="medName" data-translate="medication_name">Medication Name</label>
     <select id="medName">
-      <option disabled selected value="">Choose Medication</option>
+      <option disabled selected value="" data-translate="choose_medication">Choose Medication</option>
     </select>
 
 
-    <label for="dosage">Dosage</label>
-    <input type="text" id="dosage" placeholder="e.g. 2 pills" />
+    <label for="dosage" data-translate="dosage">Dosage</label>
+    <input type="text" id="dosage" placeholder="e.g. 2 pills" data-translate="dosage_placeholder"/>
 
-    <label for="supplyQuantity">Supply Quantity</label>
+    <label for="supplyQuantity" data-translate="supply_quantity">Supply Quantity</label>
     <input type="text" id="supplyQuantity" />
 
-    <label for="refillThreshold">Refill Threshold</label>
+    <label for="refillThreshold" data-translate="refill_threshold">Refill Threshold</label>
     <input type="text" id="refillThreshold" />
 
-    <label>Select Days</label>
+    <label data-translate="select_days">Select Days</label>
     <div class="date-picker">
       <div class="day" id="Mon">Mon</div>
       <div class="day" id="Tue">Tue</div>
@@ -44,17 +44,17 @@
       <div class="day" id="Sun">Sun</div>
     </div>
     <div class="actions">
-      <button type="button" id="selectAllDays" class="btn cancel">Select All</button>
-      <button type="button" id="deselectAllDays" class="btn cancel">Deselect All</button>
+      <button type="button" id="selectAllDays" class="btn cancel" data-translate="select_all">Select All</button>
+      <button type="button" id="deselectAllDays" class="btn cancel" data-translate="deselect_all">Deselect All</button>
     </div>
 
-    <label>Medication Time(s)</label>
+    <label data-translate="medication_times">Medication Time(s)</label>
     <div class="time-select-section" id="timeSelectSection"></div>
-    <button type="button" id="addTimeSelect" class="add-time-btn">Add Another Time</button>
+    <button type="button" id="addTimeSelect" class="add-time-btn" data-translate="add_another_time">Add Another Time</button>
 
     <div class="actions">
-      <button type="button" class="btn confirm">Confirm</button>
-      <button type="button" class="btn cancel" onclick="window.history.back()">Cancel</button>
+      <button type="button" class="btn confirm" data-translate="confirm">Confirm</button>
+      <button type="button" class="btn cancel" onclick="window.history.back()" data-translate="cancel">Cancel</button>
     </div>
   </div>
 
