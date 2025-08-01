@@ -53,23 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
         days.textContent = `Days: ${formatDays(med.medDayOfWeek)}`;
         content.appendChild(days);
 
-        // Checkbox
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.className = "medication-checkbox";
-
-        const saved = localStorage.getItem(`medication_${med.medication_name}`);
-        if (saved === "true") checkbox.checked = true;
-
-        updateMedicationStyle(checkbox);
-
-        checkbox.addEventListener("change", function () {
-          saveCheckboxState(this);
-          updateMedicationStyle(this);
-        });
-
         item.appendChild(content);
-        item.appendChild(checkbox);
         list.appendChild(item);
       });
     })
@@ -96,17 +80,5 @@ document.addEventListener("DOMContentLoaded", () => {
       .map(d => d.trim().charAt(0).toUpperCase() + d.trim().slice(1).toLowerCase())
       .join(', ');
   }
-
-  function saveCheckboxState(checkbox) {
-    const name = checkbox.parentElement.querySelector(".medication-name").textContent;
-    localStorage.setItem(`medication_${name}`, checkbox.checked);
-  }
-
-  function updateMedicationStyle(checkbox) {
-    if (checkbox.checked) {
-      checkbox.classList.add("checked");
-    } else {
-      checkbox.classList.remove("checked");
-    }
-  }
 });
+  
