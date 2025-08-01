@@ -13,6 +13,8 @@
     "node-fetch": "^3.3.2",
     "node-pushnotifications": "^2.1.0",
     "nodemailer": "^7.0.5",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1",
     "web-push": "^3.6.7"
   },
   "name": "spm-bed-assignment",

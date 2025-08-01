@@ -2,6 +2,8 @@ const path = require("path");
 const express = require("express");
 const sql = require("mssql");
 const dotenv = require("dotenv");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger-output.json");
 
 dotenv.config(); // Load environment variables
 require("./utils/dailySummaryScheduler");
@@ -43,6 +45,9 @@ const markasdoneController = require("./controllers/markasdoneController");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+
+// Serve the Swagger UI at a specific route
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // User routes
 app.get("/users/:id", userValidation.validateUserId, userController.getUserById); //for future use when view/edit profile
