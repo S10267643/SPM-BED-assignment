@@ -519,7 +519,7 @@ a {
     margin-top: 20px;
     display:  flex;
     justify-content: center;
-    background-color: #007BFF;
+    background-color: #00ADB5;
     color: #ffffff;
     border: none;
     padding: 12px 20px;
@@ -531,7 +531,7 @@ a {
 }
 
 .view-medication-btn:hover {
-    background-color: #0056b3;
+    background-color: #00939a;
 }
 
 .person-card {
