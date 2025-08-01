@@ -138,74 +138,86 @@ document.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.getElementById("addTimeSelect");
 
   function createTimeSelectRow() {
-    const row = document.createElement("div");
-    row.className = "time-select-wrapper";
-    row.style.display = "flex";
-    row.style.gap = "10px";
-    row.style.marginBottom = "10px";
-    row.style.alignItems = "center";
+  // Outer container for time row + remove button
+  const rowWrapper = document.createElement("div");
+  rowWrapper.className = "time-select-row";
+  rowWrapper.style.display = "flex";
+  rowWrapper.style.justifyContent = "space-between";
+  rowWrapper.style.alignItems = "center";
+  rowWrapper.style.marginBottom = "10px";
 
-    // Hour dropdown
-    const hour = document.createElement("select");
-    hour.className = "hour-select";
-    hour.style.padding = "5px";
-    
-    for (let i = 1; i <= 12; i++) {
-      const opt = document.createElement("option");
-      const value = i.toString().padStart(2, '0');
-      opt.value = value;
-      opt.textContent = value;
-      hour.appendChild(opt);
-    }
+  // Inner time selection container
+  const timeContainer = document.createElement("div");
+  timeContainer.className = "time-select-wrapper";
+  timeContainer.style.display = "flex";
+  timeContainer.style.gap = "10px";
+  timeContainer.style.alignItems = "left ";
+  rowWrapper.style.width = "100%";
 
-    // Minute dropdown
-    const minute = document.createElement("select");
-    minute.className = "minute-select";
-    minute.style.padding = "5px";
-    
-    for (let i = 0; i < 60; i += 5) {
-      const val = i.toString().padStart(2, '0');
-      const opt = document.createElement("option");
-      opt.value = val;
-      opt.textContent = val;
-      minute.appendChild(opt);
-    }
-
-    // AM/PM dropdown
-    const ampm = document.createElement("select");
-    ampm.className = "ampm-select";
-    ampm.style.padding = "5px";
-    
-    ["AM", "PM"].forEach(val => {
-      const opt = document.createElement("option");
-      opt.value = val;
-      opt.textContent = val;
-      ampm.appendChild(opt);
-    });
-
-    // Remove button (only show if more than one time row)
-    const removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.textContent = "Remove";
-    removeBtn.className = "btn cancel";
-    removeBtn.style.padding = "5px 10px";
-    removeBtn.style.fontSize = "12px";
-    
-    removeBtn.addEventListener("click", () => {
-      if (section.children.length > 1) {
-        row.remove();
-      }
-    });
-
-    row.appendChild(hour);
-    row.appendChild(minute);
-    row.appendChild(ampm);
-    row.appendChild(removeBtn);
-    section.appendChild(row);
-
-    // Hide remove button if only one row
-    updateRemoveButtons();
+  // Hour dropdown
+  const hour = document.createElement("select");
+  hour.className = "hour-select";
+  hour.style.padding = "5px";
+  for (let i = 1; i <= 12; i++) {
+    const opt = document.createElement("option");
+    const value = i.toString().padStart(2, '0');
+    opt.value = value;
+    opt.textContent = value;
+    hour.appendChild(opt);
   }
+
+  // Minute dropdown
+  const minute = document.createElement("select");
+  minute.className = "minute-select";
+  minute.style.padding = "5px";
+  for (let i = 0; i < 60; i += 5) {
+    const val = i.toString().padStart(2, '0');
+    const opt = document.createElement("option");
+    opt.value = val;
+    opt.textContent = val;
+    minute.appendChild(opt);
+  }
+
+  // AM/PM dropdown
+  const ampm = document.createElement("select");
+  ampm.className = "ampm-select";
+  ampm.style.padding = "5px";
+  ["AM", "PM"].forEach(val => {
+    const opt = document.createElement("option");
+    opt.value = val;
+    opt.textContent = val;
+    ampm.appendChild(opt);
+  });
+
+  // Append time parts to time container
+  timeContainer.appendChild(hour);
+  timeContainer.appendChild(minute);
+  timeContainer.appendChild(ampm);
+
+  // Remove button beside time container
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.textContent = "Remove";
+  removeBtn.className = "btn cancel";
+  removeBtn.style.padding = "5px 10px";
+  removeBtn.style.fontSize = "12px";
+
+  removeBtn.addEventListener("click", () => {
+    if (section.children.length > 1) {
+      rowWrapper.remove();
+    }
+    updateRemoveButtons();
+  });
+
+  // Combine time and button into the row
+  rowWrapper.appendChild(timeContainer);
+  rowWrapper.appendChild(removeBtn);
+
+  // Append row to section
+  section.appendChild(rowWrapper);
+
+  updateRemoveButtons();
+}
 
   function updateRemoveButtons() {
     const removeButtons = section.querySelectorAll("button");
