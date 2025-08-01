@@ -18,14 +18,34 @@ async function getUserById(req, res) {
 // Register new user
 async function createUser(req, res) {
   try {
-    const { name, email, phone, password, preferredLanguage, role } = req.body;
+    const { name, email, phone, password, preferredLanguage, role, captcha } = req.body;
 
-    // Check required fields
+    // Step 1: Check captcha token
+    if (!captcha) {
+      return res.status(400).json({ error: "Captcha is required" });
+    }
+
+    // Step 2: Verify captcha with Google
+    const params = new URLSearchParams();
+    params.append("secret", process.env.RECAPTCHA_SECRET_KEY);
+    params.append("response", captcha);
+
+    const captchaRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    });
+
+    const captchaData = await captchaRes.json();
+    if (!captchaData.success) {
+      return res.status(400).json({ error: "Captcha verification failed" });
+    }
+
+    // Step 3: Validate required fields
     if (!name || !email || !password) {
       return res.status(400).json({ error: "Name, email, and password are required" });
     }
 
-    // Check if name or email already exists
     const existingName = await userModel.getUserByUsername(name);
     if (existingName) {
       return res.status(400).json({ error: "This name is already taken. Please choose another." });
@@ -36,7 +56,7 @@ async function createUser(req, res) {
       return res.status(400).json({ error: "This email is already registered. Try logging in." });
     }
 
-    // Hash password before creating user
+    // Step 4: Hash password and create user
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -59,10 +79,33 @@ async function createUser(req, res) {
   }
 }
 
+ 
 async function loginUser(req, res) {
-  const { email, password } = req.body;
+  const { email, password, captcha } = req.body;
+
+  if (!captcha) {
+    return res.status(400).json({ error: "Captcha is required" });
+  }
 
   try {
+    const params = new URLSearchParams();
+    params.append('secret', process.env.RECAPTCHA_SECRET_KEY);
+    params.append('response', captcha);
+
+    const captchaRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
+    });
+
+    const captchaData = await captchaRes.json();
+
+    if (!captchaData.success) {
+      return res.status(400).json({ error: "Captcha verification failed" });
+    }
+
     const user = await userModel.findUserByEmail(email);
     if (!user) {
       return res.status(401).json({ error: "Email not found." });
@@ -72,21 +115,20 @@ async function loginUser(req, res) {
     if (!passwordMatch) {
       return res.status(401).json({ error: "Incorrect password." });
     }
-    
+
     const token = jwt.sign(
-      { userId: user.userId, role: user.role }, // role can be "elderly" or "caregiver"
+      { userId: user.userId, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
-    // Return token, user ID, role and name
-    res.status(200).json({ 
-    message: "Login successful", 
-    token,
-    userId: user.userId,
-    role: user.role,
-    name: user.name
-  });
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      userId: user.userId,
+      role: user.role,
+      name: user.name
+    });
 
   } catch (err) {
     console.error("Login error:", err);
@@ -94,7 +136,7 @@ async function loginUser(req, res) {
   }
 }
 
-// Configure your email transporter for sending OTPs (use your SMTP or Gmail credentials)
+// Configure your email transporter for sending OTPs
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -102,6 +144,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
 //Get user by role
 async function getUsersByRole(req, res) {
   const role = req.query.role;
@@ -119,12 +162,7 @@ async function getUsersByRole(req, res) {
   }
 }
 
-
-
 // Send OTP to user's email
-
-
-
 async function sendOTP(req, res) {
   const { email } = req.body;
 

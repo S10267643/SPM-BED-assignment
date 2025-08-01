@@ -6,7 +6,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <script src="script/changeLanguage.js"></script>
+    <script src="script/elderlychangeLanguage.js"></script>
 </head>
 <body>
     <div class="modal">
@@ -14,41 +14,41 @@
             <!-- Back Button -->
             <a href="emergencyContact.html" class="back-btn">&#8592;</a>
 
-            <h1>Edit Emergency Contacts</h1>
+            <h1 data-translate="edit_emergency_contacts">Edit Emergency Contacts</h1>
 
             <form id="editContactForm">
                 <div class="form-group">
-                    <label for="name">Name</label>
+                    <label for="name" data-translate="name">Name</label>
                     <input type="text" id="name" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="relationship">Relationship</label>
+                    <label for="relationship" data-translate="relationship">Relationship</label>
                     <select id="relationship" required>
-                        <option value="">Select relationship</option>
-                        <option value="son">Son</option>
-                        <option value="daughter">Daughter</option>
-                        <option value="spouse">Spouse</option>
-                        <option value="parent">Parent</option>
-                        <option value="sibling">Sibling</option>
-                        <option value="doctor">Doctor</option>
-                        <option value="caregiver">Caregiver</option>
-                        <option value="friend">Friend</option>
-                        <option value="neighbor">Neighbor</option>
-                        <option value="other">Other</option>
+                        <option value="" data-translate="select_relationship">Select relationship</option>
+                        <option value="son" data-translate="son">Son</option>
+                        <option value="daughter" data-translate="daughter">Daughter</option>
+                        <option value="spouse" data-translate="spouse">Spouse</option>
+                        <option value="parent" data-translate="parent">Parent</option>
+                        <option value="sibling" data-translate="sibling">Sibling</option>
+                        <option value="doctor" data-translate="doctor">Doctor</option>
+                        <option value="caregiver" data-translate="caregiver">Caregiver</option>
+                        <option value="friend" data-translate="friend">Friend</option>
+                        <option value="neighbor" data-translate="neighbor">Neighbor</option>
+                        <option value="other" data-translate="other">Other</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label for="phone">Phone Number</label>
+                    <label for="phone" data-translate="phone_number">Phone Number</label>
                     <input type="tel" id="phone" required>
                 </div>
                 
                 <div class="form-actions">
-                    <a class="btn outline" href="emergencyContact.html">
+                    <a class="btn outline" href="emergencyContact.html" data-translate="cancel">
                         Cancel
                     </a>
-                    <button type="submit" class="btn filled">Edit Contact</button>
+                    <button type="submit" class="btn filled" data-translate="edit_contact">Edit Contact</button>
                 </div>
             </form>
         </div>

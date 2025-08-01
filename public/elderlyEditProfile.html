@@ -6,34 +6,35 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/edit-profile.css" />
     <script src="script/edit-profile.js"></script>
+    <script src="script/elderlychangeLanguage.js"></script>
 </head>
 <body>
 <div class="edit-profile-container">
-    <h2>Edit Profile</h2>
+    <h2 data-translate="edit_profile">Edit Profile</h2>
     <form id="editProfileForm">
 
       <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" placeholder="Enter your name" required>
+        <label for="name" data-translate="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your name" required data-translate="name_placeholder">
       </div>
       
       <div class="form-group">
-        <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        <label for="email" data-translate="email_label">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required data-translate="email_placeholder">
       </div>
       
       <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+        <label for="phone" data-translate="phone_number">Phone Number</label>
+        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required data-translate="phone_placeholder">
       </div>
       
       <div class="form-group">
-        <label for="password">New Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter new password">
+        <label for="password" data-translate="password_label">New Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter new password" required data-translate="password_placeholder">
       </div>
       
       <div class="form-group">
-        <input type="submit" value="Save Changes">
+        <input type="submit" value="Save Changes" data-translate="save_changes">
       </div>
     </form>
   </div>

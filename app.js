@@ -4,7 +4,7 @@ const sql = require("mssql");
 const dotenv = require("dotenv");
 
 dotenv.config(); // Load environment variables
-
+require("./utils/dailySummaryScheduler");
 const verifyJWT = require("./middlewares/verifyJWT");
 
 const app = express();
@@ -19,6 +19,8 @@ const { validateContact } = require("./middlewares/emergencyValidation");
 // notification controller
 const notificationController = require("./controllers/NotificationController");
 
+const refillNotificationController = require("./controllers/refillNotificationController");
+
 //translation controllers
 const translationController = require("./controllers/translationController");
 
@@ -31,6 +33,11 @@ const medicationController = require("./controllers/medicationController");
 
 // messages controller
 const messageController = require("./controllers/messagesController");
+//dailysummary thing
+const dailySummaryController = require("./controllers/dailySummaryController");
+
+// MarkasDone controller
+const markasdoneController = require("./controllers/markasdoneController");
 
 // Middleware
 app.use(express.json());
@@ -77,8 +84,20 @@ app.put('/api/medications/:id', medicationValidation.validateMedicationId, medic
 app.delete('/api/medications/:id', medicationValidation.validateMedicationId, medicationController.deleteMedicine);
 
 //Medication History routes
-app.get('/api/medicationHistory/:id', medicationHistoryController.getMedicalHistoryById); // More specific route first
-app.get('/api/medicationHistory/user/:userId', medicationHistoryController.getMedicalHistoryByUserId); // Changed path to avoid conflict
+app.get('/api/medication-history', verifyJWT, medicationHistoryController.fetchMedicalHistoryByUserId);
+app.get('/api/medication-history/:id', verifyJWT, medicationHistoryController.fetchMedicalHistoryById);
+app.post('/api/medication-history', verifyJWT, medicationHistoryController.createMedicalHistory);
+app.put('/api/medication-history/:id', verifyJWT, medicationHistoryController.modifyMedicalHistory);
+app.delete('/api/medication-history/:id', verifyJWT, medicationHistoryController.removeMedicalHistory);
+
+//Daily Summary Route
+// Daily Summary Routes
+app.get("/api/daily-summaries", verifyJWT, dailySummaryController.getDailySummary);
+app.get("/api/daily-summaries/by-date", verifyJWT, dailySummaryController.getUserSummaryByDate);
+
+
+//Refill Reminder Notifcation Route
+app.get('/api/refill-check/:userId', verifyJWT, refillNotificationController.checkRefillThreshold);
 
 // Translation routes
 app.get("/api/translations", translationController.getTranslations);
@@ -91,6 +110,10 @@ app.post("/api/messages", messageController.sendMessage);
 app.put("/api/messages/:messageId", messageController.editMessage); 
 app.delete("/api/messages/:messageId", messageController.deleteMessage);
 app.get("/api/messages/caregiver", messageController.getMessagesForCaregiver);
+
+// Medication Mark as Done routes
+app.post("/api/medication-logs", markasdoneController.createMedicationLog);
+app.delete("/api/medication-logs", markasdoneController.deleteMedicationLog);
 
 // Start server
 app.listen(port, () => {

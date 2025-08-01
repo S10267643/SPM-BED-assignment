@@ -127,4 +127,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
   }
+
+  const userName = localStorage.getItem("userName");
+  let preferredLanguage = localStorage.getItem("preferredLanguage") || 
+                         localStorage.getItem("language") || 
+                         'English'; // Default to English
+
+  // Normalize language value (handle case where backend uses 'Chinese' but frontend expects 'zh')
+  if (preferredLanguage === 'Chinese' || preferredLanguage === 'zh') {
+    preferredLanguage = 'Chinese';
+  }
+
+  if (userName) {
+    const welcomeMessage = document.getElementById("welcomeMessage");
+    
+    if (preferredLanguage === 'Chinese') {
+      welcomeMessage.textContent = `你好, ${userName}!`;
+    } else {
+      welcomeMessage.textContent = `Hello, ${userName}!`;
+    }
+  }
+
 });

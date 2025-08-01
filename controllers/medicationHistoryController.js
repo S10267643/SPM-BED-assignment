@@ -1,40 +1,97 @@
-const medicationHistoryModel = require("../models/medicationHistoryModel");
+const {
+    getMedicationHistoryByUserId,
+    getMedicationHistoryById,
+    addMedicationHistory,
+    updateMedicationHistory,
+    deleteMedicationHistory
+} = require("../models/medicationHistoryModel");
 
-// GET all medication history for a specific user (summary view)
-async function getMedicalHistoryByUserId(req, res) {
-    const { userId } = req.params;
-
+// Caregiver & Senior: View summary
+async function fetchMedicalHistoryByUserId(req, res) {
     try {
-        const history = await medicationHistoryModel.getMedicationHistoryByUserId(userId);
-        res.status(200).json(history);
-    } catch (error) {
-        console.error("Failed to fetch medication history:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-}
+        const userId = req.user.role === "Caregiver"
+            ? req.query.userId
+            : req.user.userId;
 
-// GET detailed medication history record by ID
-async function getMedicalHistoryById(req, res) {
-    const { id } = req.params;
-
-    try {
-        const record = await medicationHistoryModel.getMedicationHistoryById(id);
-        if (!record) {
-            return res.status(404).json({ error: "Record not found" });
+        if (!userId) {
+            return res.status(400).json({ error: "Missing target user ID" });
         }
-        res.status(200).json(record);
-    } catch (error) {
-        console.error("Failed to fetch medication record:", error);
+
+        const result = await getMedicationHistoryByUserId(userId);
+        res.status(200).json(result);
+    } catch (err) {
+        console.error("Error fetching medical history summary:", err);
         res.status(500).json({ error: "Internal server error" });
     }
 }
 
 
+// Caregiver & Senior: View individual record (full detail)
+async function fetchMedicalHistoryById(req, res) {
+    try {
+        const { id } = req.params;
+        const result = await getMedicationHistoryById(id);
+        res.status(200).json(result);
+    } catch (err) {
+        console.error("Error fetching medication detail:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
 
+// Caregiver: Add new history record
+async function createMedicalHistory(req, res) {
+    if (req.user.role !== "Caregiver") {
+        return res.status(403).json({ error: "Forbidden: Only caregivers can add records." });
+    }
 
+    try {
+        const success = await addMedicationHistory(req.body);
+        if (success) res.status(201).json({ message: "Record added successfully" });
+        else res.status(400).json({ error: "Failed to add record" });
+    } catch (err) {
+        console.error("Error adding medication record:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+// Caregiver: Edit existing history record
+async function modifyMedicalHistory(req, res) {
+    if (req.user.role !== "Caregiver") {
+        return res.status(403).json({ error: "Forbidden: Only caregivers can modify records." });
+    }
+
+    try {
+        const { id } = req.params;
+        const success = await updateMedicationHistory(id, req.body);
+        if (success) res.status(200).json({ message: "Record updated" });
+        else res.status(400).json({ error: "Failed to update record" });
+    } catch (err) {
+        console.error("Error updating medication record:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
+
+// Caregiver: Delete record
+async function removeMedicalHistory(req, res) {
+    if (req.user.role !== "Caregiver") {
+        return res.status(403).json({ error: "Forbidden: Only caregivers can delete records." });
+    }
+
+    try {
+        const { id } = req.params;
+        const success = await deleteMedicationHistory(id);
+        if (success) res.status(200).json({ message: "Record deleted" });
+        else res.status(400).json({ error: "Failed to delete record" });
+    } catch (err) {
+        console.error("Error deleting medication record:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
 
 module.exports = {
-    getMedicalHistoryByUserId,
-    getMedicalHistoryById
+    fetchMedicalHistoryByUserId,
+    fetchMedicalHistoryById,
+    createMedicalHistory,
+    modifyMedicalHistory,
+    removeMedicalHistory
 };
-

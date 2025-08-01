@@ -1,6 +1,3 @@
-
-
-
 document.getElementById("registerForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -9,15 +6,22 @@ document.getElementById("registerForm").addEventListener("submit", async functio
   const password = document.getElementById("password").value;
   const role = document.getElementById("role").value;
 
+  // reCAPTCHA token
+  const captcha = grecaptcha.getResponse();
+  if (!captcha) {
+    alert("Please complete the CAPTCHA.");
+    return;
+  }
+
   const user = {
     name,
     email,
     password,
-    role
+    role,
+    captcha // include in body to send to backend
   };
 
   try {
-    console.log(JSON.stringify(user));
     const res = await fetch("/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -30,11 +34,10 @@ document.getElementById("registerForm").addEventListener("submit", async functio
       alert("Registration successful!");
       window.location.href = "login.html";
     } else {
-      console.log("Server response:", data);
       alert("Error: " + data.error);
     }
   } catch (err) {
+    console.error("Registration error:", err);
     alert("Something went wrong.");
-    console.error(err);
   }
 });

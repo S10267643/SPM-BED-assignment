@@ -29,6 +29,23 @@ function verifyJWT(req, res, next) {
       "DELETE /api/emergency-contacts/[0-9]+": ["Elderly"],
       "GET /api/emergency-contacts/[0-9]+": ["Elderly"],
       "PUT /api/emergency-contacts/[0-9]+": ["Elderly"],
+
+      // Caregiver can add, update, delete medication history
+      "POST /api/medication-history": ["Caregiver"],
+      "PUT /api/medication-history/[0-9]+": ["Caregiver"],
+      "DELETE /api/medication-history/[0-9]+": ["Caregiver"],
+
+      // Both Caregiver and Elderly can view history (summary and details)
+      "GET /api/medication-history": ["Caregiver", "Elderly"],
+      "GET /api/medication-history/[0-9]+": ["Caregiver", "Elderly"],
+
+        // Both roles can view daily summaries
+        "GET /api/daily-summaries": ["Caregiver", "Elderly"],
+        "GET /api/daily-summaries/by-date": ["Caregiver", "Elderly"],
+        "GET /api/daily-summaries/user/[0-9]+/by-date": ["Caregiver"],  //  Add this
+
+        // Refill check notification
+        "GET /api/refill-check/[0-9]+": ["Caregiver", "Elderly"]
     };
 
     // Build a key like "POST /medications/123"
@@ -38,9 +55,9 @@ function verifyJWT(req, res, next) {
     // Match path with parameter (e.g., /medications/123)
     const authorizedMatch = Object.entries(authorizedRoles).find(
       ([endpointPattern, roles]) => {
-        const pattern = endpointPattern
-          .replace(/\//g, "\\/") // escape slashes
-          .replace(/\[0-9\]\+/g, "[0-9]+"); // match numeric IDs
+            const pattern = endpointPattern
+                .replace(/\//g, "\\/")
+                .replace(/\[0-9\+\]/g, "[0-9]+");
         const regex = new RegExp(`^${pattern}$`);
         return regex.test(requestedEndpoint) && roles.includes(userRole);
       }

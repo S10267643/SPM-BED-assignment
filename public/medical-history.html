@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical History</title>
+    <link rel="stylesheet" href="/public/styles.css" />
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        tr:hover {
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+
+        .details {
+            margin-top: 2rem;
+            padding: 1rem;
+            border: 1px solid #aaa;
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Medication History</h1>
+
+    <table id="historyTable">
+        <thead>
+            <tr>
+                <th>Medication Name</th>
+                <th>Dosage</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Populated by JS -->
+        </tbody>
+    </table>
+
+    <div id="details" class="details" style="display: none;">
+        <h2>Medication Details</h2>
+        <p><strong>Name:</strong> <span id="detailName"></span></p>
+        <p><strong>Dosage:</strong> <span id="detailDosage"></span></p>
+        <p><strong>Notes:</strong> <span id="detailNotes"></span></p>
+    </div>
+
+    <script>
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("You must be logged in.");
+            window.location.href = "/login.html";
+        }
+
+        const tableBody = document.querySelector("#historyTable tbody");
+        const detailBox = document.getElementById("details");
+        const detailName = document.getElementById("detailName");
+        const detailDosage = document.getElementById("detailDosage");
+        const detailNotes = document.getElementById("detailNotes");
+
+        async function fetchSummary() {
+            const res = await fetch("/api/medication-history", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (!res.ok) {
+                alert("Failed to fetch history");
+                return;
+            }
+
+            const data = await res.json();
+            data.forEach(record => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${record.medication_name}</td><td>${record.dosage || 'N/A'}</td>`;
+                tr.addEventListener("click", () => showDetails(record.historyId));
+                tableBody.appendChild(tr);
+            });
+        }
+
+        async function showDetails(id) {
+            const res = await fetch(`/api/medication-history/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (!res.ok) {
+                alert("Failed to fetch details");
+                return;
+            }
+
+            const detail = await res.json();
+            detailName.textContent = detail.medication_name;
+            detailDosage.textContent = detail.dosage;
+            detailNotes.textContent = detail.notes || "None";
+            detailBox.style.display = "block";
+        }
+
+        fetchSummary();
+    </script>
+</body>
+</html>

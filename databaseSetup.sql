@@ -22,7 +22,7 @@ logId INT PRIMARY KEY IDENTITY(1,1),
 
 medId INT,  
 
-logDate DATE,  
+logDate DATETIME,  
 
 FOREIGN KEY (userId) REFERENCES users(userId) 
 
@@ -117,3 +117,20 @@ CREATE TABLE password_reset_otps (
     expires_at DATETIME NOT NULL,
     created_at DATETIME DEFAULT GETDATE()
 );
+
+CREATE TABLE messages ( 
+
+    messageId INT IDENTITY(1,1) PRIMARY KEY, 
+
+    elderlyId INT NOT NULL, 
+
+    caregiverId INT NOT NULL, 
+
+    message VARCHAR(1024) NOT NULL, 
+
+    timestamp DATETIME DEFAULT GETDATE(), 
+
+    FOREIGN KEY (elderlyId) REFERENCES users(userId), 
+
+    FOREIGN KEY (caregiverId) REFERENCES users(userId), 
+); 

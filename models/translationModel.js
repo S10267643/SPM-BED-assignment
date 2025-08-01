@@ -79,7 +79,7 @@ class TranslationModel {
       title: "DailyDose",
 
       // index.html
-      welcome_message: "Hello, User!",
+      welcome_message: "Hello,",
       messages: "Messages",
       medication: "Medication",
       add_pills: "Add pills",
@@ -91,6 +91,7 @@ class TranslationModel {
       custom_notification: "Custom Notifications",
       medical_history: "Medical History",
       credits: "Credits",
+      edit_profile: "Edit Profile",
 
       // addmedicine.html
       add_medication_title: "Add Medication",
@@ -115,18 +116,15 @@ class TranslationModel {
       create_account: "Create Account",
 
       //custom-notifications.html
-      notifications_title: "Custom Notifications",
       notifications_header: "Custom Notifications",
       back_to_settings: "← Settings",
-      ringtone_label: "Ringtone:",
-      vibration_label: "Vibration:",
-      vibration_on: "On",
-      vibration_off: "Off",
-      repeat_label: "Repeat Count:",
-      youtube_label: "YouTube Link (optional):",
-      ringtone_placeholder: "Enter ringtone name or URL",
-      repeat_placeholder: "Enter repeat count",
-      youtube_placeholder: "Enter YouTube video URL",
+      title_label: "Title",
+      enable_label: "Enable Push Notifications",
+      imageLink_label: "Image Link",
+      img_placeholder: "Enter image URL",
+      ringtone_placeholder: "Enter text here",
+      
+
 
       //startingPage.html
       caregiver_login: "Caregiver Login",
@@ -139,6 +137,86 @@ class TranslationModel {
       name_placeholder: "Enter your full name",
       email_placeholder: "Enter your email",
       password_placeholder: "Create a password",
+      role_label: "Role:",
+      role_caregiver: "Caregiver",
+      role_elderly: "Elderly",
+
+      // elderlyEditProfile.html
+      phone_number: "Phone Number",
+      phone_placeholder: "Enter your phone number",
+      save_changes: "Save Changes",
+
+      //caregiverChooseElderly.html
+      choose_elderly: "Choose Elderly",
+      manage_pills: "Manage Pills",
+      recent_message: "Recent Messages",
+      loading_messages: "Loading messages...",
+      mark_as_read: "Mark as Read",
+
+      // caregiverAddmedicine.html
+      elderly_name: "Elderly Name",
+      choose_elderly: "Choose Elderly",
+      medication_name: "Medication Name",
+      choose_medication: "Choose Medication",
+      dosage: "Dosage",
+      dosage_placeholder: "e.g. 2 pills",
+      supply_quantity: "Supply Quantity",
+      refill_threshold: "Refill Threshold",
+      select_all: "Select All",
+      deselect_all: "Deselect All",
+      medication_times: "Medication Time(s)",
+      add_another_time: "Add Another Time",
+      confirm: "Confirm",
+      select_days: "Select Days",
+
+      //elderlyMessages.html
+      select_caregiver: "Select Caregiver",
+      select_option: "Select a Caregiver",
+      confirm_selection: "Confirm Selection",
+      message_placeholder: "Type your message here...",
+      send: "Send",
+      no_messages: "No messages available",
+      loading_messages: "Loading messages...",
+      error_loading_messages: "Error loading messages",
+      save: "Save",
+      cancel: "Cancel",
+
+      //emergencyContact.html
+      emergency_contact: "Emergency Contacts",
+      add_contact: "Add Contact",
+
+      //editEmergencyContact.html
+      edit_emergency_contacts: "Edit Emergency Contacts",
+      name: "Name",
+      phone_number: "Phone Number",
+      cancel: "Cancel",
+      edit_contact: "Edit Contact",
+      son: "Son",
+      daughter: "Daughter",
+      spouse: "Spouse",
+      friend: "Friend",
+      relative: "Relative",
+      other: "Other",
+      parent: "Parent",
+      sibling: "Sibling",
+      doctor: "Doctor",
+      caregiver: "Caregiver",
+      neighbor: "Neighbor",
+      relationship: "Relationship",
+      select_relationship: "Select Relationship",
+
+      //addEmergencyContact.html
+      add_emergency_contact: "Add Emergency Contact",
+
+       // caregiverDeletemedicine.html
+      edit_medication: "Edit Medication",
+      pick_medicine: "Pick Medicine",
+      delete: "Delete",
+      edit: "Edit",
+
+
+
+
 
 
 

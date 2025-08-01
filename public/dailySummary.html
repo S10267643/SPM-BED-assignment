@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Daily Medication Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        button {
+            margin: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        #summarySection {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daily Summary</h1>
+
+    <button onclick="generateToday()">Generate Today's Summary</button>
+    <button onclick="fetchSummary(-1)">View Yesterday's Summary</button>
+    <button onclick="fetchSummary(-2)">View 2 Days Ago</button>
+
+    <div id="summarySection">
+        <h3 id="summaryDateTitle"></h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Medication</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="summaryTableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const token = localStorage.getItem("token");
+
+        function formatStatus(taken) {
+            return taken ? "✅ Taken" : "❌ Missed";
+        }
+
+        function displaySummary(date, entries) {
+            document.getElementById("summaryDateTitle").textContent = `Summary for ${date}`;
+            const tbody = document.getElementById("summaryTableBody");
+            tbody.innerHTML = "";
+            entries.forEach(entry => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+              <td>${entry.medName}</td>
+              <td>${entry.time}</td>
+              <td>${formatStatus(entry.taken)}</td>
+            `;
+                tbody.appendChild(row);
+            });
+            document.getElementById("summarySection").style.display = "block";
+        }
+
+        async function generateToday() {
+            try {
+                const res = await fetch("/api/daily-summaries", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    displaySummary(data.summaryDate, data.entries);
+                } else {
+                    alert("Failed to generate today's summary");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("An error occurred");
+            }
+        }
+
+        async function fetchSummary(daysAgo) {
+            const date = new Date();
+            date.setDate(date.getDate() + daysAgo);
+            const isoDate = date.toISOString().split("T")[0];
+
+            try {
+                const res = await fetch(`/api/daily-summaries/by-date?date=${isoDate}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    displaySummary(data.summaryDate, data.entries);
+                } else {
+                    alert("No summary found for that date");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error fetching summary");
+            }
+        }
+    </script>
+</body>
+</html>
