@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-// Enhanced validation schemas with proper patterns and constraints
+// Joi schema for adding medication
 const medicationValidationSchema = Joi.object({
   user_id: Joi.number().integer().positive().required().messages({
     'number.base': 'User ID must be a number',
@@ -25,10 +25,10 @@ const medicationValidationSchema = Joi.object({
       'any.required': 'Medication time is required'
     }),
   day_of_week: Joi.string()
-    .pattern(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)(,(Mon|Tue|Wed|Thu|Fri|Sat|Sun))*$/)
+    .pattern(/^(0|1|2|3|4|5|6)(,(0|1|2|3|4|5|6))*$/)
     .required()
     .messages({
-      'string.pattern.base': 'Day of week must be valid day abbreviations separated by commas (e.g., "Mon,Tue,Wed")',
+      'string.pattern.base': 'Day of week must be integers 0 (Sun) through 6 (Sat) separated by commas (e.g., "0,1,2")',
       'any.required': 'Day of week is required'
     }),
   refillThreshold: Joi.number().integer().min(1).required().messages({
@@ -43,6 +43,7 @@ const medicationValidationSchema = Joi.object({
   })
 });
 
+// Joi schema for updating medication
 const updateMedicationValidationSchema = Joi.object({
   medId: Joi.number().integer().positive().required().messages({
     'number.base': 'Medication ID must be a number',
@@ -62,10 +63,10 @@ const updateMedicationValidationSchema = Joi.object({
       'any.required': 'Medication time is required'
     }),
   day_of_week: Joi.string()
-    .pattern(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)(,(Mon|Tue|Wed|Thu|Fri|Sat|Sun))*$/)
+    .pattern(/^(0|1|2|3|4|5|6)(,(0|1|2|3|4|5|6))*$/)
     .required()
     .messages({
-      'string.pattern.base': 'Day of week must be valid day abbreviations separated by commas (e.g., "Mon,Tue,Wed")',
+      'string.pattern.base': 'Day of week must be integers 0 (Sun) through 6 (Sat) separated by commas (e.g., "0,1,2")',
       'any.required': 'Day of week is required'
     }),
   refillThreshold: Joi.number().integer().min(1).required().messages({
@@ -80,143 +81,115 @@ const updateMedicationValidationSchema = Joi.object({
   })
 });
 
-// Enhanced validation with custom business logic
+// Common reusable day validator
+const isValidDays = (dayList) => {
+  const valid = ['0','1','2','3','4','5','6'];
+  return dayList.every(day => valid.includes(day.trim()));
+};
+
+const isValidTime = (time) => {
+  const timePattern = /^([0-1]?[0-9]):([0-5][0-9]) (AM|PM)$/;
+  const match = time.trim().match(timePattern);
+  if (!match) return false;
+  const hour = parseInt(match[1]);
+  return hour >= 1 && hour <= 12;
+};
+
+// Middleware for adding medication
 const validateMedication = (req, res, next) => {
-  const { error } = medicationValidationSchema.validate(req.body, { 
-    abortEarly: false // Show all validation errors
-  });
-  
+  const { error } = medicationValidationSchema.validate(req.body, { abortEarly: false });
+
   if (error) {
-    const errorMessages = error.details.map(detail => detail.message);
     return res.status(400).json({
       error: "Validation error",
-      details: errorMessages
+      details: error.details.map(d => d.message)
     });
   }
-  
-  // Additional business logic validation
-  const { refillThreshold, supplyQuantity } = req.body;
+
+  const { refillThreshold, supplyQuantity, medication_time, day_of_week } = req.body;
+
   if (refillThreshold >= supplyQuantity) {
     return res.status(400).json({
       error: "Validation error",
       details: ["Refill threshold must be less than supply quantity"]
     });
   }
-  
-  // Validate time format
-  const { medication_time } = req.body;
-  const times = medication_time.split(',');
+
+  // Validate all times
+  const times = medication_time.split(",");
   for (let time of times) {
-    const timePattern = /^([0-1]?[0-9]):([0-5][0-9]) (AM|PM)$/;
-    const match = time.trim().match(timePattern);
-    if (!match) {
+    if (!isValidTime(time)) {
       return res.status(400).json({
         error: "Validation error",
-        details: [`Invalid time format: ${time}. Use format like "09:30 AM"`]
-      });
-    }
-    
-    const hour = parseInt(match[1]);
-    if (hour < 1 || hour > 12) {
-      return res.status(400).json({
-        error: "Validation error",
-        details: [`Invalid hour: ${hour}. Hour must be between 1-12`]
+        details: [`Invalid time format: ${time}. Use HH:MM AM/PM`]
       });
     }
   }
-  
-  // Validate days format
-  const { day_of_week } = req.body;
-  const validDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const days = day_of_week.split(',');
-  for (let day of days) {
-    if (!validDays.includes(day.trim())) {
-      return res.status(400).json({
-        error: "Validation error",
-        details: [`Invalid day: ${day}. Valid days are: ${validDays.join(', ')}`]
-      });
-    }
+
+  // Validate all days
+  const days = day_of_week.split(",");
+  if (!isValidDays(days)) {
+    return res.status(400).json({
+      error: "Validation error",
+      details: [`Invalid day(s): ${day_of_week}. Valid days are 0 (Sun) to 6 (Sat)`]
+    });
   }
-  
+
   next();
 };
 
+// Middleware for updating medication
 const validateUpdateMedication = (req, res, next) => {
-  const { error } = updateMedicationValidationSchema.validate(req.body, { 
-    abortEarly: false // Show all validation errors
-  });
-  
+  const { error } = updateMedicationValidationSchema.validate(req.body, { abortEarly: false });
+
   if (error) {
-    const errorMessages = error.details.map(detail => detail.message);
     return res.status(400).json({
       error: "Validation error",
-      details: errorMessages
+      details: error.details.map(d => d.message)
     });
   }
-  
-  // Additional business logic validation
-  const { refillThreshold, supplyQuantity } = req.body;
+
+  const { refillThreshold, supplyQuantity, medication_time, day_of_week } = req.body;
+
   if (refillThreshold >= supplyQuantity) {
     return res.status(400).json({
       error: "Validation error",
       details: ["Refill threshold must be less than supply quantity"]
     });
   }
-  
-  // Validate time format more strictly
-  const { medication_time } = req.body;
-  const times = medication_time.split(',');
+
+  const times = medication_time.split(",");
   for (let time of times) {
-    const timePattern = /^([0-1]?[0-9]):([0-5][0-9]) (AM|PM)$/;
-    const match = time.trim().match(timePattern);
-    if (!match) {
+    if (!isValidTime(time)) {
       return res.status(400).json({
         error: "Validation error",
-        details: [`Invalid time format: ${time}. Use format like "09:30 AM"`]
-      });
-    }
-    
-    const hour = parseInt(match[1]);
-    if (hour < 1 || hour > 12) {
-      return res.status(400).json({
-        error: "Validation error",
-        details: [`Invalid hour: ${hour}. Hour must be between 1-12`]
+        details: [`Invalid time format: ${time}. Use HH:MM AM/PM`]
       });
     }
   }
-  
-  // Validate days format
-  const { day_of_week } = req.body;
-  const validDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  const days = day_of_week.split(',');
-  for (let day of days) {
-    if (!validDays.includes(day.trim())) {
-      return res.status(400).json({
-        error: "Validation error",
-        details: [`Invalid day: ${day}. Valid days are: ${validDays.join(', ')}`]
-      });
-    }
+
+  const days = day_of_week.split(",");
+  if (!isValidDays(days)) {
+    return res.status(400).json({
+      error: "Validation error",
+      details: [`Invalid day(s): ${day_of_week}. Valid days are 0 (Sun) to 6 (Sat)`]
+    });
   }
-  
+
   next();
 };
 
+// Middleware to validate medication ID from route
 const validateMedicationId = (req, res, next) => {
   const { id } = req.params;
-  
-  if (!id) {
-    return res.status(400).json({
-      error: "Medication ID is required"
-    });
-  }
-  
   const parsedId = parseInt(id);
-  if (isNaN(parsedId) || parsedId <= 0) {
+
+  if (!id || isNaN(parsedId) || parsedId <= 0) {
     return res.status(400).json({
       error: "Invalid medication ID - must be a positive integer"
     });
   }
-  
+
   next();
 };
 

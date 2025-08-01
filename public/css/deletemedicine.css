@@ -142,6 +142,28 @@ h3 {
 
 
 
+#elderlyDropdown {
+  width: 100%;                 /* Make it full width or adjust as needed */
+  max-width: 300px;            /* Optional max width */
+  padding: 10px 12px;
+  font-size: 16px;
+  font-weight: 500;
+  border: 2px solid #00ADB5;   /* Stylish border */
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  color: #333;
+  appearance: none;            /* Remove default OS styles */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+#elderlyDropdown:focus {
+  outline: none;
+  border-color: #007b9e;       /* Focus border color */
+  background-color: #fff;
+}
 
 
 

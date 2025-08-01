@@ -279,7 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // Validate days format
-      const validDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const validDays = ['1', '2', '3', '4', '5', '6', '0'];
       for (let day of selectedDays) {
         if (!validDays.includes(day)) {
           errors.push(`Invalid day: ${day}`);
