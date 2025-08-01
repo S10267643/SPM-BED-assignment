@@ -17,10 +17,15 @@ const emergencyController = require("./controllers/emergencyController");
 const { validateContact } = require("./middlewares/emergencyValidation");
 
 // notification controller
-const notificationController = require("./controllers/NotificationController");
+const notificationController = require("./controllers/notificationController");
+
+
+const refillNotificationController = require("./controllers/refillNotificationController");
+
 
 //translation controllers
 const translationController = require("./controllers/translationController");
+
 
 //medicationHistory controller
 const medicationHistoryController = require("./controllers/medicationHistoryController");
@@ -89,16 +94,20 @@ app.post('/api/medication-history', verifyJWT, medicationHistoryController.creat
 app.put('/api/medication-history/:id', verifyJWT, medicationHistoryController.modifyMedicalHistory);
 app.delete('/api/medication-history/:id', verifyJWT, medicationHistoryController.removeMedicalHistory);
 
-//Daily Summary Route
-// Daily Summary Routes
-app.get("/api/daily-summaries", verifyJWT, dailySummaryController.getDailySummary);
-app.get("/api/daily-summaries/by-date", verifyJWT, dailySummaryController.getDailySummaryByDate);
+
+// Daily Summary Routes (Elderly and Caregiver)
+app.get("/api/daily-summaries", verifyJWT, dailySummaryController.getDailySummary); // today's summary
+app.get("/api/daily-summaries/by-date", verifyJWT, dailySummaryController.getUserSummaryByDate); // for elderly
+app.get("/api/daily-summaries/user/:userId/by-date", verifyJWT, dailySummaryController.getElderlySummaryByDate); // caregiver views summary of elderly
 
 
+//Refill Reminder Notifcation Route
+app.get('/api/refill-check/:userId', verifyJWT, refillNotificationController.checkRefillThreshold);
 
-// Translation routes
+//Translation routes
 app.get("/api/translations", translationController.getTranslations);
 app.post("/api/update-language", translationController.updateLanguagePreference);
+
 
 // Message routes
 app.get("/api/messages/user/:userId", messageController.getMessages);
