@@ -22,55 +22,99 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function createTimeRow(hour = "08", minute = "00", ampm = "AM") {
-    const row = document.createElement("div");
-    row.className = "time-select-wrapper";
-    row.style.display = "flex";
-    row.style.gap = "10px";
-    row.style.marginBottom = "10px";
+  // Outer container for each time row
+  const rowWrapper = document.createElement("div");
+  rowWrapper.className = "time-select-row";
+  rowWrapper.style.display = "flex";
+  rowWrapper.style.justifyContent = "space-between";
+  rowWrapper.style.alignItems = "center";
+  rowWrapper.style.marginBottom = "10px";
+  rowWrapper.style.width = "100%";
+  rowWrapper.style.gap = "20px";
 
-    const hourSelect = document.createElement("select");
-    hourSelect.className = "hour-select";
-    for (let i = 1; i <= 12; i++) {
-      const opt = document.createElement("option");
-      const val = i.toString().padStart(2, "0");
-      opt.value = val;
-      opt.textContent = val;
-      if (val === hour) opt.selected = true;
-      hourSelect.appendChild(opt);
-    }
+  // Inner container for time dropdowns
+  const timeContainer = document.createElement("div");
+  timeContainer.className = "time-select-wrapper";
+  timeContainer.style.display = "flex";
+  timeContainer.style.flex = "1";
+  timeContainer.style.gap = "10px";
 
-    const minuteSelect = document.createElement("select");
-    minuteSelect.className = "minute-select";
-    for (let i = 0; i < 60; i += 5) {
-      const val = i.toString().padStart(2, "0");
-      const opt = document.createElement("option");
-      opt.value = val;
-      opt.textContent = val;
-      if (val === minute) opt.selected = true;
-      minuteSelect.appendChild(opt);
-    }
-
-    const ampmSelect = document.createElement("select");
-    ampmSelect.className = "ampm-select";
-    ["AM", "PM"].forEach(ap => {
-      const opt = document.createElement("option");
-      opt.value = ap;
-      opt.textContent = ap;
-      if (ap === ampm) opt.selected = true;
-      ampmSelect.appendChild(opt);
-    });
-
-    const removeBtn = document.createElement("button");
-    removeBtn.type = "button";
-    removeBtn.textContent = "Remove";
-    removeBtn.className = "btn cancel";
-    removeBtn.addEventListener("click", () => {
-      if (section.children.length > 1) row.remove();
-    });
-
-    row.append(hourSelect, minuteSelect, ampmSelect, removeBtn);
-    section.appendChild(row);
+  // Hour dropdown
+  const hourSelect = document.createElement("select");
+  hourSelect.className = "hour-select";
+  hourSelect.style.width = "80px";
+  hourSelect.style.textAlign = "center";
+  hourSelect.style.textAlignLast = "center";
+  for (let i = 1; i <= 12; i++) {
+    const opt = document.createElement("option");
+    const val = i.toString().padStart(2, "0");
+    opt.value = val;
+    opt.textContent = val;
+    if (val === hour) opt.selected = true;
+    hourSelect.appendChild(opt);
   }
+
+  // Minute dropdown
+  const minuteSelect = document.createElement("select");
+  minuteSelect.className = "minute-select";
+  minuteSelect.style.width = "80px";
+  minuteSelect.style.textAlign = "center";
+  minuteSelect.style.textAlignLast = "center";
+  for (let i = 0; i < 60; i += 5) {
+    const val = i.toString().padStart(2, "0");
+    const opt = document.createElement("option");
+    opt.value = val;
+    opt.textContent = val;
+    if (val === minute) opt.selected = true;
+    minuteSelect.appendChild(opt);
+  }
+
+  // AM/PM dropdown
+  const ampmSelect = document.createElement("select");
+  ampmSelect.className = "ampm-select";
+  ampmSelect.style.width = "80px";
+  ampmSelect.style.textAlign = "center";
+  ampmSelect.style.textAlignLast = "center";
+  ["AM", "PM"].forEach(ap => {
+    const opt = document.createElement("option");
+    opt.value = ap;
+    opt.textContent = ap;
+    if (ap === ampm) opt.selected = true;
+    ampmSelect.appendChild(opt);
+  });
+
+  // Remove button beside time section
+  const removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.textContent = "Remove";
+  removeBtn.className = "btn cancel";
+  removeBtn.style.padding = "5px 5px";
+  removeBtn.style.fontSize = "12px";
+  removeBtn.style.width = "80px";
+  removeBtn.style.height = "30px";
+
+
+
+
+  removeBtn.addEventListener("click", () => {
+    if (section.children.length > 1) {
+      rowWrapper.remove();
+    }
+  });
+
+  // Assemble inner time dropdowns
+  timeContainer.appendChild(hourSelect);
+  timeContainer.appendChild(minuteSelect);
+  timeContainer.appendChild(ampmSelect);
+
+  // Append time + button to row
+  rowWrapper.appendChild(timeContainer);
+  rowWrapper.appendChild(removeBtn);
+
+  // Append entire row to section
+  section.appendChild(rowWrapper);
+}
+
 
   function getSelectedDays() {
     return Array.from(document.querySelectorAll(".day.selected")).map(d => d.id);
