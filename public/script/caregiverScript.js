@@ -41,12 +41,12 @@ document.addEventListener("DOMContentLoaded", () => {
         time.textContent = `Time: ${formattedTimes}`;
         content.appendChild(time);
 
-        // Dosage
+        // Dosages
         const dosage = document.createElement("div");
         dosage.className = "medication-time";
         dosage.textContent = `Dosage: ${med.dosage}`;
         content.appendChild(dosage);
-
+        
         // Days (CSV string like "Mon,Tue")
         const days = document.createElement("div");
         days.className = "medication-time";
