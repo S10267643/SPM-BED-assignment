@@ -122,6 +122,9 @@ async function loginUser(req, res) {
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
+    // Print token in terminal for Swagger testing
+    console.log("Generated JWT Token:", token);
+
     res.status(200).json({
       message: "Login successful",
       token,
