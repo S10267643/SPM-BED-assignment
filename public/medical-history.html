@@ -2,112 +2,125 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Medical History</title>
-    <link rel="stylesheet" href="/public/styles.css" />
-    <style>
-        body {
-            font-family: sans-serif;
-            padding: 2rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th, td {
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            text-align: left;
-        }
-
-        tr:hover {
-            background-color: #f0f0f0;
-            cursor: pointer;
-        }
-
-        .details {
-            margin-top: 2rem;
-            padding: 1rem;
-            border: 1px solid #aaa;
-            background-color: #fafafa;
-        }
-    </style>
+    <title data-translate="title">DailyDose</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+    <script src="script/elderlychangeLanguage.js" defer></script>
+    <script src="script/medicationHistory.js" defer></script>
 </head>
 <body>
-    <h1>Medication History</h1>
+    <div class="modal">
+        <div class="modal-content" style="width: 100%; max-width: 600px; position: relative; padding-top: 50px;">
 
-    <table id="historyTable">
-        <thead>
-            <tr>
-                <th>Medication Name</th>
-                <th>Dosage</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Populated by JS -->
-        </tbody>
-    </table>
+            <!-- Settings Button (properly positioned) -->
+            <div class="addmedication-button" onclick="location.href='elderlySettings.html'" style="position: absolute; top: 20px; right: 20px;">☰</div>
 
-    <div id="details" class="details" style="display: none;">
-        <h2>Medication Details</h2>
-        <p><strong>Name:</strong> <span id="detailName"></span></p>
-        <p><strong>Dosage:</strong> <span id="detailDosage"></span></p>
-        <p><strong>Notes:</strong> <span id="detailNotes"></span></p>
+            <!-- Header -->
+            <div class="header" style="text-align: center; margin-bottom: 20px;">
+                <h1 data-translate="medication_history">Medication History</h1>
+            </div>
+
+            <!-- Medication Table -->
+            <div style="width: 100%; overflow-x: auto; margin-bottom: 20px;">
+                <table id="historyTable" style="
+          width: 100%;
+          border-collapse: collapse;
+          border: 1px solid #ccc;
+          font-size: 0.95rem;
+          border-radius: 10px;
+          overflow: hidden;
+        ">
+                    <thead style="background-color: #f0fafa;">
+                        <tr>
+                            <th style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #ccc;">Medication Name</th>
+                            <th style="padding: 12px 16px; text-align: left; border-bottom: 1px solid #ccc;">Dosage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- JS will populate -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Medication Details -->
+            <div id="details" style="
+        display: none;
+        padding: 18px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        margin-bottom: 20px;
+      ">
+                <h2 style="margin-top: 0; font-size: 1.4rem; text-align: center;">Medication Details</h2>
+                <p><strong>Name:</strong> <span id="detailName"></span></p>
+                <p><strong>Dosage:</strong> <span id="detailDosage"></span></p>
+                <p><strong>Notes:</strong> <span id="detailNotes"></span></p>
+            </div>
+
+            <!-- Navigation Bar -->
+            <div class="navigation">
+                <a class="nav-item" data-translate="messages" href="elderlyMessages.html">Messages</a>
+                <a class="nav-item active" data-translate="medication" href="elderlyHomeScreen.html">Medication</a>
+                <a class="nav-item" data-translate="emergency" href="emergencyContact.html">Emergency</a>
+            </div>
+
+        </div>
     </div>
 
-    <script>
-        const token = localStorage.getItem("token");
-        if (!token) {
-            alert("You must be logged in.");
-            window.location.href = "/login.html";
+
+
+
+<script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+        alert("You must be logged in.");
+        window.location.href = "/login.html";
+    }
+
+    const tableBody = document.querySelector("#historyTable tbody");
+    const detailBox = document.getElementById("details");
+    const detailName = document.getElementById("detailName");
+    const detailDosage = document.getElementById("detailDosage");
+    const detailNotes = document.getElementById("detailNotes");
+
+    async function fetchSummary() {
+        const res = await fetch("/api/medication-history", {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) {
+            alert("Failed to fetch history");
+            return;
         }
 
-        const tableBody = document.querySelector("#historyTable tbody");
-        const detailBox = document.getElementById("details");
-        const detailName = document.getElementById("detailName");
-        const detailDosage = document.getElementById("detailDosage");
-        const detailNotes = document.getElementById("detailNotes");
+        const data = await res.json();
+        data.forEach(record => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${record.medication_name}</td><td>${record.dosage || 'N/A'}</td>`;
+            tr.addEventListener("click", () => showDetails(record.historyId));
+            tableBody.appendChild(tr);
+        });
+    }
 
-        async function fetchSummary() {
-            const res = await fetch("/api/medication-history", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+    async function showDetails(id) {
+        const res = await fetch(`/api/medication-history/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-            if (!res.ok) {
-                alert("Failed to fetch history");
-                return;
-            }
-
-            const data = await res.json();
-            data.forEach(record => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `<td>${record.medication_name}</td><td>${record.dosage || 'N/A'}</td>`;
-                tr.addEventListener("click", () => showDetails(record.historyId));
-                tableBody.appendChild(tr);
-            });
+        if (!res.ok) {
+            alert("Failed to fetch details");
+            return;
         }
 
-        async function showDetails(id) {
-            const res = await fetch(`/api/medication-history/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+        const detail = await res.json();
+        detailName.textContent = detail.medication_name;
+        detailDosage.textContent = detail.dosage;
+        detailNotes.textContent = detail.notes || "None";
+        detailBox.style.display = "block";
+    }
 
-            if (!res.ok) {
-                alert("Failed to fetch details");
-                return;
-            }
-
-            const detail = await res.json();
-            detailName.textContent = detail.medication_name;
-            detailDosage.textContent = detail.dosage;
-            detailNotes.textContent = detail.notes || "None";
-            detailBox.style.display = "block";
-        }
-
-        fetchSummary();
-    </script>
+    fetchSummary();
+</script>
 </body>
 </html>
