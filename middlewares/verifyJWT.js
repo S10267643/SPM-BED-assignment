@@ -44,6 +44,8 @@ function verifyJWT(req, res, next) {
         "GET /api/daily-summaries/by-date": ["Caregiver", "Elderly"],
         "GET /api/daily-summaries/user/[0-9]+/by-date": ["Caregiver"],  //  Add this
 
+        // Refill check notification
+        "GET /api/refill-check/[0-9]+": ["Caregiver", "Elderly"]
     };
 
     // Build a key like "POST /medications/123"
