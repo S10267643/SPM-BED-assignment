@@ -64,7 +64,7 @@ const user = await response.json(); // Only do this after .ok check
       }
 
       alert("Profile updated successfully!");
-      window.location.href = "caregiverChooseElderly.html"; // ✅ Go back
+      window.location.href = "elderlyHomeScreen.html"; // ✅ Go back
     });
 
   } catch (err) {

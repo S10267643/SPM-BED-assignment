@@ -80,5 +80,25 @@ document.addEventListener("DOMContentLoaded", () => {
       .map(d => d.trim().charAt(0).toUpperCase() + d.trim().slice(1).toLowerCase())
       .join(', ');
   }
+  const userName = localStorage.getItem("userName");
+  console.log(userName);
+  let preferredLanguage = localStorage.getItem("preferredLanguage") || 
+                         localStorage.getItem("language") || 
+                         'English'; // Default to English
+
+  // Normalize language value (handle case where backend uses 'Chinese' but frontend expects 'zh')
+  if (preferredLanguage === 'Chinese' || preferredLanguage === 'zh') {
+    preferredLanguage = 'Chinese';
+  }
+
+  if (userName) {
+    const welcomeMessage = document.getElementById("welcomeMessage");
+    
+    if (preferredLanguage === 'Chinese') {
+      welcomeMessage.textContent = `你好, gay ${userName}!`;
+    } else {
+      welcomeMessage.textContent = `Hello, ${userName}!`;
+    }
+  }
 });
   
