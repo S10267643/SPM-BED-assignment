@@ -146,7 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
                          localStorage.getItem("language") || 
                          'English'; // Default to English
 
-  // Normalize language value (handle case where backend uses 'Chinese' but frontend expects 'zh')
   if (preferredLanguage === 'Chinese' || preferredLanguage === 'zh') {
     preferredLanguage = 'Chinese';
   }
@@ -169,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const today = new Date();
   updateCalendar(today);
-  const todayStr = today.toLocaleDateString('en-US', { weekday: 'short' });
+  const todayStr = String(today.getDay())
 
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
@@ -215,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       if (entries.length === 0) {
-        list.innerHTML = "<div class='medication-item'>No medications for today.</div>";
+        list.innerHTML = "<div class='medication-item' data-translate='no_medications'>No medications for today.</div>";
         return;
       }
 
