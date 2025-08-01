@@ -10,15 +10,15 @@
 </head>
 <body>
     <div class="modal">
-  <div class="modal-content">
-    <div class="addmedication-button" onclick="location.href='elderlySettings.html'">☰</div>
-    
-    <div class="header">
-      <h1 id="welcomeMessage"></h1>
-      <div class="date" id="currentDate"></div>
-    </div>
+        <div class="modal-content">
+            <div class="addmedication-button" onclick="location.href='elderlySettings.html'">☰</div>
 
-            
+            <div class="header">
+                <h1 id="welcomeMessage"></h1>
+                <div class="date" id="currentDate"></div>
+            </div>
+
+
             <div class="calendar">
                 <div class="calendar-day" data-translate="day_mon">Mon</div>
                 <div class="calendar-day" data-translate="day_tue">Tue</div>
@@ -27,7 +27,7 @@
                 <div class="calendar-day" data-translate="day_fri">Fri</div>
                 <div class="calendar-day" data-translate="day_sat">Sat</div>
                 <div class="calendar-day" data-translate="day_sun">Sun</div>
-                
+
                 <!-- Empty slots that will be filled by JavaScript -->
                 <div class="calendar-day"></div>
                 <div class="calendar-day"></div>
@@ -37,9 +37,9 @@
                 <div class="calendar-day"></div>
                 <div class="calendar-day"></div>
             </div>
-            
+
             <div class="medication-list">
-               <div class="medication-item">
+                <div class="medication-item">
                     <div class="medication-content">
                         <div class="medication-name">Medication 1</div>
                         <div class="medication-time">9:00 AM</div>
@@ -47,7 +47,7 @@
                     <input type="checkbox" class="medication-checkbox">
                 </div>
             </div>
-            
+
             <div class="navigation">
                 <a class="nav-item" data-translate="messages" href="elderlyMessages.html">Messages</a>
                 <a class="nav-item active" data-translate="medication" href="elderlyHomeScreen.html">Medication</a>
@@ -56,5 +56,7 @@
         </div>
     </div>
     <script src="script/elderlyScript.js"></script>
+    <script src="script/refillNotificationScript.js"></script>
+
 </body>
 </html>
