@@ -162,36 +162,28 @@ updateCalendar(today);
       .join(', ');
   }
 
-  const userName = localStorage.getItem("userName");
-
-  let preferredLanguage = localStorage.getItem("preferredLanguage") || 
-                         localStorage.getItem("language") || 
-                         'English'; // Default to English
-
-  // Normalize language value (handle case where backend uses 'Chinese' but frontend expects 'zh')
-  if (preferredLanguage === 'Chinese' || preferredLanguage === 'zh') {
-    preferredLanguage = 'Chinese';
-  }
-
-  if (userName) {
-    const welcomeMessage = document.getElementById("welcomeMessage");
-    
-    if (preferredLanguage === 'Chinese') {
-
-      welcomeMessage.textContent = `你好, ${userName}!`;
-
-    } else {
-      welcomeMessage.textContent = `Hello, ${userName}!`;
-    }
-  }
-
-
-  const welcomeMessage = document.getElementById("welcomeMessage");
+const welcomeMessage = document.getElementById("welcomeMessage");
 const viewingUserLabel = document.getElementById("viewingUserLabel");
 
+const userName = localStorage.getItem("userName");
+let preferredLanguage = localStorage.getItem("preferredLanguage") || 
+                        localStorage.getItem("language") || 
+                        'English';
 
+if (preferredLanguage === 'Chinese' || preferredLanguage === 'zh') {
+  preferredLanguage = 'Chinese';
+}
 
-// Show Viewing User label if userId is set
+// Show greeting for the logged-in user
+if (userName && welcomeMessage) {
+  welcomeMessage.textContent = 
+    preferredLanguage === 'Chinese'
+      ? `你好, ${userName}!`
+      : `Hello, ${userName}!`;
+}
+
+// Show "Viewing: <name>" for the chosen user
+
 if (userId && viewingUserLabel) {
   fetch(`/users/${userId}`)
     .then(res => {
@@ -208,6 +200,7 @@ if (userId && viewingUserLabel) {
     });
 
 }
+
 
 
 });
