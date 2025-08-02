@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
       console.error("Error loading medication:", err);
       alert("Failed to load medication data.");
-      window.location.href = "deletemedicine.html";
+      window.location.href = "caregiverDeletemedicine.html";
     }
   }
 
@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const result = await response.json();
       if (response.ok) {
         alert("Medication updated!");
-        window.location.href = "deletemedicine.html";
+        window.location.href = "caregiverDeletemedicine.html";
       } else {
         alert("Update failed: " + (result.error || "Unknown error"));
       }
