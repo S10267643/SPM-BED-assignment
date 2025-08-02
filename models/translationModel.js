@@ -152,6 +152,7 @@ class TranslationModel {
       recent_message: "Recent Messages",
       loading_messages: "Loading messages...",
       mark_as_read: "Mark as Read",
+      view_medication: "View Medication",
 
       // caregiverAddmedicine.html
       elderly_name: "Elderly Name",
@@ -213,6 +214,19 @@ class TranslationModel {
       pick_medicine: "Pick Medicine",
       delete: "Delete",
       edit: "Edit",
+
+      //medical-historyCaregiver.html
+      back_to_settings: "← Settings",
+      medication_history_title: "Medication History for Selected Elderly",
+      refresh_list: "Refresh List",
+      add_new_record: "Add New Record",
+      medication: "Medication",
+      dosage: "Dosage",
+      actions: "Actions",
+      medication_id: "Medication ID",
+      dosage_label: "Dosage:",
+      pills_left_label: "Pills Left:",
+      notes: "Notes:",
 
 
 

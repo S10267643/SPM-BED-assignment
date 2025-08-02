@@ -10,6 +10,7 @@
     <link rel="icon" href="images/favicon.png" />
 
     <script src="script/caregiverMedicationHistory.js" defer></script>
+    <script src="script/caregiverChangeLanguage.js" defer></script>
 </head>
 <style>#backArrow {
             position: absolute; /* positioned within .modal */
@@ -29,15 +30,15 @@
 <a href="caregiverSettings.html" id="backArrow" data-translate="back_to_settings">← Settings</a>
             <!-- Header -->
             <div class="header" style="text-align:center;margin:4px 0 16px 0;">
-                <h1 style="margin:0;line-height:1.15;word-break:break-word;">
+                <h1 style="margin:0;line-height:1.15;word-break:break-word;" data-translate="medication_history_title">
                     Medication History for Selected Elderly
                 </h1>
             </div>
 
             <!-- Top actions -->
             <div style="display:flex;justify-content:center;gap:10px;margin-bottom:14px;">
-                <button class="btn filled" onclick="fetchMedicationHistory()" style="max-width:200px;">Refresh List</button>
-                <button class="btn outline" onclick="showAddForm()" style="max-width:220px;">Add New Record</button>
+                <button class="btn filled" onclick="fetchMedicationHistory()" style="max-width:200px;" data-translate="refresh_list">Refresh List</button>
+                <button class="btn outline" onclick="showAddForm()" style="max-width:220px;" data-translate="add_new_record">Add New Record</button>
             </div>
 
             <!-- CARD: table + form live together -->
@@ -51,9 +52,9 @@
                 <table id="historyTable" style="width:100%;border-collapse:collapse;table-layout:fixed;">
                     <thead style="background:#f0fafa;">
                         <tr>
-                            <th style="padding:12px 14px;text-align:left;border-bottom:1px solid #ccc;width:42%;">Medication</th>
-                            <th style="padding:12px 14px;text-align:left;border-bottom:1px solid #ccc;width:28%;">Dosage</th>
-                            <th style="padding:12px 14px;text-align:left;border-bottom:1px solid #ccc;width:30%;">Actions</th>
+                            <th style="padding:12px 14px;text-align:left;border-bottom:1px solid #ccc;width:42%;" data-translate="medication">Medication</th>
+                            <th style="padding:12px 14px;text-align:left;border-bottom:1px solid #ccc;width:28%;" data-translate="dosage">Dosage</th>
+                            <th style="padding:12px 14px;text-align:left;border-bottom:1px solid #ccc;width:30%;" data-translate="actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -64,35 +65,35 @@
 
                 <!-- Add/Edit Form (INSIDE card) -->
                 <div id="formSection" style="display:none;">
-                    <h3 id="formTitle" style="margin:0 0 10px 0;text-align:left;">Add Medication History</h3>
+                    <h3 id="formTitle" style="margin:0 0 10px 0;text-align:left;" >Add Medication History</h3>
 
                     <!-- Reuse your rounded inputs by using your existing classes; only override width/padding inline -->
                     <form id="historyForm" class="addmedication-container" style="width:100%;max-width:none;border:none;padding:0;margin:0;">
                         <input type="hidden" id="historyId" />
 
-                        <label>
+                        <label data-translate="medication_id">
                             Medication ID:
                             <input type="number" id="medId" required />
                         </label>
 
-                        <label>
+                        <label data-translate="dosage_label">
                             Dosage:
                             <input type="text" id="dosage" required />
                         </label>
 
-                        <label>
+                        <label data-translate="pills_left_label">
                             Pills Left:
                             <input type="number" id="pillsLeft" required />
                         </label>
 
-                        <label>
+                        <label data-translate="notes_label">
                             Notes:
                             <textarea id="notes" style="width:100%;padding:12px;border:1.5px solid #ddd;border-radius:10px;font-family:'Open Sans',sans-serif;"></textarea>
                         </label>
 
                         <div class="actions" style="justify-content:flex-end;gap:10px;">
-                            <button type="button" class="btn cancel" onclick="hideForm()" style="max-width:140px;">Cancel</button>
-                            <button type="submit" class="btn confirm" style="max-width:140px;">Save</button>
+                            <button type="button" class="btn cancel" onclick="hideForm()" style="max-width:140px;" data-translate="cancel">Cancel</button>
+                            <button type="submit" class="btn confirm" style="max-width:140px;" data-translate="save">Save</button>
                         </div>
                     </form>
                 </div>
@@ -100,8 +101,9 @@
 
             <!-- Bottom nav (optional, matches your system) -->
             <div class="navigation">
-                <a class="nav-item" href="elderlyMessages.html">Messages</a>
-                <a class="nav-item active" href="elderlyHomeScreen.html">Medication</a>
+                <div class="nav-item active" data-translate="medication">Medication</div>
+                <div class="nav-item" onclick="location.href='caregiverAddmedicine.html'" data-translate="add_pills">Add pills</div>
+                <div class="nav-item" onclick="location.href='caregiverDeletemedicine.html'" data-translate="manage_pills">Manage pills</div>
             </div>
         </div>
     </div>
