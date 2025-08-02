@@ -20,7 +20,7 @@ const emergencyController = require("./controllers/emergencyController");
 const { validateContact } = require("./middlewares/emergencyValidation");
 
 // notification controller
-const notificationController = require("./controllers/notificationController");
+const notificationController = require("./controllers/NotificationController");
 
 
 const refillNotificationController = require("./controllers/refillNotificationController");
