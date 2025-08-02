@@ -121,7 +121,17 @@ updateCalendar(today);
         // Days (CSV string like "Mon,Tue")
         const days = document.createElement("div");
         days.className = "medication-time";
-        days.textContent = `Days: ${formatDays(med.medDayOfWeek)}`;
+        const NumToDays = {
+          0: "Sun",
+          1: "Mon",
+          2: "Tue",
+          3: "Wed", 
+          4: "Thu",
+          5: "Fri",
+          6: "Sat"
+        };
+        const daysArray = med.medDayOfWeek.split(',').map(d => d.trim());
+        days.textContent = `Days: ${daysArray.map(d => NumToDays[d]).join(', ')}`;
         content.appendChild(days);
 
         item.appendChild(content);
