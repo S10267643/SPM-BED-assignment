@@ -153,6 +153,7 @@ updateCalendar(today);
   }
 
   const userName = localStorage.getItem("userName");
+
   let preferredLanguage = localStorage.getItem("preferredLanguage") || 
                          localStorage.getItem("language") || 
                          'English'; // Default to English
@@ -166,11 +167,14 @@ updateCalendar(today);
     const welcomeMessage = document.getElementById("welcomeMessage");
     
     if (preferredLanguage === 'Chinese') {
+
       welcomeMessage.textContent = `你好, ${userName}!`;
+
     } else {
       welcomeMessage.textContent = `Hello, ${userName}!`;
     }
   }
+
 
   const welcomeMessage = document.getElementById("welcomeMessage");
 const viewingUserLabel = document.getElementById("viewingUserLabel");
@@ -194,6 +198,7 @@ if (userId && viewingUserLabel) {
     });
 
 }
+
 
 });
   

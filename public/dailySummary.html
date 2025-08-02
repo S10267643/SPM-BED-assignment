@@ -4,13 +4,57 @@
     <meta charset="UTF-8" />
     <title>Daily Medication Summary</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
+        html, body {
+            height: 100%;
         }
 
+        body {
+            margin: 0;
+            font-family: 'Open Sans', sans-serif;
+            padding: 20px; /* keep your original padding */
+            display: flex; /* center the modal */
+            align-items: center; /* vertical center */
+            justify-content: center; /* horizontal center */
+            box-sizing: border-box;
+        }
+
+        .modal {
+            position: relative; /* anchor for #backArrow */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 90vh;
+            width: 23vw;
+            padding: 20px 20px 20px 20px; /* keep your size */
+            box-sizing: border-box;
+            border: 1px solid #333;
+            border-radius: 5px;
+            overflow: auto; /* internal scrolling stays */
+        }
+
+        #backArrow {
+            position: absolute; /* positioned within .modal */
+            top: 12px;
+            left: 12px;
+            font-size: 24px;
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+            user-select: none;
+            z-index: 1; /* above content but inside modal */
+        }
+
+        /* give the heading a bit of top margin so it doesn't collide with the arrow */
+        h2 {
+            margin-top: 28px;
+            text-align: center;
+        }
+
+
         button {
-            margin: 5px;
+            margin: 5px 10px 5px 0;
+            padding: 6px 12px;
         }
 
         table {
@@ -26,35 +70,38 @@
         }
 
         th {
-            background-color: #f0f0f0;
+            background-color: #f2f2f2;
         }
 
         #summarySection {
             display: none;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Daily Summary</h1>
+    <div class="modal">
+        <a href="elderlySettings.html" id="backArrow" data-translate="back_to_settings">← Settings</a>
+        <h1>Daily Summary</h1>
 
-    <button onclick="generateToday()">Generate Today's Summary</button>
-    <button onclick="fetchSummary(-1)">View Yesterday's Summary</button>
-    <button onclick="fetchSummary(-2)">View 2 Days Ago</button>
+        <button onclick="generateToday()">Generate Today's Summary</button>
+        <button onclick="fetchSummary(-1)">View Yesterday's Summary</button>
+        <button onclick="fetchSummary(-2)">View 2 Days Ago</button>
 
-    <div id="summarySection">
-        <h3 id="summaryDateTitle"></h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Medication</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="summaryTableBody"></tbody>
-        </table>
+        <div id="summarySection">
+            <h3 id="summaryDateTitle"></h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Medication</th>
+                        <th>Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="summaryTableBody"></tbody>
+            </table>
+        </div>
     </div>
-
     <script>
         const token = localStorage.getItem("token");
 
@@ -69,10 +116,10 @@
             entries.forEach(entry => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-              <td>${entry.medName}</td>
-              <td>${entry.time}</td>
-              <td>${formatStatus(entry.taken)}</td>
-            `;
+                  <td>${entry.medName}</td>
+                  <td>${entry.time}</td>
+                  <td>${formatStatus(entry.taken)}</td>
+                `;
                 tbody.appendChild(row);
             });
             document.getElementById("summarySection").style.display = "block";
